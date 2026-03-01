@@ -5,6 +5,14 @@
 
 ---
 
+## 👨‍🏫 讲师
+
+**温颖** 副教授  
+上海交通大学 人工智能学院  
+🔗 [yingwen.io](https://yingwen.io)
+
+---
+
 ## 📚 课程简介
 
 本课程面向 MBA 学员，系统介绍大语言模型（LLM）与 AI Agent 的核心原理、技术架构与商业应用。通过理论讲解与动手实践相结合，帮助学员理解 AI Agent 如何重塑企业工作流程，并具备评估、选型和落地 AI Agent 解决方案的能力。
@@ -29,8 +37,6 @@
 │   ├── L1-2-LLM-Basics-大语言模型基础.md
 │   ├── L3-4-Workflow-RAG-流程与检索增强.md
 │   └── ...
-│
-│
 │
 ├── output/pdf/          # 📄 PDF 输出文件
 │
@@ -64,8 +70,6 @@
 
 ## 🚀 快速开始
 
-### 查看课件
-
 幻灯片使用 [Marp](https://marp.app/) 格式编写，可直接用 VS Code + Marp 插件预览：
 
 ```bash
@@ -74,12 +78,6 @@ npm install -g @marp-team/marp-cli
 
 # 生成 PDF
 marp slides/day1-lesson1-2-llm-basics.md --pdf -o output.pdf
-```
-
-
-```bash
-pip install -r requirements.txt
-python prompt_playground.py
 ```
 
 ---
