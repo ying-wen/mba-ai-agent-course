@@ -25,46 +25,45 @@
 
 ---
 
-## 📂 目录结构
-
-```
-├── slides/              # 📽️ 课程幻灯片 (Marp格式)
-│   ├── course-overview.md
-│   ├── day1-lesson1-2-llm-basics.md
-│   └── ...
-│
-├── lecture-notes/       # 📖 详细讲义
-│   ├── L1-2-LLM-Basics-大语言模型基础.md
-│   ├── L3-4-Workflow-RAG-流程与检索增强.md
-│   └── ...
-│
-├── output/pdf/          # 📄 PDF 输出文件
-│
-├── SYLLABUS.md          # 课程大纲
-└── READING-LIST.md      # 延伸阅读清单
-```
-
----
-
 ## 📅 课程大纲
 
 ### Day 1：基础与架构
 
-| 课时 | 主题 | 内容 |
-|------|------|------|
-| L1-2 | 大语言模型基础 | Transformer、预训练、Prompt Engineering |
-| L3-4 | 工作流与 RAG | LLM 应用范式、检索增强生成 |
-| L5-6 | Agent 架构 | ReAct、Planning、Tool Use |
-| L7-8 | 记忆与工具 | 记忆系统设计、工具编排 |
+| 课时 | 主题 | 幻灯片 | 讲义 |
+|------|------|--------|------|
+| L1-2 | 大语言模型基础 | [MD](slides/day1-lesson1-2-llm-basics.md) · [PDF](output/pdf/slides/day1-lesson1-2-llm-basics.pdf) | [MD](lecture-notes/L1-2-LLM-Basics-大语言模型基础.md) · [PDF](output/pdf/lecture-notes/L1-2-LLM-Basics-大语言模型基础.pdf) |
+| L3-4 | 工作流与 RAG | [MD](slides/day1-lesson3-4-workflow.md) · [PDF](output/pdf/slides/day1-lesson3-4-workflow.pdf) | [MD](lecture-notes/L3-4-Workflow-RAG-流程与检索增强.md) · [PDF](output/pdf/lecture-notes/L3-4-Workflow-RAG-流程与检索增强.pdf) |
+| L5-6 | Agent 架构 | [MD](slides/day1-lesson5-6-agent.md) · [PDF](output/pdf/slides/day1-lesson5-6-agent.pdf) | [MD](lecture-notes/L5-6-Agent-智能体设计与实现.md) · [PDF](output/pdf/lecture-notes/L5-6-Agent-智能体设计与实现.pdf) |
+| L7-8 | 记忆与工具 | [MD](slides/day1-lesson7-8-memory-tools.md) · [PDF](output/pdf/slides/day1-lesson7-8-memory-tools.pdf) | [MD](lecture-notes/L7-8-Memory-Tools-记忆系统与工具编排.md) · [PDF](output/pdf/lecture-notes/L7-8-Memory-Tools-记忆系统与工具编排.pdf) |
 
 ### Day 2：进阶与落地
 
-| 课时 | 主题 | 内容 |
-|------|------|------|
-| L9-10 | 多智能体系统 | 协作模式、任务分解、质量控制 |
-| L11-12 | MCP 与工具生态 | Model Context Protocol、Skill 生态 |
-| L13-14 | LLM OS | 智能体操作系统、OpenClaw 架构 |
-| L15-16 | 商业落地 | 应用场景、ROI 评估、未来展望 |
+| 课时 | 主题 | 幻灯片 | 讲义 |
+|------|------|--------|------|
+| L9-10 | 多智能体系统 | [MD](slides/day2-lesson9-10-multi-agent.md) · [PDF](output/pdf/slides/day2-lesson9-10-multi-agent.pdf) | [MD](lecture-notes/L9-10-MultiAgent-多智能体系统设计.md) · [PDF](output/pdf/lecture-notes/L9-10-MultiAgent-多智能体系统设计.pdf) |
+| L11-12 | MCP 与工具生态 | [MD](slides/day2-lesson11-12-mcp.md) · [PDF](output/pdf/slides/day2-lesson11-12-mcp.pdf) | [MD](lecture-notes/L11-12-MCP-工具集成标准.md) · [PDF](output/pdf/lecture-notes/L11-12-MCP-工具集成标准.pdf) |
+| L13-14 | LLM OS | [MD](slides/day2-lesson13-14-llm-os.md) · [PDF](output/pdf/slides/day2-lesson13-14-llm-os.pdf) | [MD](lecture-notes/L13-14-LLM-OS-智能体操作系统.md) · [PDF](output/pdf/lecture-notes/L13-14-LLM-OS-智能体操作系统.pdf) |
+| L15-16 | 商业落地 | [MD](slides/day2-lesson15-16-business.md) · [PDF](output/pdf/slides/day2-lesson15-16-business.pdf) | [MD](lecture-notes/L15-16-Business-商业落地与未来展望.md) · [PDF](output/pdf/lecture-notes/L15-16-Business-商业落地与未来展望.pdf) |
+
+### 📖 其他资源
+
+| 资源 | 格式 |
+|------|------|
+| 课程概览 | [MD](slides/course-overview.md) · [PDF](output/pdf/slides/course-overview.pdf) |
+| 课程大纲 | [MD](SYLLABUS.md) · [PDF](output/pdf/SYLLABUS.pdf) |
+| 延伸阅读 | [MD](READING-LIST.md) · [PDF](output/pdf/READING-LIST.pdf) |
+
+---
+
+## 📂 目录结构
+
+```
+├── slides/              # 📽️ 课程幻灯片 (Marp格式)
+├── lecture-notes/       # 📖 详细讲义
+├── output/pdf/          # 📄 PDF 输出文件
+├── SYLLABUS.md          # 课程大纲
+└── READING-LIST.md      # 延伸阅读清单
+```
 
 ---
 
@@ -113,7 +112,7 @@ marp slides/day1-lesson1-2-llm-basics.md --pdf -o output.pdf
 
 <div align="center">
 
-**上海交通大学安泰经济与管理学院 × OpenClaw**
+**上海交通大学人工智能学院 × 安泰经济与管理学院 × OpenClaw**
 
 *让每个人都能拥有自己的 AI Agent*
 
