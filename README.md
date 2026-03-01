@@ -12,7 +12,6 @@
 ### 课程特色
 
 - 🎯 **商业导向**：聚焦 AI Agent 在企业场景的实际应用
-- 🔧 **动手实践**：配套 4 个实验项目，从 Prompt 工程到多智能体系统
 - 🌐 **前沿视野**：涵盖 MCP 协议、LLM OS 等最新技术趋势
 - 🇨🇳 **本土视角**：深入分析中国 AI 产业格局与机遇
 
@@ -31,11 +30,6 @@
 │   ├── L3-4-Workflow-RAG-流程与检索增强.md
 │   └── ...
 │
-├── labs/                # 🧪 实验项目
-│   ├── lab1-prompt/     # Prompt 工程实验
-│   ├── lab2-workflow/   # RAG 工作流实验
-│   ├── lab3-agent/      # ReAct Agent 实验
-│   └── lab4-multiagent/ # 多智能体协作实验
 │
 │
 ├── output/pdf/          # 📄 PDF 输出文件
@@ -82,10 +76,8 @@ npm install -g @marp-team/marp-cli
 marp slides/day1-lesson1-2-llm-basics.md --pdf -o output.pdf
 ```
 
-### 运行实验
 
 ```bash
-cd labs/lab1-prompt
 pip install -r requirements.txt
 python prompt_playground.py
 ```
