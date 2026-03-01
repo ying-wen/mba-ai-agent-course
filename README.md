@@ -37,7 +37,6 @@
 │   ├── lab3-agent/      # ReAct Agent 实验
 │   └── lab4-multiagent/ # 多智能体协作实验
 │
-├── assignments/         # 📝 作业与项目指南
 │
 ├── output/pdf/          # 📄 PDF 输出文件
 │
