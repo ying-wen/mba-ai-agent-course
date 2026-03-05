@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>L-AI-Developer-Mindset-AI开发者思维</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">L-AI-Developer-Mindset-AI开发者思维</h1>
+</header>
+<h1 id="l-supplementary-ai-开发者思维-the-ai-developers-mindset">L-Supplementary:
+AI 开发者思维 (The AI Developer’s Mindset)</h1>
+<blockquote>
+<p><strong>课程</strong>: MBA大模型智能体课程<br />
+<strong>定位</strong>: L1-2补充材料 (基于Stanford CS146S)<br />
+<strong>核心洞察</strong>: “你不会被AI取代，但会被会用AI的人取代”</p>
+</blockquote>
+<hr />
+<h2 id="本讲核心问题">本讲核心问题</h2>
+<ol type="1">
+<li><strong>2026年的世界发生了什么变化？</strong>
+AI如何重塑软件开发？</li>
+<li><strong>大模型是怎么训练出来的？</strong>
+三阶段训练流程是什么？</li>
+<li><strong>为什么说”不是所有Token都平等”？</strong>
+如何利用这个洞察？</li>
+<li><strong>什么是上下文工程？</strong>
+为什么它是AI时代的核心竞争力？</li>
+</ol>
+<hr />
+<h2 id="part-1-state-of-the-world-2026">Part 1: State of the World
+2026</h2>
+<h3 id="软件开发的范式转移">1.1 软件开发的范式转移</h3>
+<p><strong>关键数据</strong>: -
+2025年，<strong>72%的开发者</strong>已在日常工作中使用AI辅助编码 (GitHub
+Survey) - 使用AI的开发者生产力提升 <strong>55-75%</strong> (McKinsey,
+2025) - AI编写的代码占GitHub新增代码的 <strong>41%</strong> (GitHub
+Copilot Report)</p>
+<p><strong>核心洞察</strong>: &gt; “You won’t be replaced by AI, but by
+an engineer using AI.” &gt; — 软件工程的新现实</p>
+<h3 id="从会写代码到会指挥ai">1.2 从”会写代码”到”会指挥AI”</h3>
+<table>
+<thead>
+<tr>
+<th>传统开发者</th>
+<th>AI时代开发者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手写每一行代码</td>
+<td>设计Spec，让AI实现</td>
+</tr>
+<tr>
+<td>记住API文档</td>
+<td>描述需求，让AI查找</td>
+</tr>
+<tr>
+<td>调试靠打断点</td>
+<td>让AI解释+修复bug</td>
+</tr>
+<tr>
+<td>独立完成任务</td>
+<td>协调多个AI Agent</td>
+</tr>
+</tbody>
+</table>
+<p><strong>新能力要求</strong>: 1. <strong>Prompt Engineering</strong> →
+如何精确描述需求 2. <strong>Context Engineering</strong> →
+如何组织信息让AI理解 3. <strong>Agent Orchestration</strong> →
+如何协调多个AI完成复杂任务 4. <strong>AI Judgment</strong> →
+知道何时信任AI，何时人工干预</p>
+<h3 id="specs-are-the-new-source-code">1.3 “Specs Are the New Source
+Code”</h3>
+<blockquote>
+<p>“在AI时代，详细的需求说明(Spec)比代码本身更重要。因为AI可以根据好的Spec生成代码，但无法从模糊的想法中猜出你要什么。”
+— Ravi Mehta, 前Facebook产品VP</p>
+</blockquote>
+<p><strong>实践建议</strong>: -
+花更多时间写清楚<strong>你要什么</strong> -
+花更少时间纠结<strong>怎么实现</strong> -
+用结构化格式描述需求（Markdown, YAML） - 为项目维护一个
+<code>SPEC.md</code> 文档</p>
+<hr />
+<h2 id="part-2-大模型的三阶段训练">Part 2: 大模型的三阶段训练</h2>
+<h3 id="为什么mba需要了解这个">2.1 为什么MBA需要了解这个？</h3>
+<p>因为训练方式决定了模型的<strong>能力边界</strong>和<strong>行为模式</strong>。理解训练过程，才能：
+- 知道模型擅长什么、不擅长什么 - 理解为什么有些prompt有效、有些无效 -
+预测模型在不同场景下的表现</p>
+<h3 id="三阶段流程">2.2 三阶段流程</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                    大模型训练三阶段                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Stage 1: Pretraining (预训练)                              │
+│  ─────────────────────────────                              │
+│  数据: 互联网文本 (万亿Token)                                │
+│  目标: 预测下一个词                                          │
+│  结果: 获得语言理解和世界知识                                 │
+│  比喻: 📚 读遍人类所有书籍                                   │
+│                                                             │
+│            ↓                                                │
+│                                                             │
+│  Stage 2: Supervised Fine-Tuning (SFT/监督微调)             │
+│  ─────────────────────────────────────────────              │
+│  数据: 高质量问答对 (万-百万)                                │
+│  目标: 学会对话格式                                          │
+│  结果: 能够回答问题、遵循指令                                 │
+│  比喻: 👨‍🏫 跟老师学习如何答题                                │
+│                                                             │
+│            ↓                                                │
+│                                                             │
+│  Stage 3: RLHF / Preference Tuning (偏好对齐)               │
+│  ─────────────────────────────────────────────              │
+│  数据: 人类偏好排序 (哪个回答更好)                           │
+│  目标: 输出人类喜欢的回答                                    │
+│  结果: 更有帮助、更安全、更对齐                              │
+│  比喻: 🎯 根据用户反馈持续改进                               │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="每个阶段的商业含义">2.3 每个阶段的商业含义</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>成本</th>
+<th>时间</th>
+<th>谁在做</th>
+<th>商业影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pretraining</td>
+<td>$10M-$1B</td>
+<td>数月</td>
+<td>少数大厂</td>
+<td>决定基础能力上限</td>
+</tr>
+<tr>
+<td>SFT</td>
+<td>$10K-$1M</td>
+<td>数周</td>
+<td>更多公司可做</td>
+<td>决定任务适配性</td>
+</tr>
+<tr>
+<td>RLHF</td>
+<td>$100K-$10M</td>
+<td>数周</td>
+<td>需要人类标注</td>
+<td>决定用户体验</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键洞察</strong>: - <strong>创业公司</strong>通常从Stage
+2介入（基于开源基座模型微调） - <strong>企业应用</strong>主要在Stage
+2-3发力（私有数据微调+对齐） -
+<strong>Pretraining</strong>是大厂的游戏（资本密集型）</p>
+<h3 id="rlhf-为什么chatgpt感觉更好用">2.4 RLHF:
+为什么ChatGPT”感觉”更好用？</h3>
+<p>RLHF (Reinforcement Learning from Human Feedback)
+是让模型”更懂人”的关键：</p>
+<pre><code>用户问题 → 模型生成多个回答 → 人类标注员排序 → 训练奖励模型 → 强化学习优化</code></pre>
+<p><strong>RLHF带来的改变</strong>: - ❌ 之前: 模型只追求”预测准确” - ✅
+之后: 模型追求”人类满意”</p>
+<p><strong>商业启示</strong>: - 用户反馈是最宝贵的数据资产 -
+“感觉好用”可能比”技术领先”更重要 -
+收集偏好数据是建立护城河的方式之一</p>
+<hr />
+<h2 id="part-3-不是所有token都平等">Part 3: 不是所有Token都平等</h2>
+<h3 id="中间迷失-lost-in-the-middle">3.1 “中间迷失” (Lost in the
+Middle)</h3>
+<p><strong>现象</strong>:
+当上下文很长时，模型对<strong>开头和结尾</strong>的信息记得最清楚，<strong>中间的信息</strong>容易被忽略。</p>
+<p><strong>研究数据</strong> (Liu et al., 2023): - 信息在开头: 准确率
+<strong>75%</strong> - 信息在中间: 准确率 <strong>45%</strong> ⚠️ -
+信息在结尾: 准确率 <strong>70%</strong></p>
+<pre><code>┌────────────────────────────────────────────────┐
+│              上下文窗口注意力分布                │
+├────────────────────────────────────────────────┤
+│                                                │
+│  注意力                                         │
+│    ▲                                           │
+│    │  ████                              ████   │
+│    │  ████                              ████   │
+│    │  ████                              ████   │
+│    │  ████     ░░░░░░░░░░░░░░░░         ████   │
+│    │  ████     ░░░░░░░░░░░░░░░░         ████   │
+│    └──────────────────────────────────────────▶│
+│       开头        中间(Lost!)          结尾     │
+│                                                │
+└────────────────────────────────────────────────┘</code></pre>
+<h3 id="实践建议">3.2 实践建议</h3>
+<p><strong>把重要信息放在对的位置</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>信息类型</th>
+<th>建议位置</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系统指令</td>
+<td>最开头</td>
+<td>设定基调</td>
+</tr>
+<tr>
+<td>关键约束</td>
+<td>开头 + 结尾重复</td>
+<td>强化记忆</td>
+</tr>
+<tr>
+<td>背景资料</td>
+<td>中间</td>
+<td>可被部分遗忘</td>
+</tr>
+<tr>
+<td>具体问题</td>
+<td>最结尾</td>
+<td>紧邻输出</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prompt结构模板</strong>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 系统指令 (开头 - 最重要)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>你是一个专业的财务分析师...</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu"># 背景资料 (中间 - 可以长)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>以下是公司的财务报表...</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">大量数据</span><span class="co">]</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu"># 关键约束提醒 (结尾前 - 重复强调)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>请记住：</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>所有数字必须有来源</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>不确定时说&quot;需要更多信息&quot;</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># 具体问题 (最后 - 紧邻输出)</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>请分析该公司的现金流状况。</span></code></pre></div>
+<h3 id="context-rot-长对话的衰减">3.3 Context Rot: 长对话的衰减</h3>
+<p><strong>现象</strong>:
+在长对话中，早期的信息会逐渐”腐烂”——模型越来越难以准确回忆和使用它们。</p>
+<p><strong>Chroma Research发现</strong>: -
+10轮对话后，早期信息召回准确率下降 <strong>40%</strong> -
+某些细节可能被”覆盖”或”扭曲”</p>
+<p><strong>应对策略</strong>: 1. <strong>定期总结</strong>:
+每隔几轮让AI总结关键信息 2. <strong>外部记忆</strong>:
+重要信息存储在外部系统（RAG） 3. <strong>主动提醒</strong>:
+在关键时刻重新注入重要上下文</p>
+<hr />
+<h2 id="part-4-上下文工程-context-engineering">Part 4: 上下文工程
+(Context Engineering)</h2>
+<h3 id="定义">4.1 定义</h3>
+<blockquote>
+<p><strong>上下文工程</strong> =
+设计和管理输入给AI的信息，使其能够最有效地完成任务的艺术与科学。</p>
+</blockquote>
+<p>这不仅仅是”写好prompt”，而是一整套系统性的方法论：</p>
+<pre><code>┌─────────────────────────────────────────────────┐
+│              上下文工程的四个维度                 │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  1. 信息选择 (What)                              │
+│     哪些信息应该放入上下文？                      │
+│                                                 │
+│  2. 信息组织 (How)                               │
+│     信息以什么格式、顺序呈现？                    │
+│                                                 │
+│  3. 信息压缩 (Compression)                       │
+│     如何在有限窗口内放入最多有用信息？            │
+│                                                 │
+│  4. 信息更新 (Update)                            │
+│     随着对话进行，如何动态调整上下文？            │
+│                                                 │
+└─────────────────────────────────────────────────┘</code></pre>
+<h3 id="manus团队的教训">4.2 Manus团队的教训</h3>
+<p>Manus是2025年爆火的AI Agent产品，他们的上下文工程经验值得学习：</p>
+<p><strong>四次架构重构</strong>: 1. V1: 简单拼接所有信息 →
+经常超出窗口限制 2. V2: 只保留最近N轮 → 丢失重要早期信息 3. V3:
+LLM自动摘要 → 摘要丢失关键细节 4. V4: 分层记忆 + 按需检索 → 效果最好</p>
+<p><strong>核心教训</strong>: &gt;
+“上下文工程是一门实验科学，没有银弹。你必须根据具体任务不断迭代。” &gt;
+— Manus团队博客</p>
+<h3 id="实用技巧清单">4.3 实用技巧清单</h3>
+<table>
+<thead>
+<tr>
+<th>技巧</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>前置系统提示</strong></td>
+<td>把角色设定放最前面</td>
+<td>所有场景</td>
+</tr>
+<tr>
+<td><strong>结构化输入</strong></td>
+<td>用Markdown/JSON组织信息</td>
+<td>复杂任务</td>
+</tr>
+<tr>
+<td><strong>分块处理</strong></td>
+<td>长文档分段处理后合并</td>
+<td>文档分析</td>
+</tr>
+<tr>
+<td><strong>渐进式细化</strong></td>
+<td>先粗后细，逐步深入</td>
+<td>创作任务</td>
+</tr>
+<tr>
+<td><strong>显式状态追踪</strong></td>
+<td>让AI维护一个状态摘要</td>
+<td>长对话</td>
+</tr>
+<tr>
+<td><strong>外部记忆</strong></td>
+<td>重要信息存数据库/文件</td>
+<td>Agent系统</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-5-ai开发工具生态">Part 5: AI开发工具生态</h2>
+<h3 id="ai-ide-cursor-windsurf">5.1 AI IDE: Cursor &amp; Windsurf</h3>
+<p><strong>Cursor</strong> (cursor.com): - 基于VSCode的AI-native编辑器 -
+核心功能: <code>Cmd+K</code> 自然语言编辑, <code>Cmd+L</code> AI对话 -
+杀手特性: <code>.cursorrules</code> 项目级上下文配置</p>
+<p><strong>Windsurf</strong> (codeium.com/windsurf): - Codeium出品的AI
+IDE - 特点: 更激进的AI集成，“Flow”模式 - 适合: 喜欢AI主导的开发风格</p>
+<p><strong>配置示例</strong> (<code>.cursorrules</code>):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 项目上下文配置</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">project_type</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Python FastAPI backend&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coding_style</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Google Python Style Guide&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">always_include</span><span class="kw">:</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;README.md&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;docs/API.md&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">preferences</span><span class="kw">:</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;使用type hints&quot;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;函数必须有docstring&quot;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;错误处理用自定义异常类&quot;</span></span></code></pre></div>
+<h3 id="modern-terminal-warp">5.2 Modern Terminal: Warp</h3>
+<p><strong>Warp</strong> (warp.dev): - AI增强的现代终端 - 核心功能:
+自然语言生成命令、智能补全 - 适合: 不熟悉命令行但需要使用的人</p>
+<p><strong>使用示例</strong>:</p>
+<pre><code># 用自然语言描述
+&gt; &quot;找出当前目录下最大的10个文件&quot;
+
+# Warp自动生成
+$ find . -type f -exec du -h {} + | sort -rh | head -10</code></pre>
+<h3 id="claude-code-深度解析">5.3 Claude Code 深度解析</h3>
+<p><strong>Claude Code</strong>
+是Anthropic官方的AI编程Agent，官方用法值得深入研究。</p>
+<p><strong>核心概念</strong>: 1. <strong>System Prompts</strong>:
+定义Agent的角色和能力边界 2. <strong>System Reminders</strong>:
+在对话中动态注入的提醒 (<code>&lt;system-reminder&gt;</code>标签) 3.
+<strong>Sub-agent Spawning</strong>: 复杂任务分解给子Agent</p>
+<p><strong>最佳实践</strong> (来自Anthropic内部): - 维护
+<code>CLAUDE.md</code> 项目文档 - 使用结构化的任务描述 -
+设置明确的成功标准 - 让Claude Code自己决定实现细节</p>
+<hr />
+<h2 id="课后阅读">课后阅读</h2>
+<h3 id="必读">必读</h3>
+<ol type="1">
+<li><a href="https://blog.ravi-mehta.com/p/specs-are-the-new-source-code">Specs
+Are the New Source Code</a> - Ravi Mehta</li>
+<li><a href="https://www.youtube.com/watch?v=7xTGNNLPyMI">Deep Dive into
+LLMs</a> - Andrej Karpathy (3小时视频)</li>
+<li><a href="https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html">How
+Long Contexts Fail</a></li>
+</ol>
+<h3 id="进阶">进阶</h3>
+<ol start="4" type="1">
+<li><a href="https://www-cdn.anthropic.com/58284b19e702b49db9302d5b6f135ad8871e7658.pdf">How
+Anthropic Uses Claude Code</a> - Anthropic官方PDF</li>
+<li><a href="https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">Context
+Engineering for AI Agents</a> - Manus团队</li>
+</ol>
+<hr />
+<h2 id="本讲小结">本讲小结</h2>
+<table>
+<thead>
+<tr>
+<th>核心概念</th>
+<th>一句话总结</th>
+<th>行动建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>State of World</td>
+<td>AI正在重塑软件开发</td>
+<td>学会”指挥AI”而非”替代AI”</td>
+</tr>
+<tr>
+<td>三阶段训练</td>
+<td>Pretrain→SFT→RLHF</td>
+<td>理解能力边界，合理设定预期</td>
+</tr>
+<tr>
+<td>Token不平等</td>
+<td>开头结尾&gt;中间</td>
+<td>重要信息放对位置</td>
+</tr>
+<tr>
+<td>上下文工程</td>
+<td>AI时代的核心技能</td>
+<td>投资学习，持续实践</td>
+</tr>
+<tr>
+<td>工具生态</td>
+<td>Cursor/Warp/Claude Code</td>
+<td>选择一个深度使用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>本讲义基于Stanford CS146S (Fall 2025) “The Modern Software
+Developer” 课程内容优化</em></p>
+</body>
+</html>

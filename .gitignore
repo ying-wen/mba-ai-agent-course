@@ -14,8 +14,6 @@ Thumbs.db
 .idea/
 
 # Build output (generated files)
-all-html/
-all-pdf/
 all-pptx/
 output/
 

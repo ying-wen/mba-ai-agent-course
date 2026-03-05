@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SYLLABUS</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+</head>
+<body>
+<h1 id="课程大纲-大模型智能体-llm-agents">📋 课程大纲 | 大模型智能体
+(LLM Agents)</h1>
+<p><strong>课程代码</strong>: MBA-AI-501<br />
+<strong>学分</strong>: 2<br />
+<strong>课时</strong>: 16 (2天 × 8课时)<br />
+<strong>授课语言</strong>: 中文 (技术术语英文)</p>
+<hr />
+<h2 id="第一天-从大模型到单智能体">第一天: 从大模型到单智能体</h2>
+<h3 id="第1-2课时-大语言模型基础与prompt工程">📚 第1-2课时:
+大语言模型基础与Prompt工程</h3>
+<p><strong>学习目标</strong>: - 理解Transformer架构和大模型工作原理 -
+掌握Prompt工程的核心技巧 - 区分不同模型的能力边界</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>大模型演进史</strong> (20min)
+<ul>
+<li>GPT系列: GPT-3 → GPT-4 → GPT-5</li>
+<li>Claude系列: Claude 2 → Claude 3 → Claude 4.5/4.6</li>
+<li>开源生态: LLaMA → Qwen → GLM-5</li>
+<li>中国模型: DeepSeek R1/R2, Kimi K2.5</li>
+</ul></li>
+<li><strong>核心概念</strong> (25min)
+<ul>
+<li>Token、上下文窗口、Temperature</li>
+<li>涌现能力 (Emergent Abilities)</li>
+<li>Scaling Laws与Chinchilla定律</li>
+<li>Reasoning Models: o1/o3, DeepSeek R1</li>
+</ul></li>
+<li><strong>Prompt工程实战</strong> (40min)
+<ul>
+<li>Zero-shot、Few-shot、Chain-of-Thought</li>
+<li>角色设定与系统提示词</li>
+<li>结构化输出 (JSON Mode)</li>
+<li>提示词注入攻击与防御</li>
+</ul></li>
+<li><strong>现场演示</strong>: Claude vs GPT-5 能力对比</li>
+</ol>
+<p><strong>实验环节</strong>: Lab 1 - Prompt Engineering Playground</p>
+<hr />
+<h3 id="第3-4课时-大模型工作流从链式到图式">📚 第3-4课时:
+大模型工作流：从链式到图式</h3>
+<p><strong>学习目标</strong>: - 理解LLM应用的演进路径 -
+掌握主流工作流框架 - 学会设计复杂的LLM应用</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>工作流演进</strong> (20min)
+<ul>
+<li>单次调用 → 链式调用 → DAG → 循环图</li>
+<li>为什么需要工作流？</li>
+<li>工作流 vs Agent的边界</li>
+</ul></li>
+<li><strong>LangChain深度解析</strong> (25min)
+<ul>
+<li>LCEL (LangChain Expression Language)</li>
+<li>Chain、Memory、Retriever</li>
+<li>RAG (检索增强生成) 架构</li>
+<li>实际案例: 企业知识库问答</li>
+</ul></li>
+<li><strong>LangGraph: 图式编排</strong> (25min)
+<ul>
+<li>状态图 (StateGraph) 概念</li>
+<li>节点、边、条件路由</li>
+<li>人机协作 (Human-in-the-loop)</li>
+<li>检查点与持久化</li>
+</ul></li>
+<li><strong>工作流设计模式</strong> (20min)
+<ul>
+<li>串行 vs 并行</li>
+<li>Map-Reduce模式</li>
+<li>路由与分支</li>
+<li>错误处理与重试</li>
+</ul></li>
+</ol>
+<p><strong>实验环节</strong>: Lab 2 - 构建RAG工作流</p>
+<hr />
+<h3 id="第5-6课时-智能体架构react反思规划">📚 第5-6课时:
+智能体架构：ReAct、反思、规划</h3>
+<p><strong>学习目标</strong>: - 理解Agent与工作流的本质区别 -
+掌握主流Agent架构范式 - 学会评估Agent系统的可靠性</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>什么是Agent？</strong> (15min)
+<ul>
+<li>定义: 感知-决策-行动循环</li>
+<li>Agent = LLM + Memory + Tools + Planning</li>
+<li>工作流是预定义的，Agent是自主的</li>
+</ul></li>
+<li><strong>ReAct范式</strong> (25min)
+<ul>
+<li>Reasoning + Acting</li>
+<li>思考链与行动交织</li>
+<li>ReAct的局限性</li>
+<li>代码演示: 基础ReAct Agent</li>
+</ul></li>
+<li><strong>反思机制 (Reflection)</strong> (25min)
+<ul>
+<li>Self-Refine: 自我批评与改进</li>
+<li>Reflexion: 经验积累</li>
+<li>CRITIC: 外部工具验证</li>
+<li>案例: 代码Agent的自我debug</li>
+</ul></li>
+<li><strong>规划能力 (Planning)</strong> (25min)
+<ul>
+<li>Plan-and-Execute模式</li>
+<li>Tree of Thoughts (ToT)</li>
+<li>Graph of Thoughts (GoT)</li>
+<li>层级任务分解 (HTN)</li>
+</ul></li>
+</ol>
+<p><strong>实验环节</strong>: Lab 3 - 构建ReAct Agent</p>
+<hr />
+<h3 id="第7-8课时-记忆与工具构建完整agent">📚 第7-8课时:
+记忆与工具：构建完整Agent</h3>
+<p><strong>学习目标</strong>: - 设计Agent的记忆系统 - 理解工具调用机制 -
+掌握Skill/Plugin架构</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>Agent记忆系统</strong> (25min)
+<ul>
+<li>短期记忆: 对话上下文</li>
+<li>长期记忆: 向量数据库 + 摘要</li>
+<li>情景记忆 vs 语义记忆</li>
+<li>MemGPT与自主记忆管理</li>
+<li>最新研究: MemR3自适应检索</li>
+</ul></li>
+<li><strong>工具调用 (Tool Use)</strong> (25min)
+<ul>
+<li>Function Calling机制</li>
+<li>工具描述的最佳实践</li>
+<li>并行工具调用</li>
+<li>工具编排与错误处理</li>
+</ul></li>
+<li><strong>Skill与Plugin架构</strong> (20min)
+<ul>
+<li>Skill: 可复用的能力单元</li>
+<li>Plugin: 第三方扩展</li>
+<li>热加载与版本管理</li>
+<li>OpenClaw的Skill体系</li>
+</ul></li>
+<li><strong>Agent微调</strong> (20min)
+<ul>
+<li>SFT: 监督微调基础</li>
+<li>RLHF vs RLAIF</li>
+<li>Agent专用数据集构建</li>
+<li>LoRA/QLoRA高效微调</li>
+</ul></li>
+</ol>
+<p><strong>实验环节</strong>: Lab 3 (续) - 添加记忆和工具</p>
+<hr />
+<h2 id="第二天-从多智能体到大模型操作系统">第二天:
+从多智能体到大模型操作系统</h2>
+<h3 id="第9-10课时-多智能体协作与编排框架">📚 第9-10课时:
+多智能体协作与编排框架</h3>
+<p><strong>学习目标</strong>: - 理解多智能体系统设计原则 -
+掌握主流多智能体框架 - 学会选择合适的编排模式</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>多智能体系统概述</strong> (20min)
+<ul>
+<li>为什么需要多Agent？</li>
+<li>角色分工 vs 能力互补</li>
+<li>通信模式: 点对点、广播、黑板</li>
+<li>协调机制: 投票、辩论、层级</li>
+</ul></li>
+<li><strong>AutoGen深度解析</strong> (25min)
+<ul>
+<li>Microsoft的多Agent框架</li>
+<li>对话式协作模型</li>
+<li>GroupChat与Manager</li>
+<li>案例: 多专家辩论系统</li>
+</ul></li>
+<li><strong>CrewAI实战</strong> (25min)
+<ul>
+<li>角色定义 (Agent)</li>
+<li>任务分配 (Task)</li>
+<li>团队编排 (Crew)</li>
+<li>案例: 内容创作团队</li>
+</ul></li>
+<li><strong>框架对比与选型</strong> (20min) | 框架 | 特点 | 适用场景 |
+|——|——|———-| | LangGraph | 状态图、精细控制 | 企业级、合规要求高 | |
+CrewAI | 简洁直观、快速原型 | 创意工作流 | | AutoGen | 对话式、灵活 |
+辩论、决策 |</li>
+</ol>
+<p><strong>实验环节</strong>: Lab 4 - 多智能体系统搭建</p>
+<hr />
+<h3 id="第11-12课时-mcp协议与工具生态">📚 第11-12课时:
+MCP协议与工具生态</h3>
+<p><strong>学习目标</strong>: - 深入理解MCP协议设计 - 掌握MCP Server开发
+- 了解Agent互操作标准</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>MCP协议详解</strong> (30min)
+<ul>
+<li>Model Context Protocol概述</li>
+<li>为什么Anthropic要推MCP？</li>
+<li>架构: Host、Client、Server</li>
+<li>传输层: stdio、HTTP/SSE</li>
+<li>核心能力: Resources、Tools、Prompts、Sampling</li>
+</ul></li>
+<li><strong>MCP生态</strong> (20min)
+<ul>
+<li>官方SDK: TypeScript、Python</li>
+<li>MCP Apps: UI能力扩展 (2026.01新)</li>
+<li>企业集成案例: Outreach、Salesforce</li>
+<li>MCP Gateway: Obot等网关方案</li>
+</ul></li>
+<li><strong>开发MCP Server</strong> (25min)
+<ul>
+<li>代码演示: 简单MCP Server</li>
+<li>工具定义最佳实践</li>
+<li>认证与安全</li>
+<li>调试技巧</li>
+</ul></li>
+<li><strong>其他Agent协议</strong> (15min)
+<ul>
+<li>OpenAI Plugins (已淘汰)</li>
+<li>Semantic Kernel Skills</li>
+<li>A2A (Agent-to-Agent) Protocol</li>
+<li>协议统一趋势</li>
+</ul></li>
+</ol>
+<p><strong>实验环节</strong>: Lab 4 (续) - 开发简单MCP Server</p>
+<hr />
+<h3 id="第13-14课时-大模型操作系统与前沿系统">📚 第13-14课时:
+大模型操作系统与前沿系统</h3>
+<p><strong>学习目标</strong>: - 理解”LLM OS”愿景 - 掌握前沿Agent系统 -
+学会评估和选用Agent平台</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><p><strong>LLM OS愿景</strong> (20min)</p>
+<ul>
+<li>Karpathy的LLM OS概念</li>
+<li>内核 = LLM</li>
+<li>文件系统 = 上下文窗口 + 记忆</li>
+<li>进程 = Agent</li>
+<li>系统调用 = 工具</li>
+</ul></li>
+<li><p><strong>OpenClaw深度解析</strong> (25min)</p>
+<ul>
+<li>架构: Gateway → Session → Agent</li>
+<li>Skill系统与热加载</li>
+<li>多Channel支持 (飞书/TG/微信)</li>
+<li>多模态: 浏览器控制、Camera、Screen</li>
+<li>Node网络与远程执行</li>
+</ul></li>
+<li><p><strong>编码智能体对比</strong> (25min) | 系统 | 模型 | 特点 |
+最新Benchmark | |——|——|——|—————| | Codex | GPT-5.3 | 终端原生、云沙箱 |
+Terminal-Bench 77.3% | | Claude Code | Claude 4.6 Opus | Git原生、大仓库
+| 复杂debug优势 | | Cursor | 多模型 | IDE集成 | 交互式开发 | | Manus |
+自研 | 全自动任务 | 综合Agent |</p></li>
+<li><p><strong>多模态Agent</strong> (20min)</p>
+<ul>
+<li>Computer Use: 屏幕操作</li>
+<li>Seedance 2.0: 视频生成Agent</li>
+<li>机器人Agent: 具身智能</li>
+<li>未来: 通用Agent</li>
+</ul></li>
+</ol>
+<p><strong>现场演示</strong>: OpenClaw实操、Claude Code对比Codex</p>
+<hr />
+<h3 id="第15-16课时-商业应用与未来展望">📚 第15-16课时:
+商业应用与未来展望</h3>
+<p><strong>学习目标</strong>: - 分析Agent的商业化路径 -
+识别投资机会与风险 - 展望技术发展方向</p>
+<p><strong>内容大纲</strong>:</p>
+<ol type="1">
+<li><strong>Agent商业化现状</strong> (25min)
+<ul>
+<li>2025年AI风投: 2110亿美元</li>
+<li>Agent创业赛道分类:
+<ul>
+<li>垂直Agent (法律、医疗、金融)</li>
+<li>水平平台 (开发者工具、企业中台)</li>
+<li>基础设施 (评估、安全、编排)</li>
+</ul></li>
+<li>案例: Cursor ($4B)、Anthropic ($350B估值)</li>
+</ul></li>
+<li><strong>行业应用深度剖析</strong> (25min)
+<ul>
+<li><strong>软件开发</strong>: Codex、Claude Code、Devin</li>
+<li><strong>客户服务</strong>: 对话Agent、工单自动化</li>
+<li><strong>内容创作</strong>: 写作、视频、营销</li>
+<li><strong>数据分析</strong>: BI Agent、自动报表</li>
+<li><strong>运营自动化</strong>: RPA + Agent</li>
+</ul></li>
+<li><strong>Agent安全与治理</strong> (20min)
+<ul>
+<li>对齐问题 (Alignment)</li>
+<li>权限控制与沙箱</li>
+<li>审计与可解释性</li>
+<li>幻觉与事实核查</li>
+<li>Red Team与Adversarial Testing</li>
+</ul></li>
+<li><strong>2026-2030展望</strong> (20min)
+<ul>
+<li>技术趋势:
+<ul>
+<li>Reasoning Model持续突破</li>
+<li>多模态统一 (文本+图像+视频+音频+动作)</li>
+<li>Agent间协议标准化</li>
+<li>本地/边缘Agent兴起</li>
+</ul></li>
+<li>产业趋势:
+<ul>
+<li>Agent即服务 (AaaS)</li>
+<li>人形机器人爆发 (Figure, Tesla, Unitree)</li>
+<li>知识工作自动化加速</li>
+</ul></li>
+</ul></li>
+</ol>
+<p><strong>课程总结与Q&amp;A</strong></p>
+<hr />
+<h2 id="评估方式">📊 评估方式</h2>
+<table>
+<thead>
+<tr>
+<th>组成部分</th>
+<th>权重</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>课堂参与</td>
+<td>20%</td>
+<td>讨论、提问、演示互动</td>
+</tr>
+<tr>
+<td>实验报告</td>
+<td>30%</td>
+<td>4个Lab的完成情况</td>
+</tr>
+<tr>
+<td>案例分析</td>
+<td>25%</td>
+<td>选择一个行业，设计Agent方案</td>
+</tr>
+<tr>
+<td>期末展示</td>
+<td>25%</td>
+<td>小组展示Agent应用创意</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="技术要求">🛠 技术要求</h2>
+<ul>
+<li><strong>必需</strong>: 笔记本电脑、稳定网络</li>
+<li><strong>软件</strong>: Claude Desktop、Cursor (试用)</li>
+<li><strong>API</strong>: 课程提供Claude API额度</li>
+<li><strong>可选</strong>: Python环境 (用于Lab深度实验)</li>
+</ul>
+<hr />
+<h2 id="联系方式">📞 联系方式</h2>
+<ul>
+<li><strong>授课教师</strong>: 温颖 (Ying Wen)、温睦宁</li>
+<li><strong>助教</strong>: TBD</li>
+<li><strong>课程答疑</strong>: 飞书群组</li>
+</ul>
+<hr />
+<p><em>Version 1.0 | 2026-02-26</em></p>
+</body>
+</html>

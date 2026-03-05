@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>L5-6-Agent-智能体设计与实现</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">L5-6-Agent-智能体设计与实现</h1>
+</header>
+<h1 id="l5-6-讲义智能体设计与实现">L5-6 讲义：智能体设计与实现</h1>
+<blockquote>
+<p><strong>课程</strong>: MBA大模型智能体课程<br />
+<strong>课时</strong>: 第5-6讲（90分钟）<br />
+<strong>适用</strong>: 讲师备课 / 学生预习与复习<br />
+<strong>对应Slides</strong>:
+<code>slides-marp/day1-lesson5-6-agent.md</code></p>
+</blockquote>
+<hr />
+<h2 id="本讲核心问题">本讲核心问题</h2>
+<ol type="1">
+<li><strong>什么是AI Agent？</strong>
+它和普通聊天机器人有什么区别？</li>
+<li><strong>Agent如何”思考”？</strong> ReAct框架的核心逻辑是什么？</li>
+<li><strong>Agent如何自我改进？</strong> 反思机制如何工作？</li>
+<li><strong>如何设计一个Agent？</strong> 从需求到落地的完整流程</li>
+</ol>
+<hr />
+<h2 id="为什么这节课是核心">为什么这节课是核心？</h2>
+<p>如果说前面几节课讲的是”如何让AI回答问题”，这节课讲的是”如何让AI完成任务”。</p>
+<p>这是一个根本性的跨越：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>聊天机器人</th>
+<th>AI Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交互模式</td>
+<td>问答式</td>
+<td>任务式</td>
+</tr>
+<tr>
+<td>决策能力</td>
+<td>被动响应</td>
+<td>主动规划</td>
+</tr>
+<tr>
+<td>工具使用</td>
+<td>无/有限</td>
+<td>丰富且动态</td>
+</tr>
+<tr>
+<td>任务范围</td>
+<td>单轮完成</td>
+<td>多步骤复杂任务</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>简单重试</td>
+<td>反思改进</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>MBA视角</strong>：Agent是AI从”工具”变成”员工”的关键技术。理解Agent，就理解了AI如何在组织中承担实际工作。</p>
+</blockquote>
+<hr />
+<h2 id="part-1什么是ai-agent">Part 1：什么是AI Agent？</h2>
+<h3 id="定义">定义</h3>
+<p>AI
+Agent是一个<strong>能自主决策、使用工具、完成复杂任务</strong>的AI系统。</p>
+<p>用一个类比来理解：</p>
+<p><strong>普通LLM = 百科全书</strong> - 你问什么，它查什么 -
+不会主动做事</p>
+<p><strong>AI Agent = 远程员工</strong> - 你给任务，它自己规划怎么做 -
+需要时自己查资料、用工具 - 遇到问题自己想办法</p>
+<h3 id="agent架构总览">Agent架构总览</h3>
+<p><img role="img" aria-label="Agent架构总览" src="../slides-marp/assets/images/lilian-weng-agent-overview.png" alt="Agent架构总览" /> <em>来源: Lilian Weng, “LLM Powered Autonomous
+Agents” (2023)</em></p>
+<p>上图展示了Agent的核心架构： -
+<strong>LLM</strong>作为”大脑”进行规划和推理 -
+<strong>Memory</strong>提供短期和长期记忆能力 -
+<strong>Tools</strong>让Agent能与外部世界交互 -
+<strong>Planning</strong>让Agent能分解复杂任务</p>
+<h3 id="agent的四要素">Agent的四要素</h3>
+<p>就像一个员工需要具备的能力：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>能力</th>
+<th>商业类比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>感知 (Perceive)</strong></td>
+<td>理解用户意图、获取环境信息</td>
+<td>理解老板需求</td>
+</tr>
+<tr>
+<td><strong>思考 (Think)</strong></td>
+<td>分析问题、制定方案</td>
+<td>制定工作计划</td>
+</tr>
+<tr>
+<td><strong>行动 (Act)</strong></td>
+<td>调用工具、执行操作</td>
+<td>执行具体任务</td>
+</tr>
+<tr>
+<td><strong>反思 (Reflect)</strong></td>
+<td>评估结果、改进策略</td>
+<td>复盘总结经验</td>
+</tr>
+</tbody>
+</table>
+<h3 id="agent的核心循环">Agent的核心循环</h3>
+<p>Agent不是一次性输出，而是<strong>循环执行</strong>直到任务完成：</p>
+<pre><code>感知 → 思考 → 行动 → 观察结果 → 反思 → 继续思考 → ...</code></pre>
+<p>这个循环会一直进行，直到： - 任务完成 - 达到最大步数 - 用户中断</p>
+<hr />
+<h2 id="part-2react框架">Part 2：ReAct框架</h2>
+<h3 id="论文背景">论文背景</h3>
+<p>ReAct (Reasoning + Acting) 是2022年Google
+Research和Princeton提出的Agent框架，将<strong>推理</strong>和<strong>行动</strong>交织进行。</p>
+<h3 id="react执行示例">ReAct执行示例</h3>
+<p><img role="img" aria-label="ReAct框架示例" src="../slides-marp/assets/images/lilian-weng-react.png" alt="ReAct框架示例" /> <em>来源: Lilian Weng, “LLM Powered Autonomous
+Agents” (2023)</em></p>
+<p>上图展示了ReAct的实际执行过程： -
+<strong>Thought</strong>：Agent的推理过程 -
+<strong>Action</strong>：Agent调用的工具 -
+<strong>Observation</strong>：工具返回的结果</p>
+<h3 id="核心思想">核心思想</h3>
+<p>传统方法把思考和行动分开：</p>
+<pre><code>思考 → 思考 → 思考 → 行动</code></pre>
+<p>ReAct把它们交织在一起：</p>
+<pre><code>思考 → 行动 → 观察 → 思考 → 行动 → 观察 → ...</code></pre>
+<h3 id="为什么这样更好">为什么这样更好？</h3>
+<p>想象你在做市场调研：</p>
+<p><strong>传统方法</strong>（先想完再做）：</p>
+<pre><code>1. 我觉得市场规模大概是100亿
+2. 我觉得主要竞争对手是A、B、C
+3. 我觉得增长率大概是15%
+4. 开始写报告...
+
+问题：全凭猜测，可能全错</code></pre>
+<p><strong>ReAct方法</strong>（边做边想）：</p>
+<pre><code>1. 我需要查市场规模 → 搜索&quot;中国咖啡市场规模2026&quot;
+2. 观察：搜索结果显示市场规模是850亿
+3. 我需要查竞争格局 → 搜索&quot;中国咖啡连锁品牌排名&quot;
+4. 观察：瑞幸第一、星巴克第二...
+5. 基于真实数据写报告
+
+优势：每一步都基于真实信息</code></pre>
+<h3 id="实际执行示例">实际执行示例</h3>
+<pre><code>用户任务: &quot;帮我查一下苹果公司最新的市值，并与微软比较&quot;
+
+Agent执行过程:
+
+Thought 1: 我需要查询苹果公司的当前市值
+Action 1: search(&quot;Apple Inc market cap 2026&quot;)
+Observation 1: Apple Inc. (AAPL) has a market cap of $3.2 trillion...
+
+Thought 2: 现在我需要查询微软的市值
+Action 2: search(&quot;Microsoft market cap 2026&quot;)
+Observation 2: Microsoft Corporation (MSFT) market cap is $3.4 trillion...
+
+Thought 3: 我已经有了两家公司的数据，可以进行比较了
+Action 3: 生成比较分析
+
+Final Answer:
+截至2026年2月，苹果市值约3.2万亿美元，微软市值约3.4万亿美元。
+微软市值超过苹果约2000亿美元，差距约6%...</code></pre>
+<h3 id="react的优势">ReAct的优势</h3>
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>透明性</strong></td>
+<td>每一步推理可追溯，出问题知道在哪</td>
+</tr>
+<tr>
+<td><strong>可控性</strong></td>
+<td>可以中途干预、调整方向</td>
+</tr>
+<tr>
+<td><strong>准确性</strong></td>
+<td>基于实际观察而非臆测</td>
+</tr>
+<tr>
+<td><strong>可调试</strong></td>
+<td>出错时容易定位问题</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-3反思机制">Part 3：反思机制</h2>
+<h3 id="为什么需要反思">为什么需要反思？</h3>
+<p>Agent执行过程中可能出错： - 工具调用失败 - 获取的信息不准确 -
+推理逻辑有漏洞 - 结果不符合预期</p>
+<p>没有反思的Agent就像一个不会总结经验的员工——同样的错误会反复犯。</p>
+<h3 id="reflexion机制">Reflexion机制</h3>
+<p><img role="img" aria-label="Reflexion反思机制" src="../slides-marp/assets/images/lilian-weng-reflexion.png" alt="Reflexion反思机制" /> <em>来源: Lilian Weng, “LLM Powered
+Autonomous Agents” (2023)</em></p>
+<p>上图展示了Reflexion的工作原理： - Agent执行任务后评估结果 -
+如果失败，生成反思摘要 - 反思存入记忆，指导下次执行</p>
+<h3 id="三种反思策略">三种反思策略</h3>
+<h4 id="self-refine自我改进">1. Self-Refine（自我改进）</h4>
+<pre><code>生成初稿 → 自我评估 → 改进 → 再评估 → ...
+
+示例：
+初稿：&quot;市场规模100亿&quot;
+评估：&quot;没有数据来源，可信度低&quot;
+改进：&quot;根据艾瑞咨询报告，2025年市场规模为95亿元[1]&quot;</code></pre>
+<p><strong>优点</strong>：简单、成本低
+<strong>缺点</strong>：可能陷入局部最优（自己看不到自己的问题）</p>
+<h4 id="reflexion反思记忆">2. Reflexion（反思记忆）</h4>
+<pre><code>失败经验 → 提取教训 → 存入记忆 → 下次避免
+
+示例：
+失败：&quot;搜索&#39;苹果市值&#39;返回了水果苹果的结果&quot;
+教训：&quot;搜索公司信息时要加&#39;公司&#39;或股票代码&quot;
+记忆：存储这条教训
+下次：搜索&quot;苹果公司AAPL市值&quot;</code></pre>
+<p><strong>优点</strong>：持续学习、避免重复错误
+<strong>缺点</strong>：需要维护记忆系统</p>
+<h4 id="critic-agent批评者agent">3. Critic Agent（批评者Agent）</h4>
+<pre><code>执行Agent完成任务 → Critic Agent评估 → 反馈改进建议
+
+类似于：
+- 员工写报告 → 主管审核 → 修改意见 → 员工修改</code></pre>
+<p><strong>优点</strong>：视角独立、更客观
+<strong>缺点</strong>：成本翻倍、需要协调两个Agent</p>
+<h3 id="如何选择反思策略">如何选择反思策略？</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐策略</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>简单任务</td>
+<td>Self-Refine</td>
+<td>成本低，够用</td>
+</tr>
+<tr>
+<td>需要积累经验</td>
+<td>Reflexion</td>
+<td>持续改进</td>
+</tr>
+<tr>
+<td>高风险决策</td>
+<td>Critic Agent</td>
+<td>需要双重检验</td>
+</tr>
+<tr>
+<td>成本敏感</td>
+<td>Self-Refine</td>
+<td>最便宜</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-4规划算法">Part 4：规划算法</h2>
+<h3 id="为什么需要规划">为什么需要规划？</h3>
+<p>复杂任务需要分解成子任务，好的规划能够： - 提高执行效率 -
+减少无效尝试 - 处理任务依赖</p>
+<h3 id="tree-of-thoughts-tot">Tree of Thoughts (ToT)</h3>
+<p>ToT的核心思想：<strong>不要只走一条路，同时探索多条路</strong></p>
+<pre><code>                    问题
+                      │
+           ┌─────────┼─────────┐
+           │         │         │
+         思路A     思路B     思路C
+           │         │         │
+        ┌──┴──┐   ┌──┴──┐   (剪枝)
+        │     │   │     │   
+       A1    A2  B1    B2  
+        ↓         ↓    
+      评估      评估  
+        ↓         
+     选择最优</code></pre>
+<p><strong>示例</strong>：解决一个商业问题</p>
+<pre><code>问题：如何提升用户留存？
+
+思路A：优化产品体验
+├── A1：简化注册流程
+└── A2：增加新手引导
+
+思路B：增强用户粘性
+├── B1：增加社交功能
+└── B2：设计积分体系
+
+思路C：提高服务质量
+└── （评估后认为不是核心问题，剪枝）
+
+评估每个方案的可行性和ROI，选择最优</code></pre>
+<h3 id="规划方法选择建议">规划方法选择建议</h3>
+<table>
+<thead>
+<tr>
+<th>任务复杂度</th>
+<th>推荐方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>简单</td>
+<td>直接执行</td>
+<td>ReAct足够</td>
+</tr>
+<tr>
+<td>中等</td>
+<td>ToT</td>
+<td>关键决策点展开多路径</td>
+</tr>
+<tr>
+<td>复杂</td>
+<td>分层规划</td>
+<td>先粗后细</td>
+</tr>
+<tr>
+<td>超复杂</td>
+<td>人机协作</td>
+<td>Agent提建议，人做决策</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-5agent设计模式">Part 5：Agent设计模式</h2>
+<h3 id="模式1单一agent">模式1：单一Agent</h3>
+<pre><code>用户 → Agent → 结果
+
+适用：简单任务、快速响应</code></pre>
+<h3 id="模式2工具增强agent">模式2：工具增强Agent</h3>
+<pre><code>用户 → Agent ←→ 工具库 → 结果
+
+工具库包括：
+- 搜索引擎
+- 计算器
+- 数据库
+- API调用
+- 代码执行</code></pre>
+<h3 id="模式3多agent协作">模式3：多Agent协作</h3>
+<pre><code>用户 → Coordinator Agent
+              │
+    ┌─────────┼─────────┐
+    ↓         ↓         ↓
+ Agent A   Agent B   Agent C
+    │         │         │
+    └─────────┴─────────┘
+              ↓
+           结果汇总
+
+适用：复杂任务需要多种专业能力</code></pre>
+<h3 id="设计模式决策树">设计模式决策树</h3>
+<pre><code>任务复杂度如何？
+    │
+    ├── 简单（单步可完成）
+    │   └── 单一Agent，无需工具
+    │
+    ├── 中等（需要外部信息/计算）
+    │   └── 工具增强Agent
+    │
+    └── 复杂（需要多种专业能力）
+        │
+        └── 是否可以并行？
+            │
+            ├── 是 → 多Agent并行
+            └── 否 → 多Agent串行</code></pre>
+<hr />
+<h2 id="part-6前沿agent框架与产品">Part 6：前沿Agent框架与产品</h2>
+<h3 id="编码agent">编码Agent</h3>
+<table>
+<thead>
+<tr>
+<th>产品</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Devin</strong></td>
+<td>全自主开发、端到端交付</td>
+<td>工程外包</td>
+</tr>
+<tr>
+<td><strong>Claude Code</strong></td>
+<td>CLI工具、CLAUDE.md配置、Thinking模式</td>
+<td>开发者日常</td>
+</tr>
+<tr>
+<td><strong>Codex CLI</strong></td>
+<td>GitHub深度集成、Web+CLI双端</td>
+<td>企业开发</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ai-ide">AI IDE</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 27%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th>产品</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cursor</strong></td>
+<td>Composer多文件编辑、Background Agent、Plugins</td>
+<td>项目开发</td>
+</tr>
+<tr>
+<td><strong>Windsurf</strong></td>
+<td>Cascade引擎、持久记忆</td>
+<td>快速原型</td>
+</tr>
+</tbody>
+</table>
+<h3 id="通用agent框架">通用Agent框架</h3>
+<table>
+<thead>
+<tr>
+<th>产品</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenClaw</strong></td>
+<td>多渠道、Skills系统、MCP集成、开源</td>
+<td>个人AI助手</td>
+</tr>
+<tr>
+<td><strong>Manus</strong></td>
+<td>Context Engineering、被Meta收购</td>
+<td>复杂任务</td>
+</tr>
+</tbody>
+</table>
+<h3 id="企业agent">企业Agent</h3>
+<table>
+<thead>
+<tr>
+<th>产品</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Claude Cowork</strong></td>
+<td>Office集成、企业Plugins</td>
+<td>企业办公</td>
+</tr>
+</tbody>
+</table>
+<h3 id="框架选型建议">框架选型建议</h3>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>个人开发助手</td>
+<td>Claude Code / Cursor</td>
+</tr>
+<tr>
+<td>企业办公自动化</td>
+<td>Claude Cowork</td>
+</tr>
+<tr>
+<td>构建自定义Agent</td>
+<td>OpenClaw（开源）</td>
+</tr>
+<tr>
+<td>端到端开发外包</td>
+<td>Devin</td>
+</tr>
+<tr>
+<td>快速原型</td>
+<td>Windsurf</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-7企业应用案例">Part 7：企业应用案例</h2>
+<h3 id="案例1ai投研助手">案例1：AI投研助手</h3>
+<p><strong>背景</strong>：某券商需要处理海量研报、新闻、财务数据</p>
+<p><strong>Agent架构</strong>：</p>
+<pre><code>PM Agent (项目经理)
+    │
+    ├── Data Agent (数据收集)
+    │   └── 搜索、爬取、数据库查询
+    │
+    ├── Analyst Agent (分析研究)
+    │   └── 财务分析、竞争格局
+    │
+    ├── Writer Agent (报告撰写)
+    │   └── 结构化输出
+    │
+    └── Review Agent (合规审核)
+        └── 风险检查、合规审核</code></pre>
+<p><strong>效果</strong>： - 研报初稿时间：4小时 → 30分钟 -
+数据覆盖：+200% - 合规问题：-80%</p>
+<h3 id="案例2klarna客服ai">案例2：Klarna客服AI</h3>
+<p><strong>背景</strong>：瑞典金融科技公司，每月数百万客服请求</p>
+<p><strong>方案</strong>：基于OpenAI的客服Agent，处理退款、查询、投诉等场景</p>
+<p><strong>效果</strong>（2024年数据）： - 处理量：相当于700名全职客服 -
+解决时间：11分钟 → 2分钟 - 客户满意度：持平（关键！） -
+年节省成本：$4000万</p>
+<p><strong>争议与反思</strong>： - 引发裁员担忧 -
+“效率提升”vs”就业影响”的平衡 - 适合重复性高、标准化强的场景</p>
+<hr />
+<h2 id="part-8agent开发实践">Part 8：Agent开发实践</h2>
+<h3 id="天路线图">30/60/90天路线图</h3>
+<p><strong>第一阶段（0-30天）：验证可行性</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>选择1个具体业务场景</label></li>
+<li><label><input type="checkbox"></input>用现成工具（如Coze）搭建原型</label></li>
+<li><label><input type="checkbox"></input>收集100个真实用户反馈</label></li>
+<li><label><input type="checkbox"></input>计算粗略ROI</label></li>
+</ul>
+<p><strong>第二阶段（30-60天）：小规模试点</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>优化Prompt和工作流</label></li>
+<li><label><input type="checkbox"></input>接入必要的内部系统</label></li>
+<li><label><input type="checkbox"></input>建立评估指标体系</label></li>
+<li><label><input type="checkbox"></input>培训试点用户</label></li>
+</ul>
+<p><strong>第三阶段（60-90天）：规模化落地</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>完善异常处理</label></li>
+<li><label><input type="checkbox"></input>建立监控告警</label></li>
+<li><label><input type="checkbox"></input>制定SOP和培训材料</label></li>
+<li><label><input type="checkbox"></input>扩展到更多用户/场景</label></li>
+</ul>
+<h3 id="常见失败原因">常见失败原因</h3>
+<table>
+<thead>
+<tr>
+<th>失败模式</th>
+<th>根因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent不知道该做什么</td>
+<td>任务描述模糊</td>
+<td>明确成功标准</td>
+</tr>
+<tr>
+<td>Agent做了不该做的事</td>
+<td>权限控制不足</td>
+<td>最小权限原则</td>
+</tr>
+<tr>
+<td>Agent陷入死循环</td>
+<td>没有终止条件</td>
+<td>设置最大步数</td>
+</tr>
+<tr>
+<td>Agent输出不稳定</td>
+<td>缺少评估机制</td>
+<td>建立质量门控</td>
+</tr>
+<tr>
+<td>成本失控</td>
+<td>没有预算限制</td>
+<td>设置token上限</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="课堂实操">课堂实操</h2>
+<h3 id="设计一个agent15分钟">设计一个Agent（15分钟）</h3>
+<p>选择以下场景之一，设计Agent架构：</p>
+<ol type="1">
+<li><strong>客服Agent</strong>：处理退款申请</li>
+<li><strong>研究Agent</strong>：竞争对手分析</li>
+<li><strong>招聘Agent</strong>：简历初筛</li>
+<li><strong>内容Agent</strong>：社交媒体日更</li>
+</ol>
+<p>需要回答： - 需要什么工具？ - 采用什么设计模式？ - 如何处理失败？ -
+如何评估效果？</p>
+<hr />
+<h2 id="本讲总结">本讲总结</h2>
+<h3 id="核心概念">核心概念</h3>
+<ul>
+<li><strong>Agent =
+能自主决策、使用工具、完成复杂任务的AI系统</strong></li>
+<li><strong>ReAct = 推理和行动交织进行</strong></li>
+<li><strong>反思 = Agent自我评估和改进的能力</strong></li>
+<li><strong>规划 = 将复杂任务分解为可执行步骤</strong></li>
+</ul>
+<h3 id="agent-vs-传统ai的本质区别">Agent vs 传统AI的本质区别</h3>
+<table>
+<thead>
+<tr>
+<th>传统AI</th>
+<th>Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>回答问题</td>
+<td>完成任务</td>
+</tr>
+<tr>
+<td>一次性输出</td>
+<td>循环执行</td>
+</tr>
+<tr>
+<td>被动响应</td>
+<td>主动规划</td>
+</tr>
+<tr>
+<td>固定能力</td>
+<td>工具扩展</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mba关键洞察">MBA关键洞察</h3>
+<ol type="1">
+<li><strong>Agent是AI从”工具”变成”员工”的技术</strong></li>
+<li><strong>设计Agent = 设计一个虚拟岗位</strong></li>
+<li><strong>Agent需要监督，就像新员工需要管理</strong></li>
+<li><strong>从简单场景开始，逐步扩展</strong></li>
+</ol>
+<hr />
+<h2 id="延伸阅读">延伸阅读</h2>
+<h3 id="论文">论文</h3>
+<ul>
+<li><a href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing
+Reasoning and Acting</a></li>
+<li><a href="https://arxiv.org/abs/2303.11366">Reflexion: Language
+Agents with Verbal Reinforcement Learning</a></li>
+<li><a href="https://arxiv.org/abs/2305.10601">Tree of Thoughts:
+Deliberate Problem Solving</a></li>
+</ul>
+<h3 id="框架文档">框架文档</h3>
+<ul>
+<li><a href="https://python.langchain.com/docs/modules/agents/">LangChain
+Agents</a></li>
+<li><a href="https://docs.openclaw.ai">OpenClaw Documentation</a></li>
+<li><a href="https://microsoft.github.io/autogen/">AutoGen</a></li>
+</ul>
+<h3 id="博客">博客</h3>
+<ul>
+<li><a href="https://www.anthropic.com/research/building-effective-agents">Anthropic:
+Building Effective Agents</a></li>
+<li><a href="https://manus.im/blog/Context-Engineering-for-AI-Agents">Manus:
+Context Engineering for AI Agents</a></li>
+</ul>
+<hr />
+<p><em>本讲义最后更新：2026-02-28</em></p>
+</body>
+</html>

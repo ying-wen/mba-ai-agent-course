@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>assignment1-openclaw-report</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+</head>
+<body>
+<h1 id="assignment-1-openclaw-使用报告">Assignment 1: OpenClaw
+使用报告</h1>
+<h2 id="作业目标">🎯 作业目标</h2>
+<p>亲手完成 OpenClaw 的安装部署与核心功能体验，建立对「Agent
+如何通过工具与 Skills 在真实世界执行任务」的直观理解。</p>
+<hr />
+<h2 id="作业要求">✅ 作业要求</h2>
+<h3 id="安装部署-openclaw">1) 安装部署 OpenClaw</h3>
+<ul>
+<li>在自己的电脑或云主机完成 OpenClaw 安装与运行</li>
+<li>能够启动网关/服务，并成功进行至少一次对话交互</li>
+</ul>
+<h3 id="体验核心功能">2) 体验核心功能</h3>
+<p>请至少覆盖以下三类能力：</p>
+<ul>
+<li><strong>消息集成</strong>: 任选渠道完成接入与对话</li>
+<li><strong>工具调用</strong>: 让 Agent 实际调用至少 2 次工具</li>
+<li><strong>Skills 机制</strong>: 安装/启用至少 2 个 Skills</li>
+</ul>
+<h3 id="输出使用报告">3) 输出使用报告</h3>
+<p>建议包含以下结构：</p>
+<ol type="1">
+<li><strong>环境与安装过程</strong></li>
+<li><strong>功能体验记录</strong></li>
+<li><strong>问题清单（Issue Log）</strong></li>
+<li><strong>改进建议</strong></li>
+</ol>
+<hr />
+<h2 id="评分标准">🧮 评分标准</h2>
+<table>
+<thead>
+<tr>
+<th>评分维度</th>
+<th style="text-align: right;">权重</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>安装完成度</td>
+<td style="text-align: right;">20%</td>
+<td>能否成功安装、运行</td>
+</tr>
+<tr>
+<td>功能体验深度</td>
+<td style="text-align: right;">30%</td>
+<td>是否覆盖核心功能</td>
+</tr>
+<tr>
+<td>报告质量</td>
+<td style="text-align: right;">50%</td>
+<td>结构清晰、有洞察</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="截止日期">⏰ 截止日期</h2>
+<p><strong>课程结束后提交</strong></p>
+</body>
+</html>

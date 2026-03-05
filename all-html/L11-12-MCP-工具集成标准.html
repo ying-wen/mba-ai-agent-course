@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>L11-12-MCP-工具集成标准</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">L11-12-MCP-工具集成标准</h1>
+</header>
+<h1 id="l11-12-讲义mcp协议与工具集成">L11-12
+讲义：MCP协议与工具集成</h1>
+<blockquote>
+<p><strong>课程</strong>: MBA大模型智能体课程<br />
+<strong>课时</strong>: 第11-12讲（90分钟）<br />
+<strong>适用</strong>: 讲师备课 / 学生预习与复习<br />
+<strong>对应Slides</strong>:
+<code>slides-marp/day2-lesson11-12-mcp.md</code></p>
+</blockquote>
+<hr />
+<h2 id="本讲核心问题">本讲核心问题</h2>
+<ol type="1">
+<li><strong>为什么需要MCP？</strong> 工具集成的痛点是什么？</li>
+<li><strong>MCP如何工作？</strong> Host/Client/Server三层架构</li>
+<li><strong>Skill是什么？</strong> 与MCP的区别是什么？</li>
+<li><strong>如何设计好的工具？</strong> 有哪些原则和反模式？</li>
+</ol>
+<hr />
+<h2 id="part-1工具集成的痛点">Part 1：工具集成的痛点</h2>
+<h3 id="mn连接器爆炸">M×N连接器爆炸</h3>
+<p>想象你是一家企业的IT负责人：</p>
+<pre><code>你有 M 个AI应用：
+- ChatGPT
+- Claude
+- 内部Agent
+- ...
+
+你有 N 个工具/数据源：
+- Slack
+- GitHub
+- 数据库
+- 内部系统
+- ...
+
+传统方案：每对都要单独集成
+连接器数量 = M × N</code></pre>
+<p>当M=10，N=20时，你需要维护200个连接器。这是不可持续的。</p>
+<h3 id="四大痛点">四大痛点</h3>
+<table>
+<thead>
+<tr>
+<th>痛点</th>
+<th>表现</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>重复造轮子</strong></td>
+<td>每个AI应用都重新集成</td>
+<td>开发成本高</td>
+</tr>
+<tr>
+<td><strong>稳定性差</strong></td>
+<td>各团队实现质量不一</td>
+<td>维护成本高</td>
+</tr>
+<tr>
+<td><strong>安全难治理</strong></td>
+<td>权限分散、审计困难</td>
+<td>合规风险</td>
+</tr>
+<tr>
+<td><strong>协作成本高</strong></td>
+<td>接口不统一、文档缺失</td>
+<td>沟通成本</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mcp的解决思路">MCP的解决思路</h3>
+<pre><code>传统: M × N 连接
+─────────────────
+AI应用1 ──┬── 工具A
+          ├── 工具B
+          └── 工具C
+AI应用2 ──┬── 工具A
+          ├── 工具B
+          └── 工具C
+
+MCP: M + N 连接
+─────────────────
+AI应用1 ──┐
+AI应用2 ──┼── MCP协议 ──┬── 工具A
+AI应用3 ──┘              ├── 工具B
+                         └── 工具C</code></pre>
+<p><strong>类比</strong>：MCP就像USB协议——在USB出现之前，每种设备都有专属接口；有了USB之后，任何设备都能即插即用。</p>
+<hr />
+<h2 id="part-2mcp协议原理">Part 2：MCP协议原理</h2>
+<h3 id="什么是mcp">什么是MCP？</h3>
+<p>MCP (Model Context Protocol)
+是Anthropic于2024年11月发布的开放标准，用于连接AI应用与外部工具/数据。</p>
+<blockquote>
+<p><strong>一句话定义</strong>：MCP是AI应用与工具之间的”USB协议”——标准化接口，即插即用。</p>
+</blockquote>
+<h3 id="三层架构">三层架构</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                    MCP 架构                          │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  Host（宿主）                                       │
+│  └── Claude Desktop、IDE、你的应用                 │
+│      职责：管理生命周期、安全策略                  │
+│                                                     │
+│  Client（客户端）                                   │
+│  └── MCP Client库                                  │
+│      职责：与Server通信、协议解析                  │
+│                                                     │
+│  Server（服务端）                                   │
+│  └── GitHub MCP、Slack MCP、自定义MCP             │
+│      职责：暴露工具能力、处理请求                  │
+│                                                     │
+└─────────────────────────────────────────────────────┘</code></pre>
+<h3 id="四大能力">四大能力</h3>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tools</strong></td>
+<td>可执行的函数</td>
+<td>发送消息、创建文件</td>
+</tr>
+<tr>
+<td><strong>Resources</strong></td>
+<td>可读取的数据</td>
+<td>文件内容、数据库记录</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>预定义的提示词模板</td>
+<td>代码审查模板</td>
+</tr>
+<tr>
+<td><strong>Sampling</strong></td>
+<td>Server请求LLM生成</td>
+<td>高级场景</td>
+</tr>
+</tbody>
+</table>
+<h3 id="工作流程">工作流程</h3>
+<pre><code>用户: &quot;帮我创建一个GitHub issue&quot;
+        │
+        ▼
+    ┌─────────┐
+    │  Host   │  ← Claude Desktop
+    └────┬────┘
+         │ 1. 识别需要调用GitHub工具
+         ▼
+    ┌─────────┐
+    │ Client  │
+    └────┬────┘
+         │ 2. 发送JSON-RPC请求
+         ▼
+    ┌─────────┐
+    │ Server  │  ← GitHub MCP Server
+    └────┬────┘
+         │ 3. 调用GitHub API
+         │ 4. 返回结果
+         ▼
+    用户看到: &quot;已创建Issue #123&quot;</code></pre>
+<h3 id="传输方式">传输方式</h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>适用场景</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>stdio</strong></td>
+<td>本地进程</td>
+<td>简单、安全、无需网络</td>
+</tr>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>远程服务</td>
+<td>可扩展、需要认证</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-3skill系统">Part 3：Skill系统</h2>
+<h3 id="什么是skill">什么是Skill？</h3>
+<p>Skill是OpenClaw的能力扩展机制，核心是一个<strong>SKILL.md</strong>文件——让Agent学习如何使用工具的说明文档。</p>
+<h3 id="与传统plugin的区别">与传统Plugin的区别</h3>
+<pre><code>传统Plugin:
+代码 ──► 代码接口 ──► 执行
+
+Skill:
+SKILL.md ──► LLM阅读理解 ──► LLM决定如何调用 ──► 执行
+
+关键区别: LLM自己读文档学习使用方法！</code></pre>
+<h3 id="为什么这样设计">为什么这样设计？</h3>
+<ol type="1">
+<li><strong>灵活性</strong>：不需要预定义所有调用方式</li>
+<li><strong>容错性</strong>：LLM可以处理模糊指令</li>
+<li><strong>可扩展</strong>：增加能力只需写文档</li>
+<li><strong>可维护</strong>：非程序员也能创建Skill</li>
+</ol>
+<h3 id="skill结构示例">Skill结构示例</h3>
+<pre><code>~/.openclaw/workspace/skills/weather/
+├── SKILL.md          # 核心说明文档
+├── scripts/
+│   └── get_weather.sh
+└── examples/
+    └── usage.md</code></pre>
+<p><strong>SKILL.md内容</strong>：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Weather Skill</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 功能</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>获取指定城市的天气预报。</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## 使用方法</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>运行 <span class="in">`./scripts/get_weather.sh &lt;城市名&gt;`</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## 示例</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>用户: &quot;北京今天天气怎么样？&quot;</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>动作: 运行 ./scripts/get_weather.sh 北京</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>输出: 解析结果并回复用户</span></code></pre></div>
+<h3 id="mcp-vs-skill">MCP vs Skill</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>MCP Server</th>
+<th>Skill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标准化</td>
+<td>JSON-RPC协议</td>
+<td>无标准</td>
+</tr>
+<tr>
+<td>跨平台</td>
+<td>任何支持MCP的Host</td>
+<td>仅OpenClaw</td>
+</tr>
+<tr>
+<td>实现复杂度</td>
+<td>中等</td>
+<td>低</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>通用服务集成</td>
+<td>特定场景快速实现</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择建议</strong>： - 需要跨平台 → MCP - 仅OpenClaw使用 →
+Skill更简单 - 复杂企业集成 → MCP（标准化） - 快速原型 →
+Skill（1小时上线）</p>
+<hr />
+<h2 id="part-4工具设计原则">Part 4：工具设计原则</h2>
+<h3 id="anthropic的洞察">Anthropic的洞察</h3>
+<p>在<a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Writing
+Tools for AI Agents</a>中，Anthropic分享了工具设计的核心原则：</p>
+<blockquote>
+<p>“One of the most common failure modes we see is <strong>bloated tool
+sets</strong> that cover too much functionality or lead to ambiguous
+decision points.”</p>
+</blockquote>
+<h3 id="原则1最小化工具集">原则1：最小化工具集</h3>
+<pre><code>❌ 坏设计：20个功能相近的工具
+─────────────────────────────
+search_products()
+find_products()
+query_products()
+get_product_list()
+lookup_products()
+...
+
+问题：Agent困惑&quot;我该用哪个？&quot;
+
+
+✅ 好设计：最小可行工具集
+─────────────────────────────
+search_products(query, filters)
+
+清晰、无歧义、一个工具解决一类问题</code></pre>
+<p><strong>判断标准</strong>：如果人类工程师都不能确定该用哪个工具，AI也做不到。</p>
+<h3 id="原则2清晰的接口描述">原则2：清晰的接口描述</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;create_issue&quot;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;在GitHub仓库中创建新的Issue&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;parameters&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;repo&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;string&quot;</span><span class="fu">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;仓库名，格式为 owner/repo&quot;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;string&quot;</span><span class="fu">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Issue标题，简明扼要&quot;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;body&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;string&quot;</span><span class="fu">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Issue详细描述，支持Markdown&quot;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>关键：<strong>描述要让LLM能准确判断何时使用、如何使用</strong>。</p>
+<h3 id="原则3优雅的错误处理">原则3：优雅的错误处理</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 好的错误返回</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;success&quot;</span>: false,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;error&quot;</span>: {</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;code&quot;</span>: <span class="st">&quot;REPO_NOT_FOUND&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;message&quot;</span>: <span class="st">&quot;仓库 &#39;owner/repo&#39; 不存在或无权限访问&quot;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;suggestion&quot;</span>: <span class="st">&quot;请检查仓库名是否正确，或确认有访问权限&quot;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>让Agent能理解错误并采取补救措施。</p>
+<h3 id="原则4幂等性">原则4：幂等性</h3>
+<pre><code>同一请求执行多次，结果应该一致
+
+✅ 幂等: get_user(id=123) 总是返回同一用户
+✅ 幂等: set_status(id=123, status=&quot;done&quot;) 重复执行无副作用
+❌ 非幂等: create_order() 每次都创建新订单</code></pre>
+<p>非幂等操作需要额外的确认机制。</p>
+<h3 id="反模式清单">反模式清单</h3>
+<table>
+<thead>
+<tr>
+<th>反模式</th>
+<th>问题</th>
+<th>改进</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>功能重叠</td>
+<td>Agent不知选哪个</td>
+<td>合并或明确区分</td>
+</tr>
+<tr>
+<td>描述模糊</td>
+<td>误用率高</td>
+<td>写清楚使用场景</td>
+</tr>
+<tr>
+<td>错误不明</td>
+<td>Agent无法恢复</td>
+<td>提供可操作的错误信息</td>
+</tr>
+<tr>
+<td>参数过多</td>
+<td>调用复杂</td>
+<td>提供合理默认值</td>
+</tr>
+<tr>
+<td>无权限控制</td>
+<td>安全风险</td>
+<td>实现最小权限原则</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-5企业工具治理">Part 5：企业工具治理</h2>
+<h3 id="安全分层">安全分层</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                   安全分层模型                       │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  L0 只读工具                                        │
+│  └── 搜索、查询、读取                              │
+│      风险：低，可自由使用                          │
+│                                                     │
+│  L1 低影响写入                                      │
+│  └── 创建草稿、添加备注                            │
+│      风险：中低，需要日志                          │
+│                                                     │
+│  L2 业务影响                                        │
+│  └── 发送消息、修改数据                            │
+│      风险：中，需要审批或确认                      │
+│                                                     │
+│  L3 高风险操作                                      │
+│  └── 删除、资金操作、权限变更                      │
+│      风险：高，必须人工确认                        │
+│                                                     │
+└─────────────────────────────────────────────────────┘</code></pre>
+<h3 id="审计要求">审计要求</h3>
+<p>每次工具调用应记录：</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-03-01T00:15:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user&quot;</span><span class="fu">:</span> <span class="st">&quot;user_123&quot;</span><span class="fu">,</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;agent&quot;</span><span class="fu">:</span> <span class="st">&quot;assistant&quot;</span><span class="fu">,</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tool&quot;</span><span class="fu">:</span> <span class="st">&quot;create_issue&quot;</span><span class="fu">,</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;parameters&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;repo&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">,</span> <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">},</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;success&quot;</span><span class="fu">,</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;token_cost&quot;</span><span class="fu">:</span> <span class="dv">150</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="成本控制">成本控制</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>控制手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>调用频率</td>
+<td>Rate limiting</td>
+</tr>
+<tr>
+<td>单次成本</td>
+<td>Token限制</td>
+</tr>
+<tr>
+<td>累计成本</td>
+<td>预算告警</td>
+</tr>
+<tr>
+<td>异常检测</td>
+<td>模式识别</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-6实战演示">Part 6：实战演示</h2>
+<h3 id="体验mcp">体验MCP</h3>
+<p><strong>Claude Desktop配置示例</strong>：</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;github&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;npx&quot;</span><span class="fu">,</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;-y&quot;</span><span class="ot">,</span> <span class="st">&quot;@modelcontextprotocol/server-github&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;GITHUB_TOKEN&quot;</span><span class="fu">:</span> <span class="st">&quot;your_token&quot;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>配置后，可以直接对Claude说”帮我创建一个GitHub issue”。</p>
+<h3 id="创建自定义skill">创建自定义Skill</h3>
+<p><strong>步骤</strong>：</p>
+<ol type="1">
+<li>创建目录：<code>~/.openclaw/workspace/skills/my-skill/</code></li>
+<li>编写SKILL.md</li>
+<li>添加脚本或工具</li>
+<li>测试使用</li>
+</ol>
+<p><strong>示例SKILL.md</strong>：</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 股票查询 Skill</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 功能</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>查询A股股票的实时行情。</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## 使用方法</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>运行 <span class="in">`curl &quot;https://api.example.com/stock?code=$CODE&quot;`</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## 示例</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>用户: &quot;茅台现在多少钱？&quot;</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>动作: 查询股票代码600519的实时价格</span></code></pre></div>
+<hr />
+<h2 id="课堂实操">课堂实操</h2>
+<h3 id="设计一个mcp-server15分钟">设计一个MCP Server（15分钟）</h3>
+<p>选择以下场景之一，设计MCP Server的接口：</p>
+<ol type="1">
+<li><strong>企业知识库</strong>：搜索内部文档</li>
+<li><strong>CRM系统</strong>：查询客户信息</li>
+<li><strong>日程管理</strong>：创建和查询日程</li>
+</ol>
+<p>需要定义： - 提供哪些Tools？ - 每个Tool的参数和返回值？ -
+如何处理错误？ - 安全等级是什么？</p>
+<hr />
+<h2 id="本讲总结">本讲总结</h2>
+<h3 id="核心概念">核心概念</h3>
+<ul>
+<li><strong>MCP = AI应用与工具之间的USB协议</strong></li>
+<li><strong>三层架构</strong>：Host / Client / Server</li>
+<li><strong>四大能力</strong>：Tools / Resources / Prompts /
+Sampling</li>
+<li><strong>Skill</strong>：OpenClaw的轻量级能力扩展机制</li>
+</ul>
+<h3 id="工具设计原则">工具设计原则</h3>
+<ol type="1">
+<li><strong>最小化工具集</strong>：避免功能重叠</li>
+<li><strong>清晰的描述</strong>：让LLM能准确判断</li>
+<li><strong>优雅的错误处理</strong>：让Agent能恢复</li>
+<li><strong>幂等性</strong>：重复执行无副作用</li>
+</ol>
+<h3 id="mba关键洞察">MBA关键洞察</h3>
+<ol type="1">
+<li><strong>MCP解决的是协作问题</strong>，不只是调用问题</li>
+<li><strong>好的工具设计减少Token消耗</strong>，直接降低成本</li>
+<li><strong>安全分层是必须的</strong>，不是可选的</li>
+<li><strong>Skill让非技术人员也能扩展AI能力</strong></li>
+</ol>
+<hr />
+<h2 id="延伸阅读">延伸阅读</h2>
+<h3 id="官方资源">官方资源</h3>
+<ul>
+<li><a href="https://modelcontextprotocol.io/">MCP官网</a></li>
+<li><a href="https://github.com/modelcontextprotocol">MCP
+GitHub</a></li>
+<li><a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Anthropic:
+Writing Tools for AI Agents</a></li>
+</ul>
+<h3 id="openclaw">OpenClaw</h3>
+<ul>
+<li><a href="https://docs.openclaw.ai/skills">OpenClaw
+Skills文档</a></li>
+<li><a href="https://clawhub.com">ClawHub技能市场</a></li>
+</ul>
+<hr />
+<p><em>本讲义最后更新：2026-03-01</em></p>
+</body>
+</html>

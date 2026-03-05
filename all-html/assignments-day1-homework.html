@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>day1-homework</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<h1 id="第一天课后实践任务手册">第一天课后实践任务手册</h1>
+<blockquote>
+<p>适用课程：MBA《大模型智能体》</p>
+<p>完成时间：<strong>第二周上课前完成</strong>（建议总投入 3~5
+小时）</p>
+</blockquote>
+<hr />
+<h2 id="第一天课后任务-第二周上课前完成">第一天课后任务
+(第二周上课前完成)</h2>
+<h2 id="任务1-环境搭建-必做">任务1: 环境搭建 (必做)</h2>
+<h3 id="openclaw-安装指南macos-windows-linux">1.1 OpenClaw
+安装指南（macOS / Windows / Linux）</h3>
+<blockquote>
+<p>目标：完成 OpenClaw 本地安装，并能成功启动 Gateway。</p>
+</blockquote>
+<h4 id="a-通用前置检查">A) 通用前置检查</h4>
+<p>OpenClaw CLI 依赖 Node.js 环境，建议先确认：</p>
+<ul>
+<li>Node.js LTS（建议 v20+）</li>
+<li>npm（随 Node.js 安装）</li>
+<li>Git</li>
+<li>稳定网络环境</li>
+</ul>
+<hr />
+<h4 id="b-macos-安装步骤">B) macOS 安装步骤</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) 安装 Homebrew（若已安装可跳过）</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/bash</span> <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) 安装 Node.js 与 Git</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> update</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install node git</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) 验证版本</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> <span class="at">-v</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> <span class="at">-v</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) 安装 OpenClaw CLI</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> openclaw</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) 验证安装</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> <span class="at">--version</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> help</span></code></pre></div>
+<hr />
+<h4 id="c-windows-安装步骤powershell">C) Windows
+安装步骤（PowerShell）</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) 安装 Node.js LTS 与 Git（需管理员权限）</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>winget install OpenJS<span class="op">.</span><span class="fu">NodeJS</span><span class="op">.</span><span class="fu">LTS</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>winget install Git<span class="op">.</span><span class="fu">Git</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) 重新打开 PowerShell 后验证</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>node <span class="op">-</span>v</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>npm <span class="op">-</span>v</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>git <span class="op">--</span>version</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) 安装 OpenClaw CLI</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>npm install <span class="op">-</span>g openclaw</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) 验证安装</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>openclaw <span class="op">--</span>version</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>openclaw help</span></code></pre></div>
+<hr />
+<h4 id="d-linux-安装步骤ubuntudebian-示例">D) Linux
+安装步骤（Ubuntu/Debian 示例）</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) 安装基础依赖</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> curl ca-certificates gnupg git</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) 安装 Node.js LTS（NodeSource）</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://deb.nodesource.com/setup_lts.x <span class="kw">|</span> <span class="fu">sudo</span> <span class="at">-E</span> bash <span class="at">-</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> nodejs</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) 验证版本</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> <span class="at">-v</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> <span class="at">-v</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) 安装 OpenClaw CLI</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> openclaw</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) 验证安装</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> <span class="at">--version</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> help</span></code></pre></div>
+<hr />
+<h3 id="基础配置api-key-设置">1.2 基础配置（API Key 设置）</h3>
+<blockquote>
+<p>建议优先使用向导，避免手工配置错误。</p>
+</blockquote>
+<h4 id="方案一向导配置推荐">方案一：向导配置（推荐）</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化本地配置与工作区</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> setup <span class="at">--wizard</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 按需补充模型/网关配置</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> configure <span class="at">--section</span> model <span class="at">--section</span> gateway</span></code></pre></div>
+<h4 id="方案二环境变量配置示例">方案二：环境变量配置（示例）</h4>
+<blockquote>
+<p>仅示例，你可根据所用模型平台选择对应 Key。</p>
+</blockquote>
+<p><strong>macOS / Linux（zsh/bash）</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 编辑 shell 配置文件（zsh 用 ~/.zshrc；bash 用 ~/.bashrc）</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OPENAI_API_KEY</span><span class="op">=</span><span class="st">&quot;sk-xxx&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">ANTHROPIC_API_KEY</span><span class="op">=</span><span class="st">&quot;sk-ant-xxx&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OPENROUTER_API_KEY</span><span class="op">=</span><span class="st">&quot;sk-or-xxx&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 使配置生效</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.zshrc</span></code></pre></div>
+<p><strong>Windows（PowerShell）</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>setx OPENAI_API_KEY <span class="st">&quot;sk-xxx&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>setx ANTHROPIC_API_KEY <span class="st">&quot;sk-ant-xxx&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>setx OPENROUTER_API_KEY <span class="st">&quot;sk-or-xxx&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 关闭并重新打开 PowerShell 后生效</span></span></code></pre></div>
+<h4 id="安全提醒">安全提醒</h4>
+<ul>
+<li>不要把真实 API Key 提交到 Git 仓库</li>
+<li>不要在截图中暴露完整 Key（只显示前 4 位）</li>
+<li>建议使用 <code>.env</code> + <code>.gitignore</code>
+或系统环境变量</li>
+</ul>
+<hr />
+<h3 id="验证安装成功的检查清单">1.3 验证安装成功的检查清单</h3>
+<p>按顺序执行并打勾：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> <span class="at">--version</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> gateway start</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> gateway status</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> health</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> gateway stop</span></code></pre></div>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>openclaw --version</code>
+有正常版本输出</label></li>
+<li><label><input type="checkbox"></input><code>openclaw gateway start</code>
+启动成功</label></li>
+<li><label><input type="checkbox"></input><code>openclaw gateway status</code>
+显示运行状态</label></li>
+<li><label><input type="checkbox"></input><code>openclaw health</code>
+返回健康检查结果</label></li>
+<li><label><input type="checkbox"></input>能正常停止
+Gateway（<code>openclaw gateway stop</code>）</label></li>
+</ul>
+<hr />
+<h3 id="常见问题-faq">1.4 常见问题 FAQ</h3>
+<p><strong>Q1: 提示
+<code>openclaw: command not found</code>？</strong><br />
+A: 先确认 <code>npm install -g openclaw</code> 是否成功；若成功，检查
+npm 全局 bin 目录是否在 PATH 中。</p>
+<p><strong>Q2: npm 安装报 EACCES 权限错误？</strong><br />
+A: 不建议 <code>sudo npm install -g</code>。可改为配置用户级 npm
+前缀目录后重试。</p>
+<p><strong>Q3: Gateway 启动失败，提示端口占用？</strong><br />
+A: 先执行 <code>openclaw gateway status</code>
+查看状态；必要时关闭冲突进程后重启。</p>
+<p><strong>Q4: 已配置 API Key 但模型调用失败？</strong><br />
+A: 重新打开终端确认环境变量生效；或使用
+<code>openclaw configure --section model</code> 重新绑定模型配置。</p>
+<p><strong>Q5: 公司网络下连接不稳定？</strong><br />
+A: 检查代理、防火墙与 DNS；必要时切换网络并重试。</p>
+<hr />
+<h2 id="任务2-基础体验-必做">任务2: 基础体验 (必做)</h2>
+<h3 id="与-agent-进行-10-轮以上对话">2.1 与 Agent 进行 10
+轮以上对话</h3>
+<p>要求：</p>
+<ul>
+<li>至少 10 轮连续交互（同一主题更佳）</li>
+<li>主题建议：市场分析、运营优化、商业模式评估、行业研究</li>
+<li>每轮记录：你的输入 + Agent 输出 + 你对结果质量的简评</li>
+</ul>
+<p><strong>建议记录模板</strong></p>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>你的问题</th>
+<th>Agent回答摘要</th>
+<th>你的评价（1~5分）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="修改-soul.md观察行为变化">2.2 修改 SOUL.md，观察行为变化</h3>
+<blockquote>
+<p>目标：理解“系统人格/行为约束”对 Agent 输出的影响。</p>
+</blockquote>
+<p>操作建议：</p>
+<ol type="1">
+<li>备份原文件</li>
+<li>修改 2~3 条人格或输出风格规则</li>
+<li>用<strong>同一组问题</strong>做 A/B 对比（修改前 vs 修改后）</li>
+</ol>
+<p>示例（可参考）：</p>
+<ul>
+<li>输出风格：从“简洁结论优先”改为“先结构化分析后结论”</li>
+<li>语气风格：从“严谨专业”改为“顾问式建议 + 可执行清单”</li>
+<li>约束策略：增加“所有建议必须含风险提示”</li>
+</ul>
+<p><strong>建议命令</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS/Linux</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/.openclaw/workspace</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> SOUL.md SOUL.md.bak</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 用你熟悉的编辑器打开 SOUL.md 修改</span></span></code></pre></div>
+<hr />
+<h3 id="尝试至少-3-个内置-skill">2.3 尝试至少 3 个内置 Skill</h3>
+<p>要求：</p>
+<ul>
+<li>至少调用 3 个不同 Skill</li>
+<li>每个 Skill 至少 1 次成功调用</li>
+<li>记录：用途、输入、输出、是否符合预期</li>
+</ul>
+<p>示例方向（任选）：</p>
+<ol type="1">
+<li><code>weather</code>：查询某城市未来 3 天天气</li>
+<li><code>summarize</code>：总结一篇网页/文章核心观点</li>
+<li><code>github</code>：查看某仓库 issue 或 PR 信息</li>
+<li>你熟悉的其他内置 Skill</li>
+</ol>
+<hr />
+<h3 id="记录使用体验截图-文字">2.4 记录使用体验（截图 + 文字）</h3>
+<p><strong>截图指引（必含）</strong></p>
+<ul>
+<li>截图1：安装成功（<code>openclaw --version</code> +
+<code>openclaw help</code>）</li>
+<li>截图2：Gateway 状态（<code>openclaw gateway status</code>）</li>
+<li>截图3：10轮对话证据（至少展示开始、中间、结尾）</li>
+<li>截图4：SOUL.md 修改前后差异（可用 diff 或前后片段）</li>
+<li>截图5：3个 Skill 的调用结果</li>
+</ul>
+<p><strong>文字反思（300~500字）</strong></p>
+<p>建议回答：</p>
+<ol type="1">
+<li>哪个环节最顺利？为什么？</li>
+<li>哪个环节最卡顿？你如何排查？</li>
+<li>修改 SOUL.md 后，Agent 行为发生了哪些可观察变化？</li>
+<li>你认为 Agent 在你所在行业最有价值的场景是什么？</li>
+</ol>
+<hr />
+<h2 id="任务3-调研报告-选做加分">任务3: 调研报告 (选做，加分)</h2>
+<p>请选择 <strong>A/B/C</strong> 任一方向完成短报告（建议 1000~2000
+字）。</p>
+<h3 id="a.-行业应用调研">A. 行业应用调研</h3>
+<p>选一个行业（如金融、零售、医疗、教育、制造等），调研 Agent
+应用现状：</p>
+<ul>
+<li>典型应用场景（至少 3 个）</li>
+<li>头部公司/产品案例（至少 2 个）</li>
+<li>价值与限制（ROI、风险、合规）</li>
+<li>你对未来 2 年趋势判断</li>
+</ul>
+<h3 id="b.-竞品对比分析">B. 竞品对比分析</h3>
+<p>选择 2~3 个 Agent 平台进行对比：</p>
+<ul>
+<li>功能维度：工具调用、记忆、工作流、多 Agent、可观测性</li>
+<li>商业维度：定价、生态、目标用户</li>
+<li>体验维度：上手难度、稳定性、响应质量</li>
+<li>最终结论：给出你的选型建议（含适用场景）</li>
+</ul>
+<h3 id="c.-技术深度探索">C. 技术深度探索</h3>
+<p>深入研究一个技术点（如 MCP / RAG / 多 Agent）：</p>
+<ul>
+<li>核心机制与架构图</li>
+<li>关键技术挑战</li>
+<li>工程落地建议</li>
+<li>未来迭代方向</li>
+</ul>
+<hr />
+<h2 id="任务4-创意实践-选做加分">任务4: 创意实践 (选做，加分)</h2>
+<p>完成以下任意 2~3 项并给出成果证明：</p>
+<ul>
+<li>配置一个专属 Agent（修改人格/添加 Skill）</li>
+<li>连接一个 Channel（飞书 / Telegram）</li>
+<li>实现一个简单自动化工作流</li>
+</ul>
+<h3 id="示例自动化工作流参考">示例：自动化工作流参考</h3>
+<p><strong>场景</strong>：每日晨间行业资讯摘要</p>
+<ol type="1">
+<li>获取信息源（新闻/RSS/网页）</li>
+<li>Agent 总结成 5 条要点</li>
+<li>自动发送到指定频道（飞书/Telegram）</li>
+</ol>
+<p><strong>验收标准</strong>：</p>
+<ul>
+<li>流程可重复执行</li>
+<li>输出格式稳定</li>
+<li>至少运行成功 2 次</li>
+</ul>
+<hr />
+<h2 id="提交要求">提交要求</h2>
+<ul>
+<li>格式：Markdown 或 PDF</li>
+<li>截止时间：第二周上课前一天</li>
+<li>提交方式：[待定]</li>
+</ul>
+<p>建议文件命名：</p>
+<p><code>姓名-班级-day1-homework.md</code> 或
+<code>姓名-班级-day1-homework.pdf</code></p>
+<hr />
+<h2 id="评分标准">评分标准</h2>
+<ul>
+<li>环境搭建：30%</li>
+<li>基础体验：30%</li>
+<li>调研/创意：40%</li>
+</ul>
+<h3 id="评分细则助教参考">评分细则（助教参考）</h3>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>维度</th>
+<th style="text-align: right;">权重</th>
+<th>A档（优秀）</th>
+<th>B档（良好）</th>
+<th>C档（及格）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>环境搭建</td>
+<td style="text-align: right;">30%</td>
+<td>安装+配置+排障完整，证据充分</td>
+<td>完成安装配置，证据较完整</td>
+<td>仅部分完成，证据不足</td>
+</tr>
+<tr>
+<td>基础体验</td>
+<td style="text-align: right;">30%</td>
+<td>10轮对话高质量，SOUL对比清晰，3个Skill效果好</td>
+<td>完成要求，分析一般</td>
+<td>仅完成最低要求</td>
+</tr>
+<tr>
+<td>调研/创意</td>
+<td style="text-align: right;">40%</td>
+<td>观点深入，有案例与方法论，落地性强</td>
+<td>有分析有结论</td>
+<td>描述性为主，深度不足</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="最终提交清单checklist">最终提交清单（Checklist）</h2>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>已完成 OpenClaw
+安装与基础配置</label></li>
+<li><label><input type="checkbox"></input>已通过安装验证检查清单</label></li>
+<li><label><input type="checkbox"></input>已完成 10
+轮以上对话记录</label></li>
+<li><label><input type="checkbox"></input>已完成 SOUL.md
+修改与前后对比</label></li>
+<li><label><input type="checkbox"></input>已完成至少 3 个 Skill
+体验</label></li>
+<li><label><input type="checkbox"></input>已附关键截图（不少于 5
+张）</label></li>
+<li><label><input type="checkbox"></input>已完成文字反思（300~500字）</label></li>
+<li><label><input type="checkbox"></input>（选做）已完成调研报告或创意实践</label></li>
+</ul>
+<hr />
+<blockquote>
+<p>提示：本次作业重点不是“代码量”，而是你对 Agent
+系统的理解深度、实验过程严谨性与商业洞察。</p>
+</blockquote>
+</body>
+</html>

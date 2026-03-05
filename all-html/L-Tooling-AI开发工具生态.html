@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>L-Tooling-AI开发工具生态</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">L-Tooling-AI开发工具生态</h1>
+</header>
+<h1 id="l-tooling-讲义ai开发工具生态">L-Tooling
+讲义：AI开发工具生态</h1>
+<blockquote>
+<p><strong>课程</strong>: MBA大模型智能体课程<br />
+<strong>课时</strong>: 扩展模块（60分钟）<br />
+<strong>适用</strong>: 了解现代AI开发工具栈<br />
+<strong>来源</strong>: Stanford CS146S “The Modern Software
+Developer”</p>
+</blockquote>
+<hr />
+<h2 id="本讲核心问题">本讲核心问题</h2>
+<ol type="1">
+<li><strong>AI IDE是什么？</strong>
+Cursor/Windsurf如何改变代码编写方式？</li>
+<li><strong>Claude Code是什么？</strong>
+为什么说它是Agent开发的终极工具？</li>
+<li><strong>Specs是什么？</strong> 为什么说”Specs是新的源代码”？</li>
+<li><strong>如何选择工具？</strong> 不同场景应该用什么工具？</li>
+</ol>
+<hr />
+<h2 id="part-1ai-ide革命-cursor-windsurf">Part 1：AI IDE革命 — Cursor
+&amp; Windsurf</h2>
+<h3 id="什么是ai-ide">1.1 什么是AI IDE？</h3>
+<p><strong>传统IDE vs AI IDE</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>VS Code (传统)</th>
+<th>Cursor (AI原生)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码补全</td>
+<td>基于语法</td>
+<td>基于语义理解</td>
+</tr>
+<tr>
+<td>搜索范围</td>
+<td>当前文件/项目</td>
+<td>整个代码库 + 文档</td>
+</tr>
+<tr>
+<td>重构能力</td>
+<td>查找替换</td>
+<td>理解意图，跨文件重构</td>
+</tr>
+<tr>
+<td>学习曲线</td>
+<td>需要记快捷键</td>
+<td>自然语言描述即可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cursor核心功能">1.2 Cursor核心功能</h3>
+<p><strong>三大核心能力</strong>:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│  1. Tab Completion (智能补全)                               │
+│  ─────────────────────────────────────────────────────────  │
+│  • 多行代码预测                                             │
+│  • 理解上下文语义                                           │
+│  • 学习你的编码风格                                         │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  2. ⌘+K (内联编辑)                                          │
+│  ─────────────────────────────────────────────────────────  │
+│  • 选中代码 → 描述修改 → 自动重写                           │
+│  • 支持自然语言指令                                         │
+│  • 实时diff预览                                             │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  3. Agent Mode (智能体模式)                                 │
+│  ─────────────────────────────────────────────────────────  │
+│  • 自动分析代码库                                           │
+│  • 跨文件修改                                               │
+│  • 运行终端命令                                             │
+│  • 自我修正错误                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="cursorrules-项目级ai配置">1.3 .cursorrules — 项目级AI配置</h3>
+<p><strong>关键概念</strong>: <code>.cursorrules</code>
+是项目根目录的配置文件，定义AI如何理解你的项目。</p>
+<p><strong>示例 <code>.cursorrules</code></strong>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Project Context</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>This is a Django REST API for e-commerce platform.</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tech Stack</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Python 3.11, Django 5.0, DRF 3.15</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>PostgreSQL, Redis, Celery</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Docker, Kubernetes</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Code Style</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use type hints everywhere</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Docstrings in Google style</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Test coverage &gt; 80%</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Architecture Rules</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>All business logic in services/, not views/</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use repository pattern for DB access</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Never expose internal IDs in API responses</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common Patterns</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Authentication: JWT with refresh tokens</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pagination: Cursor-based for lists</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Error handling: Custom exception classes</span></code></pre></div>
+<p><strong>效果</strong>: AI生成的代码会自动遵循这些规则。</p>
+<h3 id="windsurf-cursor的竞争者">1.4 Windsurf — Cursor的竞争者</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Cursor</th>
+<th>Windsurf</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公司</td>
+<td>Anysphere</td>
+<td>Codeium</td>
+</tr>
+<tr>
+<td>底层模型</td>
+<td>Claude/GPT</td>
+<td>自研 + Claude</td>
+</tr>
+<tr>
+<td>特色功能</td>
+<td>Agent Mode强</td>
+<td>Cascade (多步推理)</td>
+</tr>
+<tr>
+<td>定价</td>
+<td>$20/月</td>
+<td>$15/月</td>
+</tr>
+<tr>
+<td>优势场景</td>
+<td>复杂重构</td>
+<td>快速补全</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MBA建议</strong>: 两个都试用一周，选择更适合团队的。</p>
+<hr />
+<h2 id="part-2claude-code-agent开发的终极武器">Part 2：Claude Code —
+Agent开发的终极武器</h2>
+<h3 id="什么是claude-code">2.1 什么是Claude Code？</h3>
+<p>Claude Code是Anthropic推出的<strong>命令行Agent工具</strong>，可以：
+- 理解整个代码库 - 自主执行多步骤任务 - 创建/编辑/删除文件 -
+运行测试和修复bug - 与Git集成</p>
+<p><strong>定位</strong>: 比Cursor更强大，适合复杂的开发任务。</p>
+<h3 id="claude-code架构解析">2.2 Claude Code架构解析</h3>
+<blockquote>
+<p>来源: Anthropic官方文档 “How Anthropic Uses Claude Code”</p>
+</blockquote>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                     Claude Code 架构                        │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  System Prompt (系统提示词)                          │   │
+│  │  • 角色定义: &quot;You are Claude Code...&quot;               │   │
+│  │  • 工具列表: Read, Write, Execute, Search...        │   │
+│  │  • 安全规则: 不删除系统文件，确认危险操作            │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  CLAUDE.md (项目配置文件)                            │   │
+│  │  • 项目描述                                          │   │
+│  │  • 编码规范                                          │   │
+│  │  • 常用命令                                          │   │
+│  │  • 架构决策                                          │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  &lt;system-reminder&gt; Tags (系统提醒)                   │   │
+│  │  • 在长对话中周期性注入                              │   │
+│  │  • 防止Context Rot                                   │   │
+│  │  • 强化关键指令                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Sub-Agent Spawning (子Agent生成)                    │   │
+│  │  • 复杂任务分解为子任务                              │   │
+│  │  • 每个子任务独立上下文                              │   │
+│  │  • 并行执行提高效率                                  │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="claude.md最佳实践">2.3 CLAUDE.md最佳实践</h3>
+<p><strong>官方模板</strong>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># CLAUDE.md</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Project Overview</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>Brief description of what this project does.</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tech Stack</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Language: TypeScript 5.0</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Framework: Next.js 14 (App Router)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Database: Prisma + PostgreSQL</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Testing: Vitest + Playwright</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Development Commands</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`pnpm dev`</span> - Start dev server</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`pnpm test`</span> - Run unit tests</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`pnpm e2e`</span> - Run E2E tests</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`pnpm lint`</span> - Check code style</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Architecture Decisions</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use Server Components by default</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Client Components only for interactivity</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>API routes in <span class="in">`app/api/`</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Shared types in <span class="in">`types/`</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Important Files</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`prisma/schema.prisma`</span> - Database schema</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`lib/auth.ts`</span> - Authentication logic</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`components/ui/`</span> - Reusable UI components</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Code Style</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Prefer composition over inheritance</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use early returns</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Meaningful variable names</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Comments explain &quot;why&quot;, not &quot;what&quot;</span></code></pre></div>
+<h3 id="实战演示用claude-code开发功能">2.4 实战演示：用Claude
+Code开发功能</h3>
+<p><strong>场景</strong>: 给电商系统添加优惠券功能</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 启动Claude Code</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 输入任务</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Add <span class="ex">a</span> coupon system with:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> - <span class="ex">CRUD</span> for admin</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> - <span class="ex">Apply</span> coupon at checkout</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> - <span class="ex">Support</span> percentage and fixed discounts</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> - <span class="ex">Usage</span> limits per coupon and per user</span></code></pre></div>
+<p><strong>Claude Code会自动</strong>: 1. 分析现有代码结构 2.
+设计数据库schema 3. 创建迁移文件 4. 实现API端点 5. 添加前端组件 6.
+编写测试用例 7. 更新文档</p>
+<hr />
+<h2 id="part-3specs-是新的源代码">Part 3：Specs 是新的源代码</h2>
+<h3 id="什么是specs">3.1 什么是Specs？</h3>
+<blockquote>
+<p>💡 <strong>核心洞察</strong> (来自Ravi Mehta): “In the AI age, the
+spec IS the code.”</p>
+</blockquote>
+<p><strong>传统开发流程</strong>:</p>
+<pre><code>需求文档 → 设计文档 → 代码 → 测试 → 文档更新
+   ↓           ↓        ↓       ↓         ↓
+  过时       过时     真相    部分真相   过时</code></pre>
+<p><strong>AI时代开发流程</strong>:</p>
+<pre><code>Specs (规格说明) ─────────────────────────────→ 代码
+       ↑                                        │
+       └────────────── AI Agent ────────────────┘
+                    (保持同步)</code></pre>
+<h3 id="specs的组成">3.2 Specs的组成</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Feature Spec: User Authentication</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objective</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Allow users to sign up, log in, and manage sessions securely.</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## User Stories</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>As a user, I can sign up with email/password</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>As a user, I can log in and stay logged in for 30 days</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>As a user, I can reset my password via email</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Technical Requirements</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>JWT tokens with refresh mechanism</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Password hashing: bcrypt, cost factor 12</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Rate limiting: 5 attempts per minute</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## API Contracts</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>POST /auth/signup</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  Request: { email, password }</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  Response: { user, token }</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>POST /auth/login</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  Request: { email, password }</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  Response: { user, token, refreshToken }</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## Edge Cases</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Invalid email format → 400 Bad Request</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Duplicate email → 409 Conflict</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Wrong password → 401 Unauthorized (generic message)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Security Considerations</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Never return &quot;user not found&quot; (prevents enumeration)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Log all auth events for audit</span></code></pre></div>
+<h3 id="mba启示">3.3 MBA启示</h3>
+<table>
+<thead>
+<tr>
+<th>传统模式</th>
+<th>AI模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PM写需求 → 开发理解 → 写代码</td>
+<td>PM写Specs → AI生成代码 → 开发review</td>
+</tr>
+<tr>
+<td>沟通成本高</td>
+<td>沟通成本低</td>
+</tr>
+<tr>
+<td>需求-代码容易drift</td>
+<td>Specs即代码，天然同步</td>
+</tr>
+<tr>
+<td>依赖开发者理解能力</td>
+<td>依赖Specs质量</td>
+</tr>
+</tbody>
+</table>
+<p><strong>新技能需求</strong>: - PM需要学会写清晰的Specs -
+开发需要学会review AI代码 - 都需要学会Prompt Engineering</p>
+<hr />
+<h2 id="part-4工具选择决策树">Part 4：工具选择决策树</h2>
+<pre><code>你的任务是什么？
+       │
+       ├─ 快速写几行代码 → Cursor Tab补全
+       │
+       ├─ 修改现有代码 → Cursor ⌘+K
+       │
+       ├─ 复杂功能开发 → Claude Code
+       │
+       ├─ 代码库分析/重构 → Claude Code
+       │
+       ├─ 日常终端操作 → Warp
+       │
+       └─ 项目初始化 → Claude Code + CLAUDE.md</code></pre>
+<h3 id="工具组合推荐">工具组合推荐</h3>
+<p><strong>个人开发者</strong>: - Cursor Pro ($20/月) + Claude Code -
+总成本: ~$40/月</p>
+<p><strong>小团队 (3-10人)</strong>: - Cursor Business + Claude Code +
+GitHub Copilot Enterprise - 总成本: ~$50/人/月</p>
+<p><strong>大企业</strong>: - 自建AI开发平台 + 私有化部署 -
+考虑安全合规、数据隐私</p>
+<hr />
+<h2 id="part-5动手实验">Part 5：动手实验</h2>
+<h3 id="lab-1-设置cursor项目">Lab 1: 设置Cursor项目</h3>
+<ol type="1">
+<li>安装Cursor: https://cursor.sh</li>
+<li>创建项目:
+<code>mkdir my-project &amp;&amp; cd my-project</code></li>
+<li>创建 <code>.cursorrules</code>:</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># My Project Rules</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use TypeScript</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Prefer functional style</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Always handle errors</span></code></pre></div>
+<ol start="4" type="1">
+<li>测试: 打开文件，按 ⌘+K，输入 “create a function to validate
+email”</li>
+</ol>
+<h3 id="lab-2-claude-code初体验">Lab 2: Claude Code初体验</h3>
+<ol type="1">
+<li>安装: <code>npm install -g @anthropic/claude-code</code></li>
+<li>配置API Key: <code>export ANTHROPIC_API_KEY=sk-...</code></li>
+<li>创建 <code>CLAUDE.md</code>:</li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># My CLI Tool</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>A simple CLI for task management.</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stack: Node.js, Commander.js</span></span></code></pre></div>
+<ol start="4" type="1">
+<li>启动: <code>claude</code></li>
+<li>输入: “Create a CLI with add, list, done commands for tasks”</li>
+</ol>
+<hr />
+<h2 id="总结工具改变开发范式">总结：工具改变开发范式</h2>
+<table>
+<thead>
+<tr>
+<th>时代</th>
+<th>核心技能</th>
+<th>典型工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2000s</td>
+<td>写代码</td>
+<td>Eclipse, IntelliJ</td>
+</tr>
+<tr>
+<td>2010s</td>
+<td>写+搜</td>
+<td>VS Code + Stack Overflow</td>
+</tr>
+<tr>
+<td>2020s</td>
+<td>描述+Review</td>
+<td>Cursor + Claude Code</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MBA行动项</strong>: 1. 本周内安装Cursor，亲身体验 2.
+评估团队AI工具采用率 3. 考虑将Specs纳入开发流程</p>
+<hr />
+<h2 id="扩展阅读">扩展阅读</h2>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 27%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th>标题</th>
+<th>链接</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Specs Are the New Source Code</td>
+<td><a href="https://blog.ravi-mehta.com/p/specs-are-the-new-source-code">Ravi
+Mehta Blog</a></td>
+<td>Specs驱动开发</td>
+</tr>
+<tr>
+<td>How Anthropic Uses Claude Code</td>
+<td><a href="https://www-cdn.anthropic.com/58284b19e702b49db9302d5b6f135ad8871e7658.pdf">PDF</a></td>
+<td>内部实践</td>
+</tr>
+<tr>
+<td>Writing Effective Tools for Agents</td>
+<td><a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Anthropic</a></td>
+<td>工具设计</td>
+</tr>
+<tr>
+<td>Cursor Docs</td>
+<td><a href="https://cursor.sh/docs">cursor.sh/docs</a></td>
+<td>官方文档</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>本讲义基于 Stanford CS146S “The Modern Software Developer”
+课程内容优化</em></p>
+</body>
+</html>

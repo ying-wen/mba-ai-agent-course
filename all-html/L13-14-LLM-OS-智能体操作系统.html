@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>L13-14-LLM-OS-智能体操作系统</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">L13-14-LLM-OS-智能体操作系统</h1>
+</header>
+<h1 id="l13-14-讲义llm-os与openclaw架构">L13-14 讲义：LLM
+OS与OpenClaw架构</h1>
+<blockquote>
+<p><strong>课程</strong>: MBA大模型智能体课程<br />
+<strong>课时</strong>: 第13-14讲（90分钟）<br />
+<strong>适用</strong>: 讲师备课 / 学生预习与复习<br />
+<strong>对应Slides</strong>:
+<code>slides-marp/day2-lesson13-14-llm-os.md</code></p>
+</blockquote>
+<hr />
+<h2 id="本讲核心问题">本讲核心问题</h2>
+<ol type="1">
+<li><strong>什么是LLM OS？</strong> Karpathy的愿景是什么？</li>
+<li><strong>为什么需要”操作系统”思维？</strong>
+与传统AI应用有什么区别？</li>
+<li><strong>OpenClaw如何实现LLM OS？</strong> 六层架构解析</li>
+<li><strong>如何部署和使用？</strong> 从安装到多Agent协作</li>
+</ol>
+<hr />
+<h2 id="part-1llm-os概念">Part 1：LLM OS概念</h2>
+<h3 id="从应用到系统">从应用到系统</h3>
+<p>计算范式正在经历一次根本性转变：</p>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│               计算范式演进                           │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  1980s: 命令行                                      │
+│  • 用户记忆命令                                     │
+│  • 精确但门槛高                                     │
+│                                                     │
+│  1990s: 图形界面 (GUI)                             │
+│  • 可视化操作                                       │
+│  • 直观但受限于界面设计                            │
+│                                                     │
+│  2020s: LLM应用                                    │
+│  • 自然语言交互                                     │
+│  • 单一功能为主                                     │
+│                                                     │
+│  2025+: LLM OS                                     │
+│  • AI作为操作系统核心                              │
+│  • 统一管理所有能力                                │
+│  • 自然语言 = 通用接口                             │
+│                                                     │
+│  关键转变:                                          │
+│  从&quot;人学习使用软件&quot;到&quot;软件理解人的意图&quot;           │
+│                                                     │
+└─────────────────────────────────────────────────────┘</code></pre>
+<h3 id="karpathy的愿景">Karpathy的愿景</h3>
+<p>2023年，前Tesla AI总监Andrej Karpathy提出”LLM OS”概念：</p>
+<blockquote>
+<p>“LLM正在成为一种新的操作系统内核。传统OS管理硬件资源，LLM
+OS管理知识和能力。”</p>
+</blockquote>
+<p>这不是比喻，而是一种架构思想。</p>
+<h3 id="操作系统类比">操作系统类比</h3>
+<table>
+<thead>
+<tr>
+<th>传统OS</th>
+<th>LLM OS</th>
+<th>对应关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU</td>
+<td>LLM</td>
+<td>核心计算/推理能力</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>上下文窗口</td>
+<td>工作记忆</td>
+</tr>
+<tr>
+<td>硬盘</td>
+<td>向量数据库/知识库</td>
+<td>长期存储</td>
+</tr>
+<tr>
+<td>进程</td>
+<td>Agent</td>
+<td>执行单元</td>
+</tr>
+<tr>
+<td>系统调用</td>
+<td>Tool Calling/MCP</td>
+<td>能力扩展</td>
+</tr>
+<tr>
+<td>权限系统</td>
+<td>安全边界</td>
+<td>访问控制</td>
+</tr>
+<tr>
+<td>调度器</td>
+<td>Orchestrator</td>
+<td>任务分配</td>
+</tr>
+<tr>
+<td>Shell/GUI</td>
+<td>自然语言</td>
+<td>用户接口</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么这个类比有价值">为什么这个类比有价值？</h3>
+<p><strong>1. 解释复杂系统</strong></p>
+<p>当你向CEO解释”我们需要一个Agent记忆系统”时，说”就像电脑的硬盘”比解释向量数据库容易100倍。</p>
+<p><strong>2. 指导架构设计</strong></p>
+<p>操作系统几十年的设计智慧可以借鉴： - 分层抽象 - 资源管理 - 进程隔离 -
+安全模型</p>
+<p><strong>3. 预测发展方向</strong></p>
+<p>传统OS的演进路径（单机→网络→分布式→云）可能在LLM OS上重演。</p>
+<hr />
+<h2 id="part-2openclaw架构">Part 2：OpenClaw架构</h2>
+<h3 id="一句话定义">一句话定义</h3>
+<p>OpenClaw是一个<strong>AI-Native Personal Operating
+System</strong>——让AI
+Agent像使用操作系统一样，统一管理你的工具、记忆、通信和任务。</p>
+<h3 id="六层架构">六层架构</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                OpenClaw 六层架构                     │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  Layer 6: Channel Layer（接入层）                  │
+│  └── 飞书/Telegram/WhatsApp/Discord/CLI            │
+│      职责：多渠道统一接入                          │
+│                                                     │
+│  Layer 5: Gateway（网关层）                        │
+│  └── 消息路由、会话管理、负载均衡                  │
+│      职责：流量入口和分发                          │
+│                                                     │
+│  Layer 4: Session Layer（会话层）                  │
+│  └── 会话状态、上下文管理                          │
+│      职责：维护对话连续性                          │
+│                                                     │
+│  Layer 3: Agent Layer（智能体层）                  │
+│  └── CEO Agent、子Agent、协作调度                  │
+│      职责：任务执行和协调                          │
+│                                                     │
+│  Layer 2: Capability Layer（能力层）               │
+│  └── Tools、MCP、Skills                            │
+│      职责：能力扩展                                │
+│                                                     │
+│  Layer 1: Node Network（节点网络）                 │
+│  └── 本地设备、远程节点、摄像头等                  │
+│      职责：物理世界连接                            │
+│                                                     │
+└─────────────────────────────────────────────────────┘</code></pre>
+<h3 id="各层详解">各层详解</h3>
+<p><strong>Layer 6: Channel Layer（接入层）</strong></p>
+<p>OpenClaw支持多种通信渠道：</p>
+<table>
+<thead>
+<tr>
+<th>渠道</th>
+<th>配置方式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>飞书</td>
+<td>企业应用</td>
+<td>企业办公首选</td>
+</tr>
+<tr>
+<td>Telegram</td>
+<td>Bot Token</td>
+<td>个人使用方便</td>
+</tr>
+<tr>
+<td>WhatsApp</td>
+<td>扫码连接</td>
+<td>全球用户多</td>
+</tr>
+<tr>
+<td>Discord</td>
+<td>Bot配置</td>
+<td>社区和团队</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td>命令行</td>
+<td>开发者友好</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键设计</strong>：无论从哪个渠道发消息，Agent看到的是统一的接口。</p>
+<p><strong>Layer 5: Gateway（网关层）</strong></p>
+<p>Gateway是OpenClaw的入口，负责： - 接收各渠道消息 - 路由到正确的会话 -
+管理认证和授权 - 负载均衡（多Agent场景）</p>
+<p><strong>Layer 4: Session Layer（会话层）</strong></p>
+<p>每个对话是一个Session，维护： - 对话历史 - 用户上下文 - 会话状态</p>
+<p><strong>Layer 3: Agent Layer（智能体层）</strong></p>
+<p>这是OpenClaw的核心：</p>
+<pre><code>CEO Agent (主Agent)
+    │
+    ├── sessions_spawn() → 派发子任务
+    │
+    ├── Researcher Agent
+    ├── Coder Agent
+    ├── Analyst Agent
+    └── ...</code></pre>
+<p><strong>CEO模式</strong>：主Agent负责理解用户意图、分解任务、调度子Agent、汇总结果。</p>
+<p><strong>Layer 2: Capability Layer（能力层）</strong></p>
+<p>Agent的能力来源： -
+<strong>内置Tools</strong>：read、write、exec、web_search… - <strong>MCP
+Servers</strong>：GitHub、Slack、数据库… -
+<strong>Skills</strong>：自定义能力扩展</p>
+<p><strong>Layer 1: Node Network（节点网络）</strong></p>
+<p>连接物理世界： - 本地电脑 - 手机 - 摄像头 - IoT设备</p>
+<hr />
+<h2 id="part-3workspace设计">Part 3：Workspace设计</h2>
+<h3 id="文件即配置">文件即配置</h3>
+<p>OpenClaw的核心设计哲学：<strong>所有配置都是文件，文件就是配置</strong>。</p>
+<pre><code>~/.openclaw/workspace/
+├── SOUL.md          # 我是谁？行为准则
+├── USER.md          # 用户是谁？偏好
+├── MEMORY.md        # 长期记忆
+├── TOOLS.md         # 工具使用笔记
+├── HEARTBEAT.md     # 定时任务配置
+├── memory/
+│   └── 2026-03-01.md  # 日志记忆
+├── skills/
+│   └── custom-skill/  # 自定义Skill
+└── projects/
+    └── my-project/    # 项目文件</code></pre>
+<h3 id="核心文件解析">核心文件解析</h3>
+<p><strong>SOUL.md — 人格定义</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># SOUL.md</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 核心角色</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>你是一个AI研究助理，精通人工智能和强化学习...</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## 沟通风格</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>简洁 &gt; 冗长</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>洞察 &gt; 描述</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>行动 &gt; 承诺</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## 红线</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>不编造：不确定时直接说&quot;我需要查一下&quot;</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>不冗长：超过3段考虑结构化呈现</span></code></pre></div>
+<p><strong>USER.md — 用户画像</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># USER.md</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 基本信息</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>名字: Ying</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>时区: Asia/Shanghai</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## 偏好</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>深度洞察优先</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>逻辑严谨</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>简洁沟通</span></code></pre></div>
+<p><strong>MEMORY.md — 长期记忆</strong></p>
+<p>Agent会在这里记录重要信息，跨会话保持。</p>
+<p><strong>HEARTBEAT.md — 定时任务</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># HEARTBEAT.md</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 每日任务</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>07<span class="sc">:00:</span> 运行RSS抓取脚本</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>07<span class="sc">:30:</span> 生成每日科研报告</span></code></pre></div>
+<h3 id="为什么这样设计">为什么这样设计？</h3>
+<table>
+<thead>
+<tr>
+<th>设计原则</th>
+<th>好处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件即配置</td>
+<td>无需复杂后台</td>
+</tr>
+<tr>
+<td>透明可审计</td>
+<td>所有状态可读</td>
+</tr>
+<tr>
+<td>易于备份</td>
+<td>整个目录即状态</td>
+</tr>
+<tr>
+<td>Git友好</td>
+<td>可版本控制</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-4多agent协作">Part 4：多Agent协作</h2>
+<h3 id="ceo模式">CEO模式</h3>
+<p>OpenClaw支持多Agent协作，通过CEO模式组织：</p>
+<pre><code>用户 → CEO Agent
+            │
+            ├── 理解意图
+            ├── 分解任务
+            ├── 派发给专业Agent
+            │       │
+            │       ├── Researcher → 研究任务
+            │       ├── Coder → 编程任务
+            │       └── Analyst → 分析任务
+            │
+            ├── 汇总结果
+            └── 回复用户</code></pre>
+<h3 id="调度api">调度API</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 派发子任务</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sessions_spawn(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    agentId<span class="op">=</span><span class="st">&quot;researcher&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    task<span class="op">=</span><span class="st">&quot;分析这篇论文的核心贡献&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">&quot;run&quot;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看运行中的子任务</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>subagents(action<span class="op">=</span><span class="st">&quot;list&quot;</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 干预子任务</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>subagents(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    action<span class="op">=</span><span class="st">&quot;steer&quot;</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span><span class="st">&quot;researcher&quot;</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    message<span class="op">=</span><span class="st">&quot;请重点关注方法论部分&quot;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h3 id="agent配置">Agent配置</h3>
+<p>每个Agent可以有独立的配置：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># agents/researcher.yaml</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> researcher</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> claude-opus-4-5</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system_prompt</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  你是一个学术研究助理，擅长论文分析和文献综述...</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tools</span><span class="kw">:</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> web_search</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> arxiv</span></span></code></pre></div>
+<hr />
+<h2 id="part-5部署与使用">Part 5：部署与使用</h2>
+<h3 id="安装">安装</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS / Linux</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://openclaw.ai/install <span class="kw">|</span> <span class="fu">sh</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 或使用npm</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> openclaw</span></code></pre></div>
+<h3 id="配置向导">配置向导</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 启动交互式配置</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> configure</span></code></pre></div>
+<p>配置向导会引导你完成： - 模型提供商配置 - API Key输入 - 渠道连接</p>
+<h3 id="启动">启动</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 启动Gateway</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> gateway start</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看状态</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> status</span></code></pre></div>
+<h3 id="基本使用">基本使用</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 命令行对话</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> chat <span class="st">&quot;你好&quot;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行一次性任务</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openclaw</span> run <span class="st">&quot;分析这个文件&quot;</span> <span class="at">--file</span> report.pdf</span></code></pre></div>
+<hr />
+<h2 id="part-6与竞品对比">Part 6：与竞品对比</h2>
+<h3 id="openclaw-vs-claude-desktop">OpenClaw vs Claude Desktop</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>OpenClaw</th>
+<th>Claude Desktop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>完整Agent OS</td>
+<td>桌面对话应用</td>
+</tr>
+<tr>
+<td>多Agent</td>
+<td>✅ 原生支持</td>
+<td>❌ 单Agent</td>
+</tr>
+<tr>
+<td>多渠道</td>
+<td>✅ 飞书/TG/WA等</td>
+<td>❌ 仅桌面</td>
+</tr>
+<tr>
+<td>自定义人格</td>
+<td>✅ SOUL.md</td>
+<td>❌ 固定</td>
+</tr>
+<tr>
+<td>记忆系统</td>
+<td>✅ 完整</td>
+<td>△ 有限</td>
+</tr>
+<tr>
+<td>开源</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>开发者/企业</td>
+<td>普通用户</td>
+</tr>
+</tbody>
+</table>
+<h3 id="openclaw-vs-manus">OpenClaw vs Manus</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>OpenClaw</th>
+<th>Manus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开源</td>
+<td>✅</td>
+<td>❌（已被Meta收购）</td>
+</tr>
+<tr>
+<td>多渠道</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>自托管</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>社区</td>
+<td>Discord活跃</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="选型建议">选型建议</h3>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>个人AI助手</td>
+<td>OpenClaw</td>
+</tr>
+<tr>
+<td>企业办公</td>
+<td>OpenClaw + 飞书</td>
+</tr>
+<tr>
+<td>普通用户尝鲜</td>
+<td>Claude Desktop</td>
+</tr>
+<tr>
+<td>开发者构建Agent</td>
+<td>OpenClaw</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-7未来展望">Part 7：未来展望</h2>
+<h3 id="llm-os的发展方向">LLM OS的发展方向</h3>
+<p><strong>短期（1-2年）</strong>： - 更多渠道集成 - 更强的记忆系统 -
+更丰富的Skill生态</p>
+<p><strong>中期（3-5年）</strong>： - 具身智能集成（机器人） -
+多模态原生支持 - 分布式Agent网络</p>
+<p><strong>长期（5-10年）</strong>： - 真正的个人AI助手 - 无处不在的智能
+- 人机协作新范式</p>
+<h3 id="对mba学生的启示">对MBA学生的启示</h3>
+<ol type="1">
+<li><strong>理解这个趋势</strong>：LLM OS代表计算范式的转变</li>
+<li><strong>学会使用</strong>：OpenClaw是实践Agent的好工具</li>
+<li><strong>思考商业机会</strong>：在这个生态中有哪些创业机会？</li>
+</ol>
+<hr />
+<h2 id="课堂实操">课堂实操</h2>
+<h3 id="体验openclaw15分钟">体验OpenClaw（15分钟）</h3>
+<p>如果已安装OpenClaw：</p>
+<ol type="1">
+<li>运行 <code>openclaw status</code> 查看状态</li>
+<li>编辑 <code>~/.openclaw/workspace/SOUL.md</code> 自定义人格</li>
+<li>发送一条测试消息</li>
+</ol>
+<p>如果未安装，可以：</p>
+<ol type="1">
+<li>访问 <a href="https://claw101.com">claw101.com</a> 跟随教程</li>
+<li>或者观看演示视频</li>
+</ol>
+<hr />
+<h2 id="本讲总结">本讲总结</h2>
+<h3 id="核心概念">核心概念</h3>
+<ul>
+<li><strong>LLM OS = AI作为操作系统核心</strong></li>
+<li><strong>OpenClaw六层架构</strong>：Channel → Gateway → Session →
+Agent → Capability → Node</li>
+<li><strong>文件即配置</strong>：SOUL.md/USER.md/MEMORY.md</li>
+<li><strong>CEO模式</strong>：主Agent调度子Agent</li>
+</ul>
+<h3 id="与传统ai应用的区别">与传统AI应用的区别</h3>
+<table>
+<thead>
+<tr>
+<th>传统AI应用</th>
+<th>LLM OS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单一功能</td>
+<td>统一管理</td>
+</tr>
+<tr>
+<td>无状态</td>
+<td>有记忆</td>
+</tr>
+<tr>
+<td>固定能力</td>
+<td>可扩展</td>
+</tr>
+<tr>
+<td>单渠道</td>
+<td>多渠道</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mba关键洞察">MBA关键洞察</h3>
+<ol type="1">
+<li><strong>LLM OS是下一代人机交互范式</strong></li>
+<li><strong>开源方案（如OpenClaw）让企业可控</strong></li>
+<li><strong>文件即配置的设计降低了使用门槛</strong></li>
+<li><strong>多Agent协作是复杂任务的解决方案</strong></li>
+</ol>
+<hr />
+<h2 id="延伸阅读">延伸阅读</h2>
+<h3 id="openclaw资源">OpenClaw资源</h3>
+<ul>
+<li><a href="https://openclaw.ai">官网</a></li>
+<li><a href="https://docs.openclaw.ai">文档</a></li>
+<li><a href="https://github.com/openclaw/openclaw">GitHub</a></li>
+<li><a href="https://discord.gg/clawd">Discord社区</a></li>
+<li><a href="https://claw101.com">教程</a></li>
+</ul>
+<h3 id="视频">视频</h3>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=zjkBMFhNj_g">Andrej
+Karpathy: Intro to LLMs</a></li>
+</ul>
+<hr />
+<p><em>本讲义最后更新：2026-03-01</em></p>
+</body>
+</html>

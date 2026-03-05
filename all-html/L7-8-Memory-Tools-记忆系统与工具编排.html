@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>L7-8-Memory-Tools-记忆系统与工具编排</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">L7-8-Memory-Tools-记忆系统与工具编排</h1>
+</header>
+<h1 id="l7-8-讲义记忆系统与工具编排">L7-8 讲义：记忆系统与工具编排</h1>
+<blockquote>
+<p><strong>课程</strong>: MBA大模型智能体课程<br />
+<strong>课时</strong>: 第7-8讲（90分钟）<br />
+<strong>适用</strong>: 讲师备课 / 学生预习与复习<br />
+<strong>对应Slides</strong>:
+<code>slides-marp/day1-lesson7-8-memory-tools.md</code></p>
+</blockquote>
+<hr />
+<h2 id="本讲核心问题">本讲核心问题</h2>
+<ol type="1">
+<li><strong>为什么Agent需要记忆？</strong> LLM的上下文窗口够用吗？</li>
+<li><strong>记忆有哪些类型？</strong> 短期/长期/情景/语义怎么区分？</li>
+<li><strong>工具使用是什么？</strong> Function Calling如何工作？</li>
+<li><strong>长时间任务怎么管理？</strong> 如何设计Agent Harness？</li>
+</ol>
+<hr />
+<h2 id="part-1为什么需要记忆系统">Part 1：为什么需要记忆系统</h2>
+<h3 id="llm的根本限制">LLM的根本限制</h3>
+<p>即使是200K tokens的上下文窗口，也无法处理： -
+长期对话历史（几个月的交互） - 大量背景知识（整个公司的文档） -
+学习到的经验（过去任务的教训）</p>
+<h3 id="类比理解">类比理解</h3>
+<pre><code>LLM的上下文窗口 = 人的&quot;工作记忆&quot;（正在想的事）
+外部记忆系统 = 人的&quot;长期记忆&quot;（记住的事）</code></pre>
+<p>人能记住20年前的事，但不能同时想1000件事。Agent也一样——需要外部存储来扩展记忆容量。</p>
+<hr />
+<h2 id="part-2记忆类型">Part 2：记忆类型</h2>
+<h3 id="四种记忆类型">四种记忆类型</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                   Agent 记忆体系                     │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  短期记忆 (Working Memory)                         │
+│  └── 当前对话的上下文                              │
+│      实现: 直接放入prompt                          │
+│                                                     │
+│  长期记忆 (Long-term Memory)                       │
+│  └── 历史对话、用户偏好                            │
+│      实现: 向量数据库 + 检索                       │
+│                                                     │
+│  情景记忆 (Episodic Memory)                        │
+│  └── 过去执行任务的完整记录                        │
+│      用途: 从历史中学习、避免重复错误              │
+│                                                     │
+│  语义记忆 (Semantic Memory)                        │
+│  └── 提取的事实、规则、知识                        │
+│      用途: 事实查询、推理依据                      │
+│                                                     │
+└─────────────────────────────────────────────────────┘</code></pre>
+<h3 id="各类型对比">各类型对比</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>内容</th>
+<th>存储周期</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>短期记忆</td>
+<td>当前对话</td>
+<td>会话内</td>
+<td>Prompt内</td>
+</tr>
+<tr>
+<td>长期记忆</td>
+<td>历史交互</td>
+<td>永久</td>
+<td>向量DB</td>
+</tr>
+<tr>
+<td>情景记忆</td>
+<td>任务执行记录</td>
+<td>永久</td>
+<td>结构化存储</td>
+</tr>
+<tr>
+<td>语义记忆</td>
+<td>知识事实</td>
+<td>永久</td>
+<td>知识图谱</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-3memgpt架构">Part 3：MemGPT架构</h2>
+<h3 id="创新点">创新点</h3>
+<p>MemGPT（2023）提出了一个类比操作系统的记忆管理方案：</p>
+<pre><code>传统方法:
+[固定大小的上下文窗口，满了就截断]
+
+MemGPT:
+┌──────────────────────────────────────────────┐
+│  Main Context (主上下文 - 类似内存)           │
+│  • 系统提示词                                 │
+│  • 当前对话                                   │
+│  • 工作记忆                                   │
+└────────────────────┬─────────────────────────┘
+                     │
+         LLM自主决定何时存入/读取
+                     │
+┌────────────────────┴─────────────────────────┐
+│  External Storage (外部存储 - 类似硬盘)       │
+│  • 历史对话摘要                               │
+│  • 用户档案                                   │
+│  • 长期记忆                                   │
+└──────────────────────────────────────────────┘</code></pre>
+<h3 id="核心创新">核心创新</h3>
+<p>LLM自己决定何时”翻页”——读取/写入外部记忆，而不是程序员硬编码规则。</p>
+<hr />
+<h2 id="part-4工具使用tool-use">Part 4：工具使用（Tool Use）</h2>
+<h3 id="function-calling流程">Function Calling流程</h3>
+<pre><code>1. 定义函数
+   {
+     &quot;name&quot;: &quot;get_weather&quot;,
+     &quot;description&quot;: &quot;获取城市天气&quot;,
+     &quot;parameters&quot;: {
+       &quot;city&quot;: {&quot;type&quot;: &quot;string&quot;}
+     }
+   }
+
+2. 用户请求
+   &quot;上海今天天气怎么样？&quot;
+
+3. LLM生成函数调用
+   {&quot;name&quot;: &quot;get_weather&quot;, &quot;arguments&quot;: {&quot;city&quot;: &quot;上海&quot;}}
+
+4. 应用执行函数，返回结果
+   {&quot;temperature&quot;: 22, &quot;condition&quot;: &quot;晴&quot;}
+
+5. LLM根据结果生成回复
+   &quot;上海今天天气晴朗，气温22度，适合外出。&quot;</code></pre>
+<h3 id="常见工具类型">常见工具类型</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>示例</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>搜索</td>
+<td>Google, Bing</td>
+<td>获取实时信息</td>
+</tr>
+<tr>
+<td>计算</td>
+<td>计算器, Python</td>
+<td>数学运算</td>
+</tr>
+<tr>
+<td>API</td>
+<td>天气、股票</td>
+<td>特定领域数据</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>SQL查询</td>
+<td>结构化数据</td>
+</tr>
+<tr>
+<td>文件</td>
+<td>读写文件</td>
+<td>文档处理</td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>网页操作</td>
+<td>Web交互</td>
+</tr>
+</tbody>
+</table>
+<h3 id="工具安全">工具安全</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>注入攻击</td>
+<td>输入验证、沙盒执行</td>
+</tr>
+<tr>
+<td>权限滥用</td>
+<td>最小权限原则</td>
+</tr>
+<tr>
+<td>数据泄露</td>
+<td>数据脱敏、访问控制</td>
+</tr>
+<tr>
+<td>成本失控</td>
+<td>调用次数限制</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-5长时间运行agent的harness设计">Part
+5：长时间运行Agent的Harness设计</h2>
+<h3 id="来源">来源</h3>
+<p>这部分内容来自Anthropic的工程实践文章：<a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Effective
+Harnesses for Long-Running Agents</a></p>
+<h3 id="核心挑战">核心挑战</h3>
+<p>长时间运行的Agent（如需要几小时完成的开发任务）面临特殊挑战： -
+上下文会溢出 - 容易偏离方向 - 难以跟踪进度 - 失败后难以恢复</p>
+<h3 id="两部分架构">两部分架构</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│           长时间Agent架构                            │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  Part 1: Initializer Agent (初始化Agent)           │
+│  ─────────────────────────────────────              │
+│  • 理解用户意图                                     │
+│  • 分解任务为feature_list.json                     │
+│  • 快速执行，确保方向正确                          │
+│                                                     │
+│  Part 2: Coding Agent (执行Agent)                  │
+│  ─────────────────────────────────                  │
+│  • 按feature_list逐个实现                          │
+│  • 更新claude-progress.txt                         │
+│  • 每完成一项就测试验证                            │
+│                                                     │
+└─────────────────────────────────────────────────────┘</code></pre>
+<h3 id="关键文件设计">关键文件设计</h3>
+<p><strong>feature_list.json</strong>：任务清单</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;features&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;用户登录&quot;</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;pending&quot;</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;acceptance_criteria&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;能输入用户名密码&quot;</span><span class="ot">,</span> <span class="st">&quot;验证成功跳转&quot;</span><span class="ot">]</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>claude-progress.txt</strong>：进度追踪</p>
+<pre><code>=== Progress Update ===
+Date: 2026-02-28
+Current Feature: 用户登录 (1/5)
+Status: In Progress
+Completed: 创建了登录页面
+Next: 实现验证逻辑
+Blockers: None</code></pre>
+<h3 id="常见失败模式与解决方案">常见失败模式与解决方案</h3>
+<table>
+<thead>
+<tr>
+<th>失败模式</th>
+<th>表现</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>一次做太多</strong></td>
+<td>想同时改5个文件</td>
+<td>强制每次只做一件事</td>
+</tr>
+<tr>
+<td><strong>过早宣布完成</strong></td>
+<td>说”完成了”但没测试</td>
+<td>要求提供测试证据</td>
+</tr>
+<tr>
+<td><strong>偏离方向</strong></td>
+<td>做了没要求的功能</td>
+<td>定期与feature_list核对</td>
+</tr>
+<tr>
+<td><strong>上下文丢失</strong></td>
+<td>忘了之前做了什么</td>
+<td>读取progress文件</td>
+</tr>
+<tr>
+<td><strong>循环错误</strong></td>
+<td>反复犯同样的错</td>
+<td>记录错误到blockers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="最佳实践">最佳实践</h3>
+<ol type="1">
+<li><strong>增量进度</strong>：小步快跑，每完成一个功能就记录</li>
+<li><strong>测试验证</strong>：不是”我觉得完成了”，而是”测试通过了”</li>
+<li><strong>明确检查点</strong>：定义每个功能的验收标准</li>
+<li><strong>失败恢复</strong>：从progress文件恢复状态</li>
+</ol>
+<hr />
+<h2 id="part-6企业工具集成最佳实践">Part 6：企业工具集成最佳实践</h2>
+<h3 id="渐进式授权">渐进式授权</h3>
+<pre><code>阶段1: 只读权限
+└── Agent只能查询，不能修改
+
+阶段2: 受限写入
+└── 低风险操作自动执行，高风险需要审批
+
+阶段3: 完全授权
+└── 建立信任后开放更多权限</code></pre>
+<h3 id="审计日志">审计日志</h3>
+<p>所有工具调用必须记录： - 谁调用的 - 什么时间 - 调用什么工具 -
+参数是什么 - 结果是什么</p>
+<h3 id="降级策略">降级策略</h3>
+<p>工具不可用时的备选方案：</p>
+<pre><code>主方案: 调用内部API获取数据
+   ↓ (失败)
+备选1: 调用公开API
+   ↓ (失败)
+备选2: 搜索引擎获取
+   ↓ (失败)
+最终: 告知用户暂时无法获取</code></pre>
+<hr />
+<h2 id="课堂实操">课堂实操</h2>
+<h3 id="设计一个记忆系统15分钟">设计一个记忆系统（15分钟）</h3>
+<p>场景：客服Agent需要记住用户的历史咨询</p>
+<p>设计要点： 1. 哪些信息存短期记忆？ 2. 哪些信息存长期记忆？ 3.
+如何检索相关历史？ 4. 何时更新用户画像？</p>
+<hr />
+<h2 id="本讲总结">本讲总结</h2>
+<h3 id="核心概念">核心概念</h3>
+<ul>
+<li><strong>记忆系统</strong>：扩展Agent的”记忆容量”</li>
+<li><strong>四种记忆类型</strong>：短期/长期/情景/语义</li>
+<li><strong>Function Calling</strong>：让LLM调用外部工具</li>
+<li><strong>Agent Harness</strong>：管理长时间运行任务的框架</li>
+</ul>
+<h3 id="设计原则">设计原则</h3>
+<ol type="1">
+<li><strong>最小权限</strong>：工具只开放必要的能力</li>
+<li><strong>增量执行</strong>：大任务分解为小步骤</li>
+<li><strong>记录一切</strong>：便于审计和恢复</li>
+<li><strong>测试验证</strong>：不是”说完成”而是”证明完成”</li>
+</ol>
+<hr />
+<h2 id="延伸阅读">延伸阅读</h2>
+<h3 id="论文">论文</h3>
+<ul>
+<li><a href="https://arxiv.org/abs/2310.08560">MemGPT: Towards LLMs as
+Operating Systems</a></li>
+<li><a href="https://arxiv.org/abs/2302.04761">Toolformer: Language
+Models Can Teach Themselves to Use Tools</a></li>
+</ul>
+<h3 id="文章">文章</h3>
+<ul>
+<li><a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Anthropic:
+Effective Harnesses for Long-Running Agents</a></li>
+</ul>
+<hr />
+<p><em>本讲义最后更新：2026-02-28</em></p>
+</body>
+</html>
