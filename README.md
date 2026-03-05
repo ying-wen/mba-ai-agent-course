@@ -73,12 +73,12 @@
 
 ## 🧪 实验 (Labs)
 
-| 实验 | 主题 |
-|------|------|
-| [Lab 1](labs/lab1-prompt-engineering.md) | Prompt Engineering 实战 |
-| [Lab 2](labs/lab2-openclaw-setup.md) | OpenClaw 环境搭建 |
-| [Lab 3](labs/lab3-skill-development.md) | Skill 开发入门 |
-| [Lab 4](labs/lab4-multi-agent.md) | 多智能体协作 |
+| 实验 | 主题 | 难度 |
+|------|------|------|
+| [Lab 1](labs/lab1-prompt/README.md) | Prompt Engineering Playground | ⭐ |
+| [Lab 2](labs/lab2-workflow/README.md) | 构建 RAG 工作流 | ⭐⭐ |
+| [Lab 3](labs/lab3-agent/README.md) | 实现 ReAct Agent | ⭐⭐ |
+| [Lab 4](labs/lab4-multiagent/README.md) | 多智能体系统 | ⭐⭐⭐ |
 
 > 实验为选修内容，不计入成绩
 
