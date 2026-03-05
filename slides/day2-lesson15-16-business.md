@@ -5,9 +5,9 @@ paginate: true
 backgroundColor: "#f5f5f7"
 color: "#1d1d1f"
 style: |
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+  
   section {
-    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
     background: #f5f5f7;
     color: #1d1d1f;
     padding: 48px 64px;
@@ -1177,43 +1177,6 @@ style: |
 3. 从流程改造切入，而非孤立应用
 4. 持续建设个人与组织的数据能力
 
----
-
-# 九、课堂综合实战
-
----
-
-## 综合练习：设计一个可盈利Agent业务
-
-**任务（小组）**：
-- 选择行业：电商/金融/教育/制造/医疗
-- 完成以下输出：
-  1. 目标客户画像
-  2. BMC 9宫格
-  3. 成本与定价草案
-  4. 12个月里程碑
-
----
-
-## 汇报模板（5分钟/组）
-
-1. 问题定义（30秒）
-2. 解决方案（1分钟）
-3. 经济模型（1分钟）
-4. 风险与治理（1分钟）
-5. 结论与融资计划（1.5分钟）
-
----
-
-## 评分标准
-
-| 维度 | 权重 |
-|---|---:|
-| 商业价值清晰度 | 30% |
-| 单位经济可行性 | 25% |
-| 执行与落地路径 | 20% |
-| 风险治理完整性 | 15% |
-| 表达与逻辑 | 10% |
 
 ---
 
