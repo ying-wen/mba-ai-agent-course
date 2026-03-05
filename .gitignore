@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build output (generated files)
+all-html/
+all-pdf/
+all-pptx/
+output/
+
+# Logs
+*.log
