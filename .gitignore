@@ -1,7 +1,3 @@
-# 忽略编译输出
-all-html/
-all-pdf/
-
 # 忽略辅助文件
 reference/
 scripts/
