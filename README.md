@@ -39,19 +39,19 @@
 
 | 课时 | 主题 | 幻灯片 | 讲义 |
 |------|------|--------|------|
-| L1-2 | 大语言模型基础 | [MD](slides/day1-lesson1-2-llm-basics.md) · [HTML](all-html/day1-lesson1-2-llm-basics.html) | [讲义](lecture-notes/L1-2-LLM-Basics-大语言模型基础.md) · [PDF](all-pdf/L1-2-LLM-Basics-大语言模型基础.pdf) |
-| L3-4 | 工作流与 RAG | [MD](slides/day1-lesson3-4-workflow.md) · [HTML](all-html/day1-lesson3-4-workflow.html) | [讲义](lecture-notes/L3-4-Workflow-RAG-流程与检索增强.md) · [PDF](all-pdf/L3-4-Workflow-RAG-流程与检索增强.pdf) |
-| L5-6 | Agent 架构 | [MD](slides/day1-lesson5-6-agent.md) · [HTML](all-html/day1-lesson5-6-agent.html) | [讲义](lecture-notes/L5-6-Agent-智能体设计与实现.md) · [PDF](all-pdf/L5-6-Agent-智能体设计与实现.pdf) |
-| L7-8 | 记忆与工具 | [MD](slides/day1-lesson7-8-memory-tools.md) · [HTML](all-html/day1-lesson7-8-memory-tools.html) | [讲义](lecture-notes/L7-8-Memory-Tools-记忆系统与工具编排.md) · [PDF](all-pdf/L7-8-Memory-Tools-记忆系统与工具编排.pdf) |
+| L1-2 | 大语言模型基础 | [MD](slides/day1-lesson1-2-llm-basics.md) · [HTML](all-html/day1-lesson1-2-llm-basics.html) | [讲义](lecture-notes/L1-2-大语言模型基础.md) · [PDF](all-pdf/L1-2-LLM-Basics-大语言模型基础.pdf) |
+| L3-4 | 工作流与 RAG | [MD](slides/day1-lesson3-4-workflow.md) · [HTML](all-html/day1-lesson3-4-workflow.html) | [讲义](lecture-notes/L3-4-工作流与RAG.md) · [PDF](all-pdf/L3-4-Workflow-RAG-流程与检索增强.pdf) |
+| L5-6 | Agent 架构 | [MD](slides/day1-lesson5-6-agent.md) · [HTML](all-html/day1-lesson5-6-agent.html) | [讲义](lecture-notes/L5-6-智能体架构.md) · [PDF](all-pdf/L5-6-Agent-智能体设计与实现.pdf) |
+| L7-8 | 记忆与工具 | [MD](slides/day1-lesson7-8-memory-tools.md) · [HTML](all-html/day1-lesson7-8-memory-tools.html) | [讲义](lecture-notes/L7-8-记忆与工具.md) · [PDF](all-pdf/L7-8-Memory-Tools-记忆系统与工具编排.pdf) |
 
 ### Day 2：进阶与落地
 
 | 课时 | 主题 | 幻灯片 | 讲义 |
 |------|------|--------|------|
-| L9-10 | 多智能体系统 | [MD](slides/day2-lesson9-10-multi-agent.md) · [HTML](all-html/day2-lesson9-10-multi-agent.html) | [讲义](lecture-notes/L9-10-MultiAgent-多智能体系统设计.md) · [PDF](all-pdf/L9-10-MultiAgent-多智能体系统设计.pdf) |
-| L11-12 | MCP 与工具生态 | [MD](slides/day2-lesson11-12-mcp.md) · [HTML](all-html/day2-lesson11-12-mcp.html) | [讲义](lecture-notes/L11-12-MCP-工具集成标准.md) · [PDF](all-pdf/L11-12-MCP-工具集成标准.pdf) |
-| L13-14 | LLM OS | [MD](slides/day2-lesson13-14-llm-os.md) · [HTML](all-html/day2-lesson13-14-llm-os.html) | [讲义](lecture-notes/L13-14-LLM-OS-智能体操作系统.md) · [PDF](all-pdf/L13-14-LLM-OS-智能体操作系统.pdf) |
-| L15-16 | 商业落地 | [MD](slides/day2-lesson15-16-business.md) · [HTML](all-html/day2-lesson15-16-business.html) | [讲义](lecture-notes/L15-16-Business-商业落地与未来展望.md) · [PDF](all-pdf/L15-16-Business-商业落地与未来展望.pdf) |
+| L9-10 | 多智能体系统 | [MD](slides/day2-lesson9-10-multi-agent.md) · [HTML](all-html/day2-lesson9-10-multi-agent.html) | [讲义](lecture-notes/L9-10-多智能体系统.md) · [PDF](all-pdf/L9-10-MultiAgent-多智能体系统设计.pdf) |
+| L11-12 | MCP 与工具生态 | [MD](slides/day2-lesson11-12-mcp.md) · [HTML](all-html/day2-lesson11-12-mcp.html) | [讲义](lecture-notes/L11-12-MCP与工具生态.md) · [PDF](all-pdf/L11-12-MCP-工具集成标准.pdf) |
+| L13-14 | LLM OS | [MD](slides/day2-lesson13-14-llm-os.md) · [HTML](all-html/day2-lesson13-14-llm-os.html) | [讲义](lecture-notes/L13-14-智能体操作系统（LLM OS）.md) · [PDF](all-pdf/L13-14-LLM-OS-智能体操作系统.pdf) |
+| L15-16 | 商业落地 | [MD](slides/day2-lesson15-16-business.md) · [HTML](all-html/day2-lesson15-16-business.html) | [讲义](lecture-notes/L15-16-商业落地.md) · [PDF](all-pdf/L15-16-Business-商业落地与未来展望.pdf) |
 
 ### 补充材料
 
@@ -88,7 +88,8 @@
 
 ```
 ├── slides/              # 📽️ 课程幻灯片 (Marp Markdown)
-├── lecture-notes/       # 📖 详细讲义 (Markdown)
+├── lecture-notes/       # 📖 详细讲义 (每节课 1 份，已整合补充章节)
+├── transcripts/         # 🎙️ 讲稿 (每页 slide 对应讲解词)
 ├── all-html/            # 🌐 幻灯片 HTML 输出
 ├── all-pdf/             # 📄 讲义 PDF 输出
 ├── assignments/         # ✏️ 作业要求

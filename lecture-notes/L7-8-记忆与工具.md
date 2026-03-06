@@ -1,0 +1,3534 @@
+# L7-8 讲义：记忆系统与工具编排
+
+> **课程**: MBA大模型智能体课程  
+> **课时**: 第7-8讲（90分钟）  
+> **适用**: 讲师备课 / 学生预习与复习  
+> **对应Slides**: `slides-marp/day1-lesson7-8-memory-tools.md`
+
+---
+
+## 本讲核心问题
+
+1. **为什么Agent需要记忆？** LLM的上下文窗口够用吗？
+2. **记忆有哪些类型？** 短期/长期/情景/语义怎么区分？
+3. **工具使用是什么？** Function Calling如何工作？
+4. **长时间任务怎么管理？** 如何设计Agent Harness？
+
+---
+
+## Part 1：为什么需要记忆系统
+
+### LLM的根本限制
+
+即使是200K tokens的上下文窗口，也无法处理：
+- 长期对话历史（几个月的交互）
+- 大量背景知识（整个公司的文档）
+- 学习到的经验（过去任务的教训）
+
+### 类比理解
+
+```
+LLM的上下文窗口 = 人的"工作记忆"（正在想的事）
+外部记忆系统 = 人的"长期记忆"（记住的事）
+```
+
+人能记住20年前的事，但不能同时想1000件事。Agent也一样——需要外部存储来扩展记忆容量。
+
+---
+
+## Part 2：记忆类型
+
+### 四种记忆类型
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Agent 记忆体系                     │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  短期记忆 (Working Memory)                         │
+│  └── 当前对话的上下文                              │
+│      实现: 直接放入prompt                          │
+│                                                     │
+│  长期记忆 (Long-term Memory)                       │
+│  └── 历史对话、用户偏好                            │
+│      实现: 向量数据库 + 检索                       │
+│                                                     │
+│  情景记忆 (Episodic Memory)                        │
+│  └── 过去执行任务的完整记录                        │
+│      用途: 从历史中学习、避免重复错误              │
+│                                                     │
+│  语义记忆 (Semantic Memory)                        │
+│  └── 提取的事实、规则、知识                        │
+│      用途: 事实查询、推理依据                      │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### 各类型对比
+
+| 类型 | 内容 | 存储周期 | 实现方式 |
+|------|------|----------|----------|
+| 短期记忆 | 当前对话 | 会话内 | Prompt内 |
+| 长期记忆 | 历史交互 | 永久 | 向量DB |
+| 情景记忆 | 任务执行记录 | 永久 | 结构化存储 |
+| 语义记忆 | 知识事实 | 永久 | 知识图谱 |
+
+---
+
+## Part 3：MemGPT架构
+
+### 创新点
+
+MemGPT（2023）提出了一个类比操作系统的记忆管理方案：
+
+```
+传统方法:
+[固定大小的上下文窗口，满了就截断]
+
+MemGPT:
+┌──────────────────────────────────────────────┐
+│  Main Context (主上下文 - 类似内存)           │
+│  • 系统提示词                                 │
+│  • 当前对话                                   │
+│  • 工作记忆                                   │
+└────────────────────┬─────────────────────────┘
+                     │
+         LLM自主决定何时存入/读取
+                     │
+┌────────────────────┴─────────────────────────┐
+│  External Storage (外部存储 - 类似硬盘)       │
+│  • 历史对话摘要                               │
+│  • 用户档案                                   │
+│  • 长期记忆                                   │
+└──────────────────────────────────────────────┘
+```
+
+### 核心创新
+
+LLM自己决定何时"翻页"——读取/写入外部记忆，而不是程序员硬编码规则。
+
+---
+
+## Part 4：工具使用（Tool Use）
+
+### Function Calling流程
+
+```
+1. 定义函数
+   {
+     "name": "get_weather",
+     "description": "获取城市天气",
+     "parameters": {
+       "city": {"type": "string"}
+     }
+   }
+
+2. 用户请求
+   "上海今天天气怎么样？"
+
+3. LLM生成函数调用
+   {"name": "get_weather", "arguments": {"city": "上海"}}
+
+4. 应用执行函数，返回结果
+   {"temperature": 22, "condition": "晴"}
+
+5. LLM根据结果生成回复
+   "上海今天天气晴朗，气温22度，适合外出。"
+```
+
+### 常见工具类型
+
+| 类型 | 示例 | 用途 |
+|------|------|------|
+| 搜索 | Google, Bing | 获取实时信息 |
+| 计算 | 计算器, Python | 数学运算 |
+| API | 天气、股票 | 特定领域数据 |
+| 数据库 | SQL查询 | 结构化数据 |
+| 文件 | 读写文件 | 文档处理 |
+| 浏览器 | 网页操作 | Web交互 |
+
+### 工具安全
+
+| 风险 | 缓解措施 |
+|------|----------|
+| 注入攻击 | 输入验证、沙盒执行 |
+| 权限滥用 | 最小权限原则 |
+| 数据泄露 | 数据脱敏、访问控制 |
+| 成本失控 | 调用次数限制 |
+
+---
+
+## Part 5：长时间运行Agent的Harness设计
+
+### 来源
+
+这部分内容来自Anthropic的工程实践文章：[Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+
+### 核心挑战
+
+长时间运行的Agent（如需要几小时完成的开发任务）面临特殊挑战：
+- 上下文会溢出
+- 容易偏离方向
+- 难以跟踪进度
+- 失败后难以恢复
+
+### 两部分架构
+
+```
+┌─────────────────────────────────────────────────────┐
+│           长时间Agent架构                            │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  Part 1: Initializer Agent (初始化Agent)           │
+│  ─────────────────────────────────────              │
+│  • 理解用户意图                                     │
+│  • 分解任务为feature_list.json                     │
+│  • 快速执行，确保方向正确                          │
+│                                                     │
+│  Part 2: Coding Agent (执行Agent)                  │
+│  ─────────────────────────────────                  │
+│  • 按feature_list逐个实现                          │
+│  • 更新claude-progress.txt                         │
+│  • 每完成一项就测试验证                            │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### 关键文件设计
+
+**feature_list.json**：任务清单
+```json
+{
+  "features": [
+    {
+      "id": "1",
+      "name": "用户登录",
+      "status": "pending",
+      "acceptance_criteria": ["能输入用户名密码", "验证成功跳转"]
+    }
+  ]
+}
+```
+
+**claude-progress.txt**：进度追踪
+```
+=== Progress Update ===
+Date: 2026-02-28
+Current Feature: 用户登录 (1/5)
+Status: In Progress
+Completed: 创建了登录页面
+Next: 实现验证逻辑
+Blockers: None
+```
+
+### 常见失败模式与解决方案
+
+| 失败模式 | 表现 | 解决方案 |
+|----------|------|----------|
+| **一次做太多** | 想同时改5个文件 | 强制每次只做一件事 |
+| **过早宣布完成** | 说"完成了"但没测试 | 要求提供测试证据 |
+| **偏离方向** | 做了没要求的功能 | 定期与feature_list核对 |
+| **上下文丢失** | 忘了之前做了什么 | 读取progress文件 |
+| **循环错误** | 反复犯同样的错 | 记录错误到blockers |
+
+### 最佳实践
+
+1. **增量进度**：小步快跑，每完成一个功能就记录
+2. **测试验证**：不是"我觉得完成了"，而是"测试通过了"
+3. **明确检查点**：定义每个功能的验收标准
+4. **失败恢复**：从progress文件恢复状态
+
+---
+
+## Part 6：企业工具集成最佳实践
+
+### 渐进式授权
+
+```
+阶段1: 只读权限
+└── Agent只能查询，不能修改
+
+阶段2: 受限写入
+└── 低风险操作自动执行，高风险需要审批
+
+阶段3: 完全授权
+└── 建立信任后开放更多权限
+```
+
+### 审计日志
+
+所有工具调用必须记录：
+- 谁调用的
+- 什么时间
+- 调用什么工具
+- 参数是什么
+- 结果是什么
+
+### 降级策略
+
+工具不可用时的备选方案：
+
+```
+主方案: 调用内部API获取数据
+   ↓ (失败)
+备选1: 调用公开API
+   ↓ (失败)
+备选2: 搜索引擎获取
+   ↓ (失败)
+最终: 告知用户暂时无法获取
+```
+
+---
+
+## 课堂实操
+
+### 设计一个记忆系统（15分钟）
+
+场景：客服Agent需要记住用户的历史咨询
+
+设计要点：
+1. 哪些信息存短期记忆？
+2. 哪些信息存长期记忆？
+3. 如何检索相关历史？
+4. 何时更新用户画像？
+
+---
+
+## 本讲总结
+
+### 核心概念
+
+- **记忆系统**：扩展Agent的"记忆容量"
+- **四种记忆类型**：短期/长期/情景/语义
+- **Function Calling**：让LLM调用外部工具
+- **Agent Harness**：管理长时间运行任务的框架
+
+### 设计原则
+
+1. **最小权限**：工具只开放必要的能力
+2. **增量执行**：大任务分解为小步骤
+3. **记录一切**：便于审计和恢复
+4. **测试验证**：不是"说完成"而是"证明完成"
+
+---
+
+## 延伸阅读
+
+### 论文
+- [MemGPT: Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560)
+- [Toolformer: Language Models Can Teach Themselves to Use Tools](https://arxiv.org/abs/2302.04761)
+
+### 文章
+- [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+
+---
+
+*本讲义最后更新：2026-02-28*
+# L7-8 讲义补充：记忆系统深度解析
+
+> **来源**: Datawhale Hello-Agents 第八章：记忆与检索
+> **适用**: 直接插入现有讲义的补充章节
+> **最后更新**: 2026-03-06
+
+---
+
+## 补充 Part A：认知科学视角的记忆系统设计
+
+### A.1 人类记忆系统的层次结构
+
+在构建智能体的记忆系统之前，我们需要从认知科学的角度理解人类是如何处理和存储信息的。人类记忆是一个多层级的认知系统，它不仅能存储信息，还能根据重要性、时间和上下文对信息进行分类和整理。
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        人类记忆系统的层次结构                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   外部刺激 → [感觉记忆] → [工作记忆] → [长期记忆]                         │
+│              (0.5-3秒)    (15-30秒)    (终生)                            │
+│                 ↓            ↓           ↓                              │
+│              容量巨大      7±2项目    容量无限                           │
+│              全感官        当前任务    永久存储                           │
+│                                         ↓                               │
+│                              ┌─────────┴─────────┐                      │
+│                              ↓                   ↓                      │
+│                         [程序性记忆]        [陈述性记忆]                 │
+│                         技能和习惯          可言说的知识                  │
+│                         (骑自行车)              ↓                        │
+│                                      ┌─────────┴─────────┐              │
+│                                      ↓                   ↓              │
+│                                 [语义记忆]          [情景记忆]           │
+│                                 一般知识            个人经历              │
+│                                 (巴黎是首都)        (昨天会议)           │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### A.2 三层记忆的认知科学解释
+
+#### 感觉记忆（Sensory Memory）
+
+- **持续时间**: 极短（0.5-3秒）
+- **容量**: 巨大，几乎无限
+- **功能**: 暂时保存感官接收到的所有原始信息
+- **类型**: 
+  - 图像记忆（视觉）: ~250ms
+  - 回声记忆（听觉）: ~3-4秒
+- **Agent映射**: 原始输入缓冲区、多模态数据的即时处理
+
+#### 工作记忆（Working Memory）
+
+- **持续时间**: 短（15-30秒）
+- **容量**: 有限（Miller定律：7±2个项目）
+- **功能**: 当前任务的信息处理和临时存储
+- **特点**: 需要主动维持，易受干扰
+- **Agent映射**: 当前对话上下文、Prompt中的内容
+
+#### 长期记忆（Long-term Memory）
+
+- **持续时间**: 可达终生
+- **容量**: 几乎无限
+- **功能**: 永久存储重要信息
+- **编码方式**: 语义编码为主
+- **Agent映射**: 向量数据库、知识图谱、历史记录
+
+### A.3 程序性记忆 vs 陈述性记忆
+
+| 维度 | 程序性记忆 | 陈述性记忆 |
+|------|-----------|-----------|
+| **定义** | 技能和习惯的记忆 | 可以用语言表达的知识 |
+| **特点** | 自动化、难以言说 | 可意识提取、可言说 |
+| **例子** | 骑自行车、打字、游泳 | 历史事件、数学公式 |
+| **习得** | 通过反复练习 | 通过学习和经历 |
+| **提取** | 无意识自动激活 | 有意识主动回忆 |
+| **Agent映射** | 工具调用模式、固定流程 | 知识库、对话历史 |
+
+### A.4 语义记忆 vs 情景记忆的深入区分
+
+| 维度 | 语义记忆 | 情景记忆 |
+|------|---------|---------|
+| **内容** | 一般知识、概念、规则 | 个人经历、具体事件 |
+| **时间性** | 不依赖特定时间 | 与特定时间地点绑定 |
+| **例子** | "巴黎是法国首都" | "去年我去巴黎旅游" |
+| **提取方式** | 概念激活 | 情境回溯 |
+| **遗忘曲线** | 相对稳定 | 细节易遗忘 |
+| **神经基础** | 新皮层为主 | 海马体依赖 |
+| **Agent存储** | 知识图谱、向量数据库 | 时间序列日志、会话记录 |
+| **Agent检索** | 语义相似度检索 | 时间+语义混合检索 |
+
+### A.5 从人类记忆到Agent记忆的映射
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│              人类记忆 → Agent记忆 映射关系                          │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  人类记忆类型          Agent实现              技术组件              │
+│  ─────────────────────────────────────────────────────────────     │
+│  感觉记忆              感知记忆              多模态编码器           │
+│  (Sensory)            (PerceptualMemory)    CLIP/CLAP模型          │
+│                                                                    │
+│  工作记忆              工作记忆              内存列表 + TTL          │
+│  (Working)            (WorkingMemory)       TF-IDF + 关键词        │
+│                                                                    │
+│  情景记忆              情景记忆              SQLite + Qdrant        │
+│  (Episodic)           (EpisodicMemory)      时间序列 + 向量检索     │
+│                                                                    │
+│  语义记忆              语义记忆              Neo4j + Qdrant         │
+│  (Semantic)           (SemanticMemory)      知识图谱 + 向量检索     │
+│                                                                    │
+│  程序性记忆            工具调用模式          Function定义 + 调用历史 │
+│  (Procedural)         (Tool Patterns)       强化学习优化            │
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### A.6 记忆形成的认知过程与技术实现
+
+人类记忆的形成经历五个阶段，每个阶段都有对应的技术实现：
+
+| 认知阶段 | 人类过程 | Agent实现 | 关键技术 |
+|---------|---------|----------|---------|
+| **编码** | 感知→神经表示 | 文本→向量嵌入 | Embedding模型 |
+| **存储** | 神经突触连接 | 持久化存储 | 向量DB/图DB/SQLite |
+| **检索** | 线索激活记忆 | 相似度搜索 | 语义检索/混合检索 |
+| **整合** | 短期→长期转化 | 记忆类型转换 | consolidate操作 |
+| **遗忘** | 突触连接弱化 | 删除/衰减 | forget策略 |
+
+---
+
+## 补充 Part B：HelloAgents 记忆系统架构
+
+### B.1 四层架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    HelloAgents 记忆系统架构                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐ │
+│  │ 基础设施层 (Infrastructure Layer)                              │ │
+│  │  ├── MemoryManager    - 记忆管理器（统一调度和协调）           │ │
+│  │  ├── MemoryItem       - 记忆数据结构（标准化记忆项）           │ │
+│  │  ├── MemoryConfig     - 配置管理（系统参数设置）               │ │
+│  │  └── BaseMemory       - 记忆基类（通用接口定义）               │ │
+│  └───────────────────────────────────────────────────────────────┘ │
+│                              ↓                                      │
+│  ┌───────────────────────────────────────────────────────────────┐ │
+│  │ 记忆类型层 (Memory Types Layer)                                │ │
+│  │  ├── WorkingMemory    - 工作记忆（临时信息，TTL管理）          │ │
+│  │  ├── EpisodicMemory   - 情景记忆（具体事件，时间序列）         │ │
+│  │  ├── SemanticMemory   - 语义记忆（抽象知识，图谱关系）         │ │
+│  │  └── PerceptualMemory - 感知记忆（多模态数据）                 │ │
+│  └───────────────────────────────────────────────────────────────┘ │
+│                              ↓                                      │
+│  ┌───────────────────────────────────────────────────────────────┐ │
+│  │ 存储后端层 (Storage Backend Layer)                             │ │
+│  │  ├── QdrantVectorStore    - 向量存储（高性能语义检索）         │ │
+│  │  ├── Neo4jGraphStore      - 图存储（知识图谱管理）             │ │
+│  │  └── SQLiteDocumentStore  - 文档存储（结构化持久化）           │ │
+│  └───────────────────────────────────────────────────────────────┘ │
+│                              ↓                                      │
+│  ┌───────────────────────────────────────────────────────────────┐ │
+│  │ 嵌入服务层 (Embedding Service Layer)                           │ │
+│  │  ├── DashScopeEmbedding        - 通义千问嵌入（云端API）       │ │
+│  │  ├── LocalTransformerEmbedding - 本地嵌入（离线部署）          │ │
+│  │  └── TFIDFEmbedding            - TFIDF嵌入（轻量级兜底）       │ │
+│  └───────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### B.2 核心数据结构
+
+#### MemoryItem - 标准化记忆项
+
+```python
+@dataclass
+class MemoryItem:
+    """标准化记忆项"""
+    id: str                    # 唯一标识符
+    content: str               # 记忆内容
+    memory_type: str           # 类型: working/episodic/semantic/perceptual
+    importance: float          # 重要性 [0.0, 1.0]
+    timestamp: datetime        # 创建时间
+    metadata: Dict[str, Any]   # 扩展元数据
+    embedding: Optional[List[float]] = None  # 向量表示
+```
+
+#### MemoryConfig - 配置管理
+
+```python
+@dataclass
+class MemoryConfig:
+    """记忆系统配置"""
+    # 工作记忆配置
+    working_memory_capacity: int = 50      # 最大容量
+    working_memory_ttl: int = 60           # 存活时间(分钟)
+    
+    # 存储后端配置
+    database_path: str = "./memory_data/memory.db"
+    qdrant_url: str = None
+    qdrant_api_key: str = None
+    neo4j_uri: str = None
+    neo4j_username: str = "neo4j"
+    neo4j_password: str = None
+    
+    # 嵌入模型配置
+    embed_model_type: str = "dashscope"    # dashscope/local/tfidf
+    embed_model_name: str = None
+    vector_dimension: int = 384
+```
+
+### B.3 记忆类型层详解
+
+#### 四种记忆类型对比
+
+| 记忆类型 | 存储周期 | 存储后端 | 检索方式 | 典型用途 |
+|---------|---------|---------|---------|---------|
+| **WorkingMemory** | 会话内 | 纯内存 | TF-IDF + 关键词 | 当前对话上下文 |
+| **EpisodicMemory** | 永久 | SQLite + Qdrant | 时间序列 + 向量 | 历史交互事件 |
+| **SemanticMemory** | 永久 | Qdrant + Neo4j | 向量 + 图遍历 | 知识概念关系 |
+| **PerceptualMemory** | 动态 | SQLite + Qdrant | 同/跨模态向量 | 多模态数据 |
+
+#### 各记忆类型的评分公式
+
+**工作记忆评分**:
+```
+final_score = (TF-IDF相似度 × 0.7 + 关键词匹配 × 0.3) × 时间衰减 × (0.8 + 重要性 × 0.4)
+```
+
+**情景记忆评分**:
+```
+final_score = (向量相似度 × 0.8 + 时间近因性 × 0.2) × (0.8 + 重要性 × 0.4)
+```
+
+**语义记忆评分**:
+```
+final_score = (向量相似度 × 0.7 + 图相似度 × 0.3) × (0.8 + 重要性 × 0.4)
+```
+
+**感知记忆评分**:
+```
+final_score = (模态向量相似度 × 0.8 + 时间近因性 × 0.2) × (0.8 + 重要性 × 0.4)
+```
+
+---
+
+## 补充 Part C：MemoryTool 完整操作详解
+
+### C.1 操作总览
+
+```python
+def execute(self, action: str, **kwargs) -> str:
+    """MemoryTool 支持的完整操作列表"""
+    
+    operations = {
+        # 基础操作
+        "add": "添加记忆（支持4种类型）",
+        "search": "搜索记忆（语义搜索）",
+        "update": "更新现有记忆",
+        "remove": "删除指定记忆",
+        
+        # 生命周期管理
+        "forget": "遗忘机制（3种策略）",
+        "consolidate": "记忆整合（短期→长期）",
+        
+        # 统计与摘要
+        "summary": "记忆摘要",
+        "stats": "统计信息",
+        
+        # 管理操作
+        "clear_all": "清空所有记忆"
+    }
+```
+
+### C.2 add - 添加记忆
+
+```python
+# 函数签名
+def _add_memory(
+    self,
+    content: str = "",           # 记忆内容
+    memory_type: str = "working", # 类型: working/episodic/semantic/perceptual
+    importance: float = 0.5,      # 重要性 [0.0, 1.0]
+    file_path: str = None,        # 多模态文件路径(感知记忆)
+    modality: str = None,         # 模态类型: text/image/audio
+    **metadata                    # 扩展元数据
+) -> str
+```
+
+**使用示例**:
+
+```python
+# 1. 工作记忆 - 临时信息，会话结束后清理
+memory_tool.execute("add",
+    content="用户刚才问了关于Python函数的问题",
+    memory_type="working",
+    importance=0.6
+)
+
+# 2. 情景记忆 - 具体事件，包含时间地点
+memory_tool.execute("add",
+    content="2024年3月15日，用户张三完成了第一个Python项目",
+    memory_type="episodic",
+    importance=0.8,
+    event_type="milestone",
+    location="在线学习平台"
+)
+
+# 3. 语义记忆 - 抽象知识，用于推理
+memory_tool.execute("add",
+    content="Python是一种解释型、面向对象的编程语言",
+    memory_type="semantic",
+    importance=0.9,
+    knowledge_type="factual"
+)
+
+# 4. 感知记忆 - 多模态信息
+memory_tool.execute("add",
+    content="用户上传了一张Python代码截图",
+    memory_type="perceptual",
+    importance=0.7,
+    modality="image",
+    file_path="./uploads/code_screenshot.png"
+)
+```
+
+### C.3 search - 搜索记忆
+
+```python
+# 函数签名
+def _search_memory(
+    self,
+    query: str,                   # 搜索查询
+    limit: int = 5,               # 返回数量
+    memory_types: List[str] = None, # 限定记忆类型
+    memory_type: str = None,      # 单一类型（简写）
+    min_importance: float = 0.1   # 最低重要性阈值
+) -> str
+```
+
+**使用示例**:
+
+```python
+# 基础搜索
+result = memory_tool.execute("search", 
+    query="Python编程", 
+    limit=5
+)
+
+# 指定单一类型搜索
+result = memory_tool.execute("search",
+    query="学习进度",
+    memory_type="episodic",
+    limit=3
+)
+
+# 多类型搜索 + 重要性过滤
+result = memory_tool.execute("search",
+    query="函数定义",
+    memory_types=["semantic", "episodic"],
+    min_importance=0.5
+)
+```
+
+### C.4 forget - 遗忘机制（三种策略）
+
+```python
+# 函数签名
+def _forget(
+    self, 
+    strategy: str = "importance_based",  # 遗忘策略
+    threshold: float = 0.1,              # 重要性阈值
+    max_age_days: int = 30               # 时间阈值（天）
+) -> str
+```
+
+**三种遗忘策略**:
+
+| 策略 | 说明 | 适用场景 |
+|-----|------|---------|
+| `importance_based` | 删除重要性低于阈值的记忆 | 清理低价值信息 |
+| `time_based` | 删除超过指定天数的记忆 | 清理过时信息 |
+| `capacity_based` | 容量超限时删除最不重要的 | 存储空间管理 |
+
+**使用示例**:
+
+```python
+# 策略1: 基于重要性 - 删除重要性<0.2的记忆
+memory_tool.execute("forget",
+    strategy="importance_based",
+    threshold=0.2
+)
+
+# 策略2: 基于时间 - 删除30天前的记忆
+memory_tool.execute("forget",
+    strategy="time_based",
+    max_age_days=30
+)
+
+# 策略3: 基于容量 - 超限时删除重要性<0.3的记忆
+memory_tool.execute("forget",
+    strategy="capacity_based",
+    threshold=0.3
+)
+```
+
+### C.5 consolidate - 记忆整合
+
+```python
+# 函数签名
+def _consolidate(
+    self, 
+    from_type: str = "working",        # 源类型
+    to_type: str = "episodic",         # 目标类型
+    importance_threshold: float = 0.7   # 整合阈值
+) -> str
+```
+
+**记忆整合路径**:
+
+```
+工作记忆 ──(重要性≥0.7)──→ 情景记忆 ──(重要性≥0.8)──→ 语义记忆
+  (临时)                    (长期事件)                  (抽象知识)
+```
+
+**使用示例**:
+
+```python
+# 将重要的工作记忆转为情景记忆（默认路径）
+memory_tool.execute("consolidate",
+    from_type="working",
+    to_type="episodic",
+    importance_threshold=0.7
+)
+
+# 将重要的情景记忆提炼为语义记忆
+memory_tool.execute("consolidate",
+    from_type="episodic",
+    to_type="semantic",
+    importance_threshold=0.8
+)
+```
+
+### C.6 summary & stats - 统计信息
+
+```python
+# 获取记忆摘要
+result = memory_tool.execute("summary")
+# 输出示例:
+# 📊 记忆摘要:
+# - 工作记忆: 12条 (最近: 用户询问了Python函数...)
+# - 情景记忆: 45条 (最近: 2024-03-15 完成项目...)
+# - 语义记忆: 23条 (最近: Python是解释型语言...)
+
+# 获取详细统计
+result = memory_tool.execute("stats")
+# 输出示例:
+# 📈 记忆统计:
+# - 总记忆数: 80
+# - 工作记忆: 12 (平均重要性: 0.65)
+# - 情景记忆: 45 (平均重要性: 0.72)
+# - 语义记忆: 23 (平均重要性: 0.85)
+# - 存储空间: 2.3 MB
+```
+
+---
+
+## 补充 Part D：存储后端详解
+
+### D.1 向量存储（Qdrant）- 语义检索
+
+**特点**:
+- 高性能向量相似度搜索
+- 支持过滤条件（metadata filtering）
+- 分布式部署能力
+- 云服务和本地部署双模式
+
+**适用场景**:
+- 语义相似度检索
+- 情景记忆的向量索引
+- 感知记忆的多模态向量存储
+
+**配置示例**:
+```bash
+# .env 配置
+QDRANT_URL=https://your-cluster.qdrant.tech:6333
+QDRANT_API_KEY=your_api_key
+QDRANT_COLLECTION=hello_agents_vectors
+QDRANT_VECTOR_SIZE=384
+QDRANT_DISTANCE=cosine
+```
+
+**核心操作**:
+```python
+# 添加向量
+store.add_vectors(
+    vectors=[embedding],
+    metadata=[{"memory_id": "xxx", "type": "semantic"}],
+    ids=["unique_id"]
+)
+
+# 相似度搜索
+results = store.search_similar(
+    query_vector=query_embedding,
+    limit=10,
+    where={"type": "semantic"}
+)
+```
+
+### D.2 图存储（Neo4j）- 知识图谱
+
+**特点**:
+- 原生图数据库
+- Cypher查询语言
+- 支持复杂关系推理
+- 可视化友好
+
+**适用场景**:
+- 实体关系存储
+- 知识图谱构建
+- 关系路径查询
+- 语义记忆的关系层
+
+**配置示例**:
+```bash
+# .env 配置
+NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_password
+NEO4J_DATABASE=neo4j
+```
+
+**核心操作**:
+```python
+# 创建实体节点
+graph.create_node(
+    label="Concept",
+    properties={"name": "Python", "type": "programming_language"}
+)
+
+# 创建关系
+graph.create_relationship(
+    from_node="Python",
+    to_node="Machine Learning",
+    relationship_type="USED_FOR"
+)
+
+# 图查询
+results = graph.query("""
+    MATCH (a:Concept)-[r:RELATED_TO]->(b:Concept)
+    WHERE a.name = $name
+    RETURN b.name, type(r)
+""", {"name": "Python"})
+```
+
+### D.3 文档存储（SQLite）- 结构化持久化
+
+**特点**:
+- 轻量级，无需额外服务
+- 支持复杂SQL查询
+- 事务支持
+- 适合结构化元数据
+
+**适用场景**:
+- 记忆元数据存储
+- 会话历史记录
+- 结构化查询
+- 情景记忆的主存储
+
+**表结构设计**:
+```sql
+CREATE TABLE memories (
+    id TEXT PRIMARY KEY,
+    content TEXT NOT NULL,
+    memory_type TEXT NOT NULL,
+    importance REAL DEFAULT 0.5,
+    timestamp TEXT NOT NULL,
+    metadata JSON,
+    embedding BLOB
+);
+
+CREATE INDEX idx_type ON memories(memory_type);
+CREATE INDEX idx_importance ON memories(importance);
+CREATE INDEX idx_timestamp ON memories(timestamp);
+```
+
+### D.4 三种存储的选择建议
+
+| 需求场景 | 推荐存储 | 理由 |
+|---------|---------|------|
+| 纯语义检索 | Qdrant | 向量检索性能最优 |
+| 关系推理 | Neo4j | 图遍历和路径查询 |
+| 结构化查询 | SQLite | SQL灵活性+轻量级 |
+| 混合检索 | Qdrant + SQLite | 向量+结构化条件 |
+| 知识图谱 | Neo4j + Qdrant | 关系+语义双重能力 |
+| 离线/边缘部署 | SQLite | 零依赖，轻量级 |
+
+**混合存储架构示例**:
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    混合存储架构                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   查询请求                                                   │
+│      ↓                                                      │
+│   ┌─────────────────────────────────────────────────────┐  │
+│   │                  MemoryManager                       │  │
+│   │  ┌─────────┐  ┌─────────┐  ┌─────────┐             │  │
+│   │  │ SQLite  │  │ Qdrant  │  │  Neo4j  │             │  │
+│   │  │(元数据) │  │(向量)   │  │(关系)   │             │  │
+│   │  └────┬────┘  └────┬────┘  └────┬────┘             │  │
+│   │       │            │            │                   │  │
+│   │       └────────────┼────────────┘                   │  │
+│   │                    ↓                                │  │
+│   │              结果融合排序                            │  │
+│   └─────────────────────────────────────────────────────┘  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 补充 Part E：嵌入服务配置
+
+### E.1 DashScope（阿里云通义千问）
+
+**特点**:
+- 云端API，无需本地资源
+- 中文优化效果好
+- 支持大规模文本
+
+**配置**:
+```bash
+# .env 配置
+EMBED_MODEL_TYPE=dashscope
+EMBED_MODEL_NAME=text-embedding-v3
+EMBED_API_KEY=your_dashscope_api_key
+```
+
+**使用示例**:
+```python
+from hello_agents.memory.embedding import get_text_embedder
+
+embedder = get_text_embedder()  # 自动使用DashScope
+vectors = embedder.encode(["这是一段中文文本"])
+```
+
+### E.2 本地模型（sentence-transformers）
+
+**特点**:
+- 离线运行，数据不出本地
+- 一次下载，持续使用
+- 适合隐私敏感场景
+
+**配置**:
+```bash
+# .env 配置
+EMBED_MODEL_TYPE=local
+EMBED_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
+```
+
+**常用模型推荐**:
+
+| 模型 | 维度 | 语言 | 特点 |
+|-----|-----|-----|-----|
+| `all-MiniLM-L6-v2` | 384 | 英文为主 | 轻量快速 |
+| `paraphrase-multilingual-MiniLM-L12-v2` | 384 | 多语言 | 中文支持好 |
+| `text2vec-base-chinese` | 768 | 中文 | 中文专精 |
+
+### E.3 TFIDF（轻量级兜底）
+
+**特点**:
+- 零依赖，纯Python实现
+- 无需模型下载
+- 适合快速原型和测试
+
+**配置**:
+```bash
+# .env 配置
+EMBED_MODEL_TYPE=tfidf
+```
+
+**适用场景**:
+- 快速原型开发
+- 资源受限环境
+- 简单关键词匹配场景
+
+### E.4 嵌入服务选择决策树
+
+```
+需要中文语义理解？
+  ├─ 是 → 数据可上云？
+  │       ├─ 是 → DashScope (text-embedding-v3)
+  │       └─ 否 → 本地 (text2vec-base-chinese)
+  │
+  └─ 否 → 多语言需求？
+          ├─ 是 → 本地 (paraphrase-multilingual-MiniLM-L12-v2)
+          └─ 否 → 资源充足？
+                  ├─ 是 → 本地 (all-MiniLM-L6-v2)
+                  └─ 否 → TFIDF (兜底方案)
+```
+
+### E.5 统一嵌入接口
+
+HelloAgents提供了统一的嵌入接口，自动处理模型选择和降级：
+
+```python
+from hello_agents.memory.embedding import (
+    get_text_embedder,
+    get_dimension,
+    create_embedding_model_with_fallback
+)
+
+# 自动选择嵌入模型（根据.env配置）
+embedder = get_text_embedder()
+
+# 获取向量维度
+dim = get_dimension(default=384)
+
+# 带降级的模型创建
+# 优先级: DashScope → Local → TFIDF
+embedder = create_embedding_model_with_fallback()
+
+# 批量编码
+texts = ["文本1", "文本2", "文本3"]
+vectors = embedder.encode(texts)  # List[List[float]]
+```
+
+---
+
+## 最佳实践总结
+
+### 1. 记忆类型选择
+
+| 场景 | 推荐记忆类型 | 理由 |
+|-----|-------------|-----|
+| 当前对话上下文 | WorkingMemory | 快速访问，自动清理 |
+| 用户历史行为 | EpisodicMemory | 时间序列，可回溯 |
+| 领域知识库 | SemanticMemory | 关系推理，知识图谱 |
+| 上传的图片/文件 | PerceptualMemory | 多模态支持 |
+
+### 2. 存储后端配置建议
+
+| 部署环境 | 推荐配置 |
+|---------|---------|
+| **开发/测试** | SQLite + TFIDF |
+| **生产-单机** | SQLite + Qdrant(云) + 本地Embedding |
+| **生产-分布式** | Qdrant(云) + Neo4j(云) + DashScope |
+| **边缘/离线** | SQLite + 本地Embedding |
+
+### 3. 重要性阈值设置
+
+| 操作 | 建议阈值 | 说明 |
+|-----|---------|-----|
+| 整合(working→episodic) | 0.7 | 只保留重要对话 |
+| 整合(episodic→semantic) | 0.8 | 只提炼核心知识 |
+| 遗忘(importance_based) | 0.2 | 清理低价值信息 |
+| 搜索(min_importance) | 0.1 | 过滤噪声记忆 |
+
+---
+
+*补充内容基于 Datawhale Hello-Agents 第八章，适配MBA智能体课程讲义*
+# L7-8 补充章节：记忆系统深度实现
+
+> **课程**: MBA大模型智能体课程  
+> **补充来源**: Datawhale Hello-Agents 第八章  
+> **适用**: 讲师备课 / 学生深入学习
+
+---
+
+## 背景
+
+原有L7-8讲义介绍了四种记忆类型和MemGPT架构概念，但缺少：
+1. **认知科学视角**的记忆系统设计思路
+2. **MemoryTool完整操作**（add/search/forget/consolidate）
+3. **存储后端详解**（向量存储、图存储、文档存储）
+4. **嵌入服务配置**和实际代码示例
+
+本补充章节将从认知科学出发，深入到工程实现层面。
+
+---
+
+## 补充内容
+
+### Part 1: 认知科学视角的记忆系统设计
+
+#### 1.1 人类记忆系统的启发
+
+在设计智能体记忆系统前，理解人类大脑如何处理和存储信息非常重要。认知心理学将人类记忆分为以下层次：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    人类记忆系统层次结构                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  感觉记忆 (Sensory Memory)                                  │
+│  ├── 持续时间: 0.5-3秒                                      │
+│  ├── 容量: 巨大                                             │
+│  └── 功能: 暂存感官信息，大部分被遗忘                        │
+│                                                             │
+│  工作记忆 (Working Memory)                                  │
+│  ├── 持续时间: 15-30秒                                      │
+│  ├── 容量: 7±2个项目                                        │
+│  └── 功能: 当前任务的信息处理"工作台"                        │
+│                                                             │
+│  长期记忆 (Long-term Memory)                                │
+│  ├── 持续时间: 可达终生                                      │
+│  ├── 容量: 几乎无限                                         │
+│  └── 分类:                                                  │
+│      ├── 程序性记忆: 技能和习惯（骑自行车）                   │
+│      └── 陈述性记忆:                                        │
+│          ├── 语义记忆: 一般知识（"巴黎是法国首都"）           │
+│          └── 情景记忆: 个人经历（"昨天的会议"）              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 1.2 记忆形成的认知过程
+
+人类记忆的形成经历以下阶段，每个阶段都有对应的技术实现：
+
+| 认知阶段 | 描述 | 技术实现 |
+|---------|------|---------|
+| **编码 (Encoding)** | 将感知信息转换为可存储形式 | 文本嵌入向量化 |
+| **存储 (Storage)** | 保存编码后的信息 | 向量数据库/图数据库 |
+| **检索 (Retrieval)** | 根据需要提取相关信息 | 相似度搜索/关系查询 |
+| **整合 (Consolidation)** | 短期记忆转化为长期记忆 | 记忆类型转换 |
+| **遗忘 (Forgetting)** | 删除不重要或过时的信息 | 基于策略的清理 |
+
+#### 1.3 四层架构设计
+
+基于认知科学启发，我们设计了四层记忆系统架构：
+
+```
+Agent记忆系统四层架构
+├── 基础设施层 (Infrastructure Layer)
+│   ├── MemoryManager - 记忆管理器（统一调度）
+│   ├── MemoryItem - 记忆数据结构
+│   ├── MemoryConfig - 配置管理
+│   └── BaseMemory - 记忆基类
+│
+├── 记忆类型层 (Memory Types Layer)
+│   ├── WorkingMemory - 工作记忆（TTL管理，纯内存）
+│   ├── EpisodicMemory - 情景记忆（时间序列，SQLite+Qdrant）
+│   ├── SemanticMemory - 语义记忆（知识图谱，Qdrant+Neo4j）
+│   └── PerceptualMemory - 感知记忆（多模态数据）
+│
+├── 存储后端层 (Storage Backend Layer)
+│   ├── QdrantVectorStore - 向量存储（语义检索）
+│   ├── Neo4jGraphStore - 图存储（知识图谱）
+│   └── SQLiteDocumentStore - 文档存储（结构化持久化）
+│
+└── 嵌入服务层 (Embedding Service Layer)
+    ├── DashScopeEmbedding - 云端API（通义千问）
+    ├── LocalTransformerEmbedding - 本地模型
+    └── TFIDFEmbedding - 轻量级兜底方案
+```
+
+---
+
+### Part 2: MemoryTool 完整操作详解
+
+#### 2.1 MemoryTool 接口设计
+
+MemoryTool采用**统一入口，分发处理**的架构模式：
+
+```python
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+
+class MemoryTool:
+    """
+    记忆工具 - 为Agent提供完整的记忆能力
+    
+    支持的操作:
+    - add: 添加记忆（4种类型）
+    - search: 搜索记忆
+    - summary: 获取记忆摘要
+    - stats: 获取统计信息
+    - update: 更新记忆
+    - remove: 删除记忆
+    - forget: 遗忘记忆（多种策略）
+    - consolidate: 整合记忆（短期→长期）
+    - clear_all: 清空所有记忆
+    """
+    
+    def __init__(
+        self,
+        user_id: str = "default_user",
+        memory_config: MemoryConfig = None,
+        memory_types: List[str] = None
+    ):
+        self.user_id = user_id
+        self.memory_config = memory_config or MemoryConfig()
+        self.memory_types = memory_types or ["working", "episodic", "semantic"]
+        self.current_session_id = None
+        
+        # 初始化记忆管理器
+        self.memory_manager = MemoryManager(
+            config=self.memory_config,
+            user_id=user_id,
+            enable_working="working" in self.memory_types,
+            enable_episodic="episodic" in self.memory_types,
+            enable_semantic="semantic" in self.memory_types,
+            enable_perceptual="perceptual" in self.memory_types
+        )
+    
+    def execute(self, action: str, **kwargs) -> str:
+        """统一执行入口"""
+        action_map = {
+            "add": self._add_memory,
+            "search": self._search_memory,
+            "summary": self._get_summary,
+            "stats": self._get_stats,
+            "update": self._update_memory,
+            "remove": self._remove_memory,
+            "forget": self._forget,
+            "consolidate": self._consolidate,
+            "clear_all": self._clear_all,
+        }
+        
+        handler = action_map.get(action)
+        if not handler:
+            return f"❌ 未知操作: {action}"
+        
+        return handler(**kwargs)
+```
+
+#### 2.2 操作1: add（添加记忆）
+
+**功能**：将新信息编码并存储到指定类型的记忆中。
+
+```python
+def _add_memory(
+    self,
+    content: str = "",
+    memory_type: str = "working",
+    importance: float = 0.5,
+    file_path: str = None,
+    modality: str = None,
+    **metadata
+) -> str:
+    """
+    添加记忆
+    
+    Args:
+        content: 记忆内容
+        memory_type: 记忆类型 (working/episodic/semantic/perceptual)
+        importance: 重要性 (0.0-1.0)
+        file_path: 文件路径（感知记忆用）
+        modality: 模态类型（image/audio/video）
+        **metadata: 额外元数据
+    
+    Returns:
+        操作结果消息
+    """
+    try:
+        # 确保会话ID存在
+        if self.current_session_id is None:
+            self.current_session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+        # 感知记忆特殊处理
+        if memory_type == "perceptual" and file_path:
+            inferred = modality or self._infer_modality(file_path)
+            metadata.setdefault("modality", inferred)
+            metadata.setdefault("raw_data", file_path)
+
+        # 添加会话信息
+        metadata.update({
+            "session_id": self.current_session_id,
+            "timestamp": datetime.now().isoformat()
+        })
+
+        memory_id = self.memory_manager.add_memory(
+            content=content,
+            memory_type=memory_type,
+            importance=importance,
+            metadata=metadata,
+            auto_classify=False
+        )
+
+        return f"✅ 记忆已添加 (ID: {memory_id[:8]}..., 类型: {memory_type})"
+
+    except Exception as e:
+        return f"❌ 添加记忆失败: {str(e)}"
+```
+
+**四种记忆类型的使用示例**：
+
+```python
+# 1. 工作记忆 - 临时信息，会话结束后清理
+memory_tool.execute("add",
+    content="用户刚才询问了Python函数的问题",
+    memory_type="working",
+    importance=0.6
+)
+
+# 2. 情景记忆 - 具体事件和经历
+memory_tool.execute("add",
+    content="2026年3月6日，用户张三完成了第一个AI Agent项目",
+    memory_type="episodic",
+    importance=0.8,
+    event_type="milestone",
+    location="在线学习平台"
+)
+
+# 3. 语义记忆 - 抽象知识和概念
+memory_tool.execute("add",
+    content="ReAct是一种将推理和行动交织进行的Agent范式",
+    memory_type="semantic",
+    importance=0.9,
+    knowledge_type="factual"
+)
+
+# 4. 感知记忆 - 多模态信息
+memory_tool.execute("add",
+    content="用户上传了一张架构图",
+    memory_type="perceptual",
+    importance=0.7,
+    modality="image",
+    file_path="./uploads/architecture.png"
+)
+```
+
+#### 2.3 操作2: search（搜索记忆）
+
+**功能**：在记忆库中检索与查询最相关的内容。
+
+```python
+def _search_memory(
+    self,
+    query: str,
+    limit: int = 5,
+    memory_types: List[str] = None,
+    memory_type: str = None,
+    min_importance: float = 0.1
+) -> str:
+    """
+    搜索记忆
+    
+    Args:
+        query: 搜索查询
+        limit: 返回结果数量
+        memory_types: 要搜索的记忆类型列表
+        memory_type: 单一记忆类型（便捷参数）
+        min_importance: 最小重要性阈值
+    
+    Returns:
+        格式化的搜索结果
+    """
+    try:
+        # 参数标准化
+        if memory_type and not memory_types:
+            memory_types = [memory_type]
+
+        results = self.memory_manager.retrieve_memories(
+            query=query,
+            limit=limit,
+            memory_types=memory_types,
+            min_importance=min_importance
+        )
+
+        if not results:
+            return f"🔍 未找到与 '{query}' 相关的记忆"
+
+        # 格式化输出
+        formatted = [f"🔍 找到 {len(results)} 条相关记忆:"]
+        
+        type_labels = {
+            "working": "工作记忆",
+            "episodic": "情景记忆",
+            "semantic": "语义记忆",
+            "perceptual": "感知记忆"
+        }
+
+        for i, memory in enumerate(results, 1):
+            label = type_labels.get(memory.memory_type, memory.memory_type)
+            preview = memory.content[:80] + "..." if len(memory.content) > 80 else memory.content
+            formatted.append(
+                f"{i}. [{label}] {preview} (重要性: {memory.importance:.2f})"
+            )
+
+        return "\n".join(formatted)
+
+    except Exception as e:
+        return f"❌ 搜索记忆失败: {str(e)}"
+```
+
+**搜索示例**：
+
+```python
+# 基础搜索
+result = memory_tool.execute("search", query="Python编程", limit=5)
+
+# 指定记忆类型
+result = memory_tool.execute("search",
+    query="学习进度",
+    memory_type="episodic",
+    limit=3
+)
+
+# 多类型搜索，带重要性过滤
+result = memory_tool.execute("search",
+    query="Agent架构",
+    memory_types=["semantic", "episodic"],
+    min_importance=0.5
+)
+```
+
+#### 2.4 操作3: forget（遗忘记忆）
+
+**功能**：模拟人类大脑的选择性遗忘，支持三种策略。
+
+```python
+def _forget(
+    self, 
+    strategy: str = "importance_based", 
+    threshold: float = 0.1, 
+    max_age_days: int = 30
+) -> str:
+    """
+    遗忘记忆（多种策略）
+    
+    Args:
+        strategy: 遗忘策略
+            - importance_based: 删除重要性低于阈值的记忆
+            - time_based: 删除超过指定天数的记忆
+            - capacity_based: 当超出容量时删除最不重要的
+        threshold: 重要性阈值（importance_based和capacity_based使用）
+        max_age_days: 最大保留天数（time_based使用）
+    
+    Returns:
+        遗忘结果消息
+    """
+    try:
+        count = self.memory_manager.forget_memories(
+            strategy=strategy,
+            threshold=threshold,
+            max_age_days=max_age_days
+        )
+        return f"🧹 已遗忘 {count} 条记忆（策略: {strategy}）"
+    except Exception as e:
+        return f"❌ 遗忘记忆失败: {str(e)}"
+```
+
+**三种遗忘策略**：
+
+```python
+# 策略1: 基于重要性 - 删除不重要的记忆
+memory_tool.execute("forget",
+    strategy="importance_based",
+    threshold=0.2  # 删除重要性<0.2的记忆
+)
+
+# 策略2: 基于时间 - 删除过期的记忆
+memory_tool.execute("forget",
+    strategy="time_based",
+    max_age_days=30  # 删除30天前的记忆
+)
+
+# 策略3: 基于容量 - 当容量不足时删除最不重要的
+memory_tool.execute("forget",
+    strategy="capacity_based",
+    threshold=0.3  # 优先删除重要性<0.3的
+)
+```
+
+#### 2.5 操作4: consolidate（整合记忆）
+
+**功能**：将重要的短期记忆转化为长期记忆，模拟人类的记忆固化过程。
+
+```python
+def _consolidate(
+    self, 
+    from_type: str = "working", 
+    to_type: str = "episodic", 
+    importance_threshold: float = 0.7
+) -> str:
+    """
+    整合记忆（短期→长期）
+    
+    Args:
+        from_type: 源记忆类型
+        to_type: 目标记忆类型
+        importance_threshold: 转移阈值（只转移重要性高于此值的记忆）
+    
+    Returns:
+        整合结果消息
+    """
+    try:
+        count = self.memory_manager.consolidate_memories(
+            from_type=from_type,
+            to_type=to_type,
+            importance_threshold=importance_threshold,
+        )
+        return f"🔄 已整合 {count} 条记忆 ({from_type} → {to_type}，阈值={importance_threshold})"
+    except Exception as e:
+        return f"❌ 整合记忆失败: {str(e)}"
+```
+
+**整合示例**：
+
+```python
+# 将重要的工作记忆转为情景记忆
+memory_tool.execute("consolidate",
+    from_type="working",
+    to_type="episodic",
+    importance_threshold=0.7
+)
+
+# 将重要的情景记忆提炼为语义记忆
+memory_tool.execute("consolidate",
+    from_type="episodic",
+    to_type="semantic",
+    importance_threshold=0.8
+)
+```
+
+---
+
+### Part 3: 存储后端详解
+
+#### 3.1 向量存储（Qdrant）
+
+**用途**：高效的语义相似度检索，适用于情景记忆和语义记忆。
+
+```python
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct
+
+class QdrantVectorStore:
+    """
+    Qdrant向量存储 - 高性能语义检索
+    
+    特点：
+    - 支持亿级向量
+    - 毫秒级检索
+    - 支持元数据过滤
+    """
+    
+    def __init__(
+        self, 
+        url: str = None, 
+        api_key: str = None,
+        collection_name: str = "agent_memories",
+        vector_size: int = 384
+    ):
+        self.client = QdrantClient(url=url, api_key=api_key)
+        self.collection_name = collection_name
+        self.vector_size = vector_size
+        
+        # 确保集合存在
+        self._ensure_collection()
+    
+    def _ensure_collection(self):
+        """创建或验证集合"""
+        collections = self.client.get_collections().collections
+        exists = any(c.name == self.collection_name for c in collections)
+        
+        if not exists:
+            self.client.create_collection(
+                collection_name=self.collection_name,
+                vectors_config=VectorParams(
+                    size=self.vector_size,
+                    distance=Distance.COSINE
+                )
+            )
+            print(f"✅ 创建Qdrant集合: {self.collection_name}")
+    
+    def add_vectors(
+        self, 
+        vectors: List[List[float]], 
+        metadata: List[Dict],
+        ids: List[str]
+    ):
+        """批量添加向量"""
+        points = [
+            PointStruct(
+                id=id_,
+                vector=vec,
+                payload=meta
+            )
+            for id_, vec, meta in zip(ids, vectors, metadata)
+        ]
+        
+        self.client.upsert(
+            collection_name=self.collection_name,
+            points=points
+        )
+    
+    def search_similar(
+        self, 
+        query_vector: List[float], 
+        limit: int = 5,
+        where: Dict = None
+    ) -> List[Dict]:
+        """相似度搜索"""
+        results = self.client.search(
+            collection_name=self.collection_name,
+            query_vector=query_vector,
+            limit=limit,
+            query_filter=self._build_filter(where) if where else None
+        )
+        
+        return [
+            {
+                "id": hit.id,
+                "score": hit.score,
+                "metadata": hit.payload
+            }
+            for hit in results
+        ]
+```
+
+#### 3.2 图存储（Neo4j）
+
+**用途**：知识图谱管理，存储实体和关系，适用于语义记忆。
+
+```python
+from neo4j import GraphDatabase
+
+class Neo4jGraphStore:
+    """
+    Neo4j图存储 - 知识图谱管理
+    
+    特点：
+    - 支持复杂关系查询
+    - 图遍历和推理
+    - 关系可视化
+    """
+    
+    def __init__(self, uri: str, username: str, password: str):
+        self.driver = GraphDatabase.driver(uri, auth=(username, password))
+    
+    def add_entity(self, entity_id: str, entity_type: str, properties: Dict):
+        """添加实体节点"""
+        query = """
+        MERGE (e:Entity {id: $entity_id})
+        SET e.type = $entity_type,
+            e += $properties
+        RETURN e
+        """
+        with self.driver.session() as session:
+            session.run(query, 
+                entity_id=entity_id,
+                entity_type=entity_type,
+                properties=properties
+            )
+    
+    def add_relation(
+        self, 
+        from_id: str, 
+        to_id: str, 
+        relation_type: str,
+        properties: Dict = None
+    ):
+        """添加关系边"""
+        query = """
+        MATCH (from:Entity {id: $from_id})
+        MATCH (to:Entity {id: $to_id})
+        MERGE (from)-[r:RELATION {type: $relation_type}]->(to)
+        SET r += $properties
+        RETURN r
+        """
+        with self.driver.session() as session:
+            session.run(query,
+                from_id=from_id,
+                to_id=to_id,
+                relation_type=relation_type,
+                properties=properties or {}
+            )
+    
+    def query_related(self, entity_id: str, depth: int = 2) -> List[Dict]:
+        """查询相关实体"""
+        query = f"""
+        MATCH (start:Entity {{id: $entity_id}})
+        CALL apoc.path.subgraphAll(start, {{
+            maxLevel: $depth
+        }})
+        YIELD nodes, relationships
+        RETURN nodes, relationships
+        """
+        with self.driver.session() as session:
+            result = session.run(query, entity_id=entity_id, depth=depth)
+            return list(result)
+```
+
+#### 3.3 文档存储（SQLite）
+
+**用途**：结构化持久化，适用于情景记忆的元数据存储。
+
+```python
+import sqlite3
+import json
+
+class SQLiteDocumentStore:
+    """
+    SQLite文档存储 - 结构化持久化
+    
+    特点：
+    - 轻量级，无需额外服务
+    - ACID事务支持
+    - 复杂查询能力
+    """
+    
+    def __init__(self, db_path: str = "./memory_data/memory.db"):
+        self.db_path = db_path
+        self._init_tables()
+    
+    def _init_tables(self):
+        """初始化数据库表"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS memories (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                memory_type TEXT NOT NULL,
+                importance REAL DEFAULT 0.5,
+                metadata TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        cursor.execute("""
+            CREATE INDEX IF NOT EXISTS idx_memory_type 
+            ON memories(memory_type)
+        """)
+        
+        cursor.execute("""
+            CREATE INDEX IF NOT EXISTS idx_importance 
+            ON memories(importance DESC)
+        """)
+        
+        conn.commit()
+        conn.close()
+        print(f"✅ SQLite初始化完成: {self.db_path}")
+    
+    def save(self, memory_item: MemoryItem):
+        """保存记忆"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT OR REPLACE INTO memories 
+            (id, content, memory_type, importance, metadata, updated_at)
+            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        """, (
+            memory_item.id,
+            memory_item.content,
+            memory_item.memory_type,
+            memory_item.importance,
+            json.dumps(memory_item.metadata)
+        ))
+        
+        conn.commit()
+        conn.close()
+    
+    def query(
+        self, 
+        memory_type: str = None,
+        min_importance: float = None,
+        limit: int = 100
+    ) -> List[Dict]:
+        """查询记忆"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        query = "SELECT * FROM memories WHERE 1=1"
+        params = []
+        
+        if memory_type:
+            query += " AND memory_type = ?"
+            params.append(memory_type)
+        
+        if min_importance:
+            query += " AND importance >= ?"
+            params.append(min_importance)
+        
+        query += " ORDER BY importance DESC, updated_at DESC LIMIT ?"
+        params.append(limit)
+        
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [self._row_to_dict(row) for row in rows]
+```
+
+---
+
+### Part 4: 嵌入服务配置
+
+#### 4.1 统一嵌入接口
+
+```python
+from abc import ABC, abstractmethod
+import numpy as np
+
+class BaseEmbedder(ABC):
+    """嵌入服务基类"""
+    
+    @abstractmethod
+    def encode(self, texts: List[str]) -> np.ndarray:
+        """将文本编码为向量"""
+        pass
+    
+    @property
+    @abstractmethod
+    def dimension(self) -> int:
+        """向量维度"""
+        pass
+
+def create_embedding_model_with_fallback() -> BaseEmbedder:
+    """
+    创建嵌入模型（带降级机制）
+    
+    优先级：
+    1. DashScope API（云端，高质量）
+    2. 本地Sentence Transformers
+    3. TF-IDF（轻量级兜底）
+    """
+    # 尝试DashScope
+    try:
+        api_key = os.getenv("DASHSCOPE_API_KEY")
+        if api_key:
+            return DashScopeEmbedding(api_key)
+    except Exception as e:
+        print(f"⚠️ DashScope不可用: {e}")
+    
+    # 尝试本地模型
+    try:
+        return LocalTransformerEmbedding()
+    except Exception as e:
+        print(f"⚠️ 本地模型不可用: {e}")
+    
+    # 降级到TF-IDF
+    print("ℹ️ 使用TF-IDF嵌入（轻量级）")
+    return TFIDFEmbedding()
+```
+
+#### 4.2 DashScope嵌入（云端API）
+
+```python
+import dashscope
+from dashscope import TextEmbedding
+
+class DashScopeEmbedding(BaseEmbedder):
+    """
+    DashScope嵌入服务（通义千问）
+    
+    特点：
+    - 高质量中文嵌入
+    - 无需本地GPU
+    - 按调用计费
+    """
+    
+    def __init__(self, api_key: str, model: str = "text-embedding-v3"):
+        dashscope.api_key = api_key
+        self.model = model
+        self._dimension = 1024  # v3模型维度
+    
+    def encode(self, texts: List[str]) -> np.ndarray:
+        """批量编码文本"""
+        result = TextEmbedding.call(
+            model=self.model,
+            input=texts
+        )
+        
+        embeddings = [item["embedding"] for item in result.output["embeddings"]]
+        return np.array(embeddings)
+    
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+```
+
+#### 4.3 本地Transformer嵌入
+
+```python
+from sentence_transformers import SentenceTransformer
+
+class LocalTransformerEmbedding(BaseEmbedder):
+    """
+    本地Sentence Transformers嵌入
+    
+    特点：
+    - 完全离线
+    - 一次性下载模型
+    - 支持多语言
+    """
+    
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+        self.model = SentenceTransformer(model_name)
+        self._dimension = self.model.get_sentence_embedding_dimension()
+    
+    def encode(self, texts: List[str]) -> np.ndarray:
+        return self.model.encode(texts, convert_to_numpy=True)
+    
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+```
+
+#### 4.4 TF-IDF嵌入（轻量级兜底）
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+class TFIDFEmbedding(BaseEmbedder):
+    """
+    TF-IDF嵌入（轻量级兜底方案）
+    
+    特点：
+    - 无需深度学习
+    - 快速简单
+    - 语义理解能力有限
+    """
+    
+    def __init__(self, max_features: int = 384):
+        self.vectorizer = TfidfVectorizer(max_features=max_features)
+        self._dimension = max_features
+        self._fitted = False
+    
+    def encode(self, texts: List[str]) -> np.ndarray:
+        if not self._fitted:
+            self.vectorizer.fit(texts)
+            self._fitted = True
+        
+        return self.vectorizer.transform(texts).toarray()
+    
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+```
+
+---
+
+### Part 5: 完整配置示例
+
+```python
+# memory_config.py
+
+import os
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class MemoryConfig:
+    """记忆系统配置"""
+    
+    # 工作记忆配置
+    working_memory_capacity: int = 50
+    working_memory_ttl: int = 60  # 分钟
+    
+    # 数据库配置
+    database_path: str = "./memory_data/memory.db"
+    
+    # Qdrant配置
+    qdrant_url: str = os.getenv("QDRANT_URL", "http://localhost:6333")
+    qdrant_api_key: Optional[str] = os.getenv("QDRANT_API_KEY")
+    qdrant_collection: str = "agent_memories"
+    
+    # Neo4j配置
+    neo4j_uri: str = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+    neo4j_username: str = os.getenv("NEO4J_USERNAME", "neo4j")
+    neo4j_password: str = os.getenv("NEO4J_PASSWORD", "password")
+    
+    # 嵌入配置
+    embed_model_type: str = os.getenv("EMBED_MODEL_TYPE", "dashscope")
+    embed_model_name: Optional[str] = os.getenv("EMBED_MODEL_NAME")
+    embed_api_key: Optional[str] = os.getenv("EMBED_API_KEY")
+```
+
+```bash
+# .env 配置示例
+
+# Qdrant向量数据库
+QDRANT_URL=https://your-cluster.qdrant.tech:6333
+QDRANT_API_KEY=your_qdrant_api_key
+
+# Neo4j图数据库
+NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_neo4j_password
+
+# 嵌入服务
+EMBED_MODEL_TYPE=dashscope
+EMBED_API_KEY=your_dashscope_api_key
+```
+
+---
+
+## 与原有内容的衔接
+
+本补充章节应安排在原L7-8讲义的以下位置：
+
+1. **Part 2（记忆类型）之后**：插入"Part 2.5: 认知科学视角的四层架构"
+2. **Part 3（MemGPT架构）之后**：插入"Part 3.5: MemoryTool完整操作"
+3. **Part 4（工具使用）之前**：插入"Part 3.6: 存储后端与嵌入服务"
+
+建议的课堂安排：
+- 概念讲解：20分钟（认知科学与架构设计）
+- MemoryTool演示：20分钟（四个核心操作）
+- 存储后端介绍：15分钟（向量/图/文档）
+- 配置实践：15分钟（学员配置自己的记忆系统）
+- 讨论：10分钟（不同场景的技术选型）
+
+---
+
+*本补充章节最后更新：2026-03-06*
+# 补充专题：上下文工程（Context Engineering）
+
+> **课程**: MBA大模型智能体课程  
+> **类型**: 补充专题（可安排在L5-6 Agent设计之后或L7-8记忆系统之前）  
+> **适用**: 讲师备课 / 学生预习与复习  
+> **对应Slides**: `slides/supplements/context-engineering-supplement.md`  
+> **参考资源**: Datawhale Hello-Agents 第九章：上下文工程  
+> **最后更新**: 2026-03-06
+
+---
+
+## 本讲核心问题
+
+1. **什么是上下文工程？** 与Prompt Engineering有什么区别？
+2. **上下文由哪些部分组成？** 如何系统性地设计？
+3. **如何管理有限的上下文窗口？** 压缩、截断还是分层？
+4. **长上下文有什么陷阱？** Lost in the Middle是什么？
+5. **实战中如何设计上下文？** 不同Agent类型有什么差异？
+
+---
+
+## Part 1：什么是上下文工程？
+
+### 1.1 定义
+
+> **上下文工程（Context Engineering）**：设计和管理LLM上下文窗口内容的系统方法论，旨在最大化模型性能，同时有效利用有限的上下文空间。
+
+如果把LLM比作一个天才员工，上下文就是你给他的工作材料：
+- **太少**：信息不足，无法完成任务
+- **太多**：信息过载，找不到重点
+- **错位**：给了错误的资料，南辕北辙
+
+上下文工程就是**设计最优的信息传递方案**。
+
+### 1.2 为什么上下文工程如此重要？
+
+#### LLM的"工作记忆"限制
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    LLM 的认知限制                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  人类工作记忆：7±2 项目（同时处理的信息数量）                      │
+│                                                                 │
+│  LLM上下文窗口：                                                 │
+│  - GPT-3.5:  4,096 tokens  ≈ 3,000 汉字                        │
+│  - GPT-4:    128K tokens   ≈ 96,000 汉字                       │
+│  - Claude 3: 200K tokens   ≈ 150,000 汉字                      │
+│                                                                 │
+│  看起来很大？但考虑到：                                          │
+│  - 系统提示词：500-2000 tokens                                   │
+│  - 工具定义：每个工具 200-500 tokens                             │
+│  - 对话历史：快速累积                                            │
+│  - 检索结果：RAG每次 1000-5000 tokens                           │
+│                                                                 │
+│  → 可用空间迅速被占满！                                          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### Token成本的商业考量
+
+```python
+# 以GPT-4为例的成本计算
+input_cost_per_1k = 0.03  # $0.03/1K input tokens
+output_cost_per_1k = 0.06  # $0.06/1K output tokens
+
+# 假设每次请求：
+system_prompt = 1500      # tokens
+tools_definition = 2000   # 10个工具
+conversation_history = 3000  # 多轮对话
+rag_context = 4000        # 检索内容
+user_input = 500          # 用户输入
+
+total_input = 11000       # tokens
+cost_per_request = total_input / 1000 * 0.03  # = $0.33
+
+# 如果每天1000次请求
+daily_cost = 1000 * 0.33  # = $330/天 = $9,900/月
+```
+
+**上下文工程不仅影响质量，更直接影响成本！**
+
+### 1.3 上下文工程 vs Prompt Engineering
+
+| 维度 | Prompt Engineering | Context Engineering |
+|------|-------------------|---------------------|
+| **关注点** | 单次提示词优化 | 整体上下文设计 |
+| **范围** | 指令和格式 | 系统提示+历史+检索+工具+示例 |
+| **时间跨度** | 单次交互 | 多轮对话/长期任务 |
+| **挑战** | 让模型理解意图 | 信息选择、压缩、组织 |
+| **类比** | 写好一封邮件 | 管理整个收件箱 |
+| **技能要求** | 文案能力 | 系统设计能力 |
+
+```
+Prompt Engineering ⊂ Context Engineering
+
+上下文工程是更大的框架，Prompt工程是其中的一个子模块
+```
+
+### 1.4 Andrej Karpathy的观点
+
+> "The hottest new programming language is English."
+> — Andrej Karpathy
+
+在Agent时代，这句话可以扩展为：
+
+> "The hottest new system design skill is Context Engineering."
+
+Agent的行为由上下文决定。设计上下文就是设计Agent的"大脑输入"。
+
+---
+
+## Part 2：上下文的组成部分
+
+### 2.1 上下文的六大组件
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                         LLM 上下文窗口结构                                │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌─────────────────────────────────────────────────────────────────────┐ │
+│  │ 1. System Prompt（系统提示词）                                       │ │
+│  │    • 角色定义、行为准则、输出格式                                     │ │
+│  │    • 通常放在最前面，优先级最高                                       │ │
+│  └─────────────────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────────────────┐ │
+│  │ 2. Few-shot Examples（示例）                                         │ │
+│  │    • 输入-输出示例对                                                  │ │
+│  │    • 帮助模型理解任务模式                                             │ │
+│  └─────────────────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────────────────┐ │
+│  │ 3. Retrieved Context（检索内容）                                     │ │
+│  │    • RAG检索到的文档片段                                              │ │
+│  │    • 知识库、数据库查询结果                                           │ │
+│  └─────────────────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────────────────┐ │
+│  │ 4. Conversation History（对话历史）                                  │ │
+│  │    • 多轮对话的user/assistant消息                                    │ │
+│  │    • 维持对话连贯性                                                   │ │
+│  └─────────────────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────────────────┐ │
+│  │ 5. Tool Results（工具结果）                                          │ │
+│  │    • Function Calling返回的结果                                      │ │
+│  │    • 代码执行输出、API响应                                            │ │
+│  └─────────────────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────────────────┐ │
+│  │ 6. User Input（用户输入）                                            │ │
+│  │    • 当前轮次的用户消息                                               │ │
+│  │    • 通常在最后，触发模型响应                                         │ │
+│  └─────────────────────────────────────────────────────────────────────┘ │
+│                                                                          │
+│  ────────────────────────────────────────────────────────────────────── │
+│  [Model Output 模型输出]                                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 各组件详解
+
+#### 组件1：系统提示词（System Prompt）
+
+系统提示词是Agent的"灵魂"，定义了它是谁、做什么、怎么做。
+
+```python
+# 优秀系统提示词的结构
+system_prompt = """
+## 角色定义
+你是一位专业的金融分析师，专注于中国A股市场研究。
+
+## 能力边界
+- 擅长：财务报表分析、行业研究、估值建模
+- 不擅长：短期价格预测、内幕消息
+- 禁止：给出具体买卖建议
+
+## 行为准则
+1. 基于数据和事实，避免主观臆断
+2. 标注信息来源和时效性
+3. 承认不确定性，量化置信度
+
+## 输出格式
+分析报告使用以下结构：
+- 核心观点（3句话内）
+- 关键数据支撑
+- 风险提示
+- 详细分析（可选）
+
+## 特殊指令
+- 遇到敏感问题时，提醒用户咨询持牌顾问
+- 数据截止日期：2024年12月
+"""
+```
+
+**系统提示词设计原则：**
+
+| 原则 | 说明 | 示例 |
+|------|------|------|
+| **具体化** | 避免模糊描述 | ❌"做好分析" ✅"分析时列出3个关键指标" |
+| **结构化** | 使用层级标题 | 用##、###组织内容 |
+| **边界化** | 明确能做和不能做 | "你可以...但不要..." |
+| **示例化** | 给出输出样例 | 展示期望的回复格式 |
+
+#### 组件2：Few-shot Examples（示例）
+
+示例是最强大的"无代码编程"方式。
+
+```python
+examples = [
+    {
+        "user": "分析一下宁德时代的投资价值",
+        "assistant": """
+## 核心观点
+宁德时代作为全球动力电池龙头，具备长期投资价值，但当前估值偏高，建议关注回调机会。
+
+## 关键数据
+- 全球市占率：37%（2023年）
+- 毛利率：22.4%，同比提升3.2pp
+- 研发投入：184亿元，占营收6.8%
+
+## 风险提示
+- 行业产能过剩风险
+- 技术路线变革风险
+- 海外政策不确定性
+
+置信度：中等（行业变化较快）
+数据来源：公司2023年年报、SNE Research
+"""
+    },
+    {
+        "user": "比亚迪怎么样",
+        "assistant": """
+## 核心观点
+比亚迪是新能源汽车+电池垂直整合龙头，2023年销量跃居全球第一，长期成长空间确定。
+
+## 关键数据
+- 2023年销量：302万辆，YoY+62%
+- 新能源车毛利率：23.1%
+- 海外销量占比：8%，增长迅速
+
+## 风险提示
+- 国内价格战影响盈利能力
+- 出海面临贸易壁垒
+- 高端化进展待观察
+
+置信度：较高
+数据来源：公司公告、中汽协
+"""
+    }
+]
+```
+
+**Few-shot示例的数量选择：**
+
+| 任务复杂度 | 建议示例数 | 原因 |
+|------------|-----------|------|
+| 简单格式转换 | 1-2 | 模式清晰，少量即可 |
+| 标准分析任务 | 2-4 | 展示多种情况 |
+| 复杂推理任务 | 3-5 | 需要更多模式学习 |
+| 边缘情况处理 | 5-8 | 覆盖异常情况 |
+
+#### 组件3：Retrieved Context（检索内容）
+
+RAG检索的内容是上下文的重要组成部分。
+
+```python
+# 检索内容的结构化组织
+retrieved_context = """
+### 相关文档检索结果
+
+**[文档1] 公司年报摘要 (相关度: 0.92)**
+来源：宁德时代2023年年报
+更新时间：2024-03-28
+
+> 报告期内，公司实现营业收入4009.17亿元，同比增长22.01%；
+> 实现归属于上市公司股东的净利润441.21亿元，同比增长43.58%。
+> 动力电池系统销量为390GWh，同比增长34.95%。
+
+**[文档2] 行业研究报告 (相关度: 0.87)**
+来源：中信证券新能源研究
+更新时间：2024-02-15
+
+> 预计2024年全球动力电池需求将达到1,200GWh，同比增长25%。
+> 中国企业市占率有望进一步提升至65%以上。
+
+**[文档3] 新闻资讯 (相关度: 0.81)**
+来源：财联社
+更新时间：2024-03-01
+
+> 宁德时代与多家车企签署2024年战略合作协议，锁定订单超200GWh。
+"""
+```
+
+**检索内容的组织原则：**
+1. **标注来源**：让模型知道信息从哪来
+2. **标注时效**：让模型判断信息是否过时
+3. **标注相关度**：让模型知道信息的可信程度
+4. **结构化呈现**：便于模型快速定位
+
+#### 组件4：Conversation History（对话历史）
+
+多轮对话的历史管理是上下文工程的核心挑战。
+
+```python
+# 对话历史示例
+conversation_history = [
+    {"role": "user", "content": "我想了解新能源车行业"},
+    {"role": "assistant", "content": "新能源车行业正处于高速发展期...（省略详细回复）"},
+    {"role": "user", "content": "宁德时代在这个行业里是什么地位？"},
+    {"role": "assistant", "content": "宁德时代是全球动力电池龙头...（省略详细回复）"},
+    {"role": "user", "content": "它的竞争对手有哪些？"},
+    {"role": "assistant", "content": "主要竞争对手包括：1.比亚迪...（省略详细回复）"},
+    # ... 更多轮次
+]
+```
+
+#### 组件5：Tool Results（工具结果）
+
+工具调用返回的结果需要精心处理后再注入上下文。
+
+```python
+# 原始工具返回（冗长）
+raw_tool_result = {
+    "status": "success",
+    "data": {
+        "stock_code": "300750.SZ",
+        "name": "宁德时代",
+        "price": 178.50,
+        "change": 2.35,
+        "change_pct": 1.33,
+        "volume": 12345678,
+        "amount": 2198765432,
+        "pe_ttm": 23.45,
+        "pb": 4.56,
+        "market_cap": 781234567890,
+        # ... 更多字段
+    },
+    "timestamp": "2024-03-15T10:30:00+08:00"
+}
+
+# 精简后的上下文注入版本
+processed_tool_result = """
+[股票查询结果]
+宁德时代(300750.SZ): ¥178.50 (+1.33%)
+PE(TTM): 23.45 | PB: 4.56 | 市值: 7812亿
+数据时间: 2024-03-15 10:30
+"""
+```
+
+#### 组件6：User Input（用户输入）
+
+用户输入看似简单，但可以进行预处理增强。
+
+```python
+def enhance_user_input(raw_input: str, context: dict) -> str:
+    """增强用户输入，添加隐含上下文"""
+    
+    enhanced = raw_input
+    
+    # 添加时间上下文
+    enhanced = f"[当前时间: {context['current_time']}]\n{enhanced}"
+    
+    # 添加用户偏好（如果有）
+    if context.get('user_preferences'):
+        prefs = context['user_preferences']
+        enhanced = f"[用户偏好: {prefs}]\n{enhanced}"
+    
+    # 添加对话摘要（如果历史很长）
+    if context.get('conversation_summary'):
+        enhanced = f"[对话背景: {context['conversation_summary']}]\n{enhanced}"
+    
+    return enhanced
+
+# 示例
+raw_input = "它的估值合理吗？"
+enhanced_input = enhance_user_input(raw_input, {
+    "current_time": "2024-03-15 10:30",
+    "conversation_summary": "用户正在分析宁德时代的投资价值",
+    "user_preferences": "偏好价值投资风格"
+})
+# 输出:
+# [当前时间: 2024-03-15 10:30]
+# [用户偏好: 偏好价值投资风格]
+# [对话背景: 用户正在分析宁德时代的投资价值]
+# 它的估值合理吗？
+```
+
+### 2.3 上下文组件的优先级
+
+当上下文空间不足时，各组件的保留优先级：
+
+```
+优先级从高到低：
+1. System Prompt     [必须保留] - Agent的核心定义
+2. User Input        [必须保留] - 当前任务
+3. Tool Results      [高优先级] - 当前任务的直接输入
+4. Retrieved Context [中优先级] - 可压缩或截断
+5. Conversation History [中优先级] - 可摘要
+6. Few-shot Examples [低优先级] - 任务明确时可省略
+```
+
+---
+
+## Part 3：上下文管理策略
+
+当上下文超过窗口限制时，需要采取管理策略。
+
+### 3.1 上下文压缩（Summarization）
+
+将冗长的内容压缩成摘要。
+
+```python
+from typing import List, Dict
+
+class ConversationSummarizer:
+    """对话历史压缩器"""
+    
+    def __init__(self, llm, max_summary_tokens: int = 500):
+        self.llm = llm
+        self.max_summary_tokens = max_summary_tokens
+    
+    def summarize(self, messages: List[Dict]) -> str:
+        """将多轮对话压缩成摘要"""
+        
+        if len(messages) < 4:
+            return None  # 太短不需要压缩
+        
+        # 构建压缩提示
+        conversation_text = "\n".join([
+            f"{m['role']}: {m['content'][:200]}..."  # 截断过长的消息
+            for m in messages
+        ])
+        
+        summary_prompt = f"""
+请将以下对话压缩成简洁的摘要，保留：
+1. 讨论的主要话题
+2. 达成的关键结论
+3. 用户的主要需求
+4. 重要的事实和数据
+
+对话内容：
+{conversation_text}
+
+摘要（控制在200字以内）：
+"""
+        
+        summary = self.llm.generate(summary_prompt)
+        return summary.strip()
+
+# 使用示例
+summarizer = ConversationSummarizer(llm)
+long_history = [...]  # 20轮对话
+summary = summarizer.summarize(long_history)
+
+# 压缩后的上下文
+compressed_context = f"""
+[对话摘要]
+{summary}
+
+[最近3轮对话]
+{recent_3_turns}
+"""
+```
+
+### 3.2 滑动窗口（Sliding Window）
+
+只保留最近的N轮对话。
+
+```python
+class SlidingWindowManager:
+    """滑动窗口对话管理器"""
+    
+    def __init__(self, window_size: int = 10):
+        self.window_size = window_size
+        self.messages = []
+    
+    def add_message(self, role: str, content: str):
+        self.messages.append({"role": role, "content": content})
+        
+        # 超过窗口大小时，移除最旧的消息
+        if len(self.messages) > self.window_size * 2:  # user+assistant成对
+            self.messages = self.messages[-self.window_size * 2:]
+    
+    def get_context(self) -> List[Dict]:
+        return self.messages.copy()
+    
+    def get_token_count(self) -> int:
+        """估算当前token数"""
+        total_chars = sum(len(m['content']) for m in self.messages)
+        return total_chars // 2  # 粗略估算：2字符≈1token
+
+# 使用示例
+window_manager = SlidingWindowManager(window_size=5)
+
+# 模拟多轮对话
+for i in range(20):
+    window_manager.add_message("user", f"问题{i}")
+    window_manager.add_message("assistant", f"回答{i}")
+
+# 只保留最近5轮
+recent_context = window_manager.get_context()
+print(len(recent_context))  # 10条消息（5轮）
+```
+
+### 3.3 选择性保留（Selective Retention）
+
+根据重要性评分，选择性保留信息。
+
+```python
+class SelectiveRetentionManager:
+    """选择性保留管理器"""
+    
+    def __init__(self, llm, max_tokens: int = 4000):
+        self.llm = llm
+        self.max_tokens = max_tokens
+        self.messages = []
+        self.importance_scores = []
+    
+    def add_message(self, role: str, content: str):
+        # 评估消息重要性
+        importance = self._score_importance(role, content)
+        
+        self.messages.append({"role": role, "content": content})
+        self.importance_scores.append(importance)
+    
+    def _score_importance(self, role: str, content: str) -> float:
+        """评估消息重要性（0-1分）"""
+        score = 0.5  # 基础分
+        
+        # 用户消息通常更重要
+        if role == "user":
+            score += 0.1
+        
+        # 包含关键词的消息更重要
+        important_keywords = ["决定", "总结", "关键", "重要", "结论", "确认"]
+        if any(kw in content for kw in important_keywords):
+            score += 0.2
+        
+        # 包含数据的消息更重要
+        if any(char.isdigit() for char in content):
+            score += 0.1
+        
+        # 长消息可能更有实质内容
+        if len(content) > 200:
+            score += 0.1
+        
+        return min(score, 1.0)
+    
+    def get_context(self) -> List[Dict]:
+        """获取优化后的上下文"""
+        
+        # 如果没超限，返回全部
+        total_tokens = sum(len(m['content']) // 2 for m in self.messages)
+        if total_tokens <= self.max_tokens:
+            return self.messages.copy()
+        
+        # 超限时，按重要性排序保留
+        indexed_messages = list(enumerate(self.messages))
+        indexed_messages.sort(key=lambda x: self.importance_scores[x[0]], reverse=True)
+        
+        # 选择最重要的消息，直到达到token限制
+        selected_indices = []
+        current_tokens = 0
+        
+        for idx, msg in indexed_messages:
+            msg_tokens = len(msg['content']) // 2
+            if current_tokens + msg_tokens <= self.max_tokens:
+                selected_indices.append(idx)
+                current_tokens += msg_tokens
+        
+        # 按原始顺序返回
+        selected_indices.sort()
+        return [self.messages[i] for i in selected_indices]
+```
+
+### 3.4 分层上下文（Hierarchical Context）
+
+将上下文分为多个层次，按需加载。
+
+```python
+class HierarchicalContextManager:
+    """分层上下文管理器"""
+    
+    def __init__(self):
+        # 三层结构
+        self.core_context = ""      # 核心层：始终加载
+        self.working_context = []    # 工作层：当前任务相关
+        self.archive_context = []    # 归档层：按需检索
+    
+    def set_core(self, system_prompt: str, user_profile: str = None):
+        """设置核心上下文"""
+        self.core_context = system_prompt
+        if user_profile:
+            self.core_context += f"\n\n## 用户画像\n{user_profile}"
+    
+    def add_to_working(self, content: str, category: str):
+        """添加到工作上下文"""
+        self.working_context.append({
+            "content": content,
+            "category": category,
+            "timestamp": datetime.now()
+        })
+    
+    def archive_old(self, hours: int = 24):
+        """将旧内容归档"""
+        cutoff = datetime.now() - timedelta(hours=hours)
+        
+        # 移动到归档层
+        to_archive = [c for c in self.working_context if c['timestamp'] < cutoff]
+        self.archive_context.extend(to_archive)
+        
+        # 从工作层移除
+        self.working_context = [c for c in self.working_context if c['timestamp'] >= cutoff]
+    
+    def retrieve_from_archive(self, query: str, top_k: int = 3) -> List[str]:
+        """从归档层检索相关内容"""
+        # 简化版：实际应使用向量检索
+        relevant = []
+        for item in self.archive_context:
+            if any(word in item['content'] for word in query.split()):
+                relevant.append(item['content'])
+        return relevant[:top_k]
+    
+    def build_context(self, current_query: str) -> str:
+        """构建完整上下文"""
+        
+        # 核心层（始终包含）
+        context_parts = [self.core_context]
+        
+        # 工作层（全部包含）
+        if self.working_context:
+            working_text = "\n\n## 当前工作上下文\n"
+            for item in self.working_context[-10:]:  # 最近10条
+                working_text += f"- [{item['category']}] {item['content'][:200]}\n"
+            context_parts.append(working_text)
+        
+        # 归档层（按需检索）
+        archived_relevant = self.retrieve_from_archive(current_query)
+        if archived_relevant:
+            archive_text = "\n\n## 相关历史信息\n"
+            for content in archived_relevant:
+                archive_text += f"- {content[:200]}\n"
+            context_parts.append(archive_text)
+        
+        return "\n".join(context_parts)
+```
+
+### 3.5 策略对比与选择
+
+| 策略 | 优点 | 缺点 | 适用场景 |
+|------|------|------|----------|
+| **压缩摘要** | 保留语义完整性 | 需要额外LLM调用 | 长对话、重要历史 |
+| **滑动窗口** | 简单高效 | 可能丢失重要早期信息 | 实时聊天、简单任务 |
+| **选择性保留** | 智能筛选 | 评分逻辑需调优 | 复杂任务、多主题对话 |
+| **分层管理** | 灵活可扩展 | 实现复杂 | 长期Agent、知识密集任务 |
+
+---
+
+## Part 4：上下文优化技术
+
+### 4.1 指令优化
+
+让系统提示词更有效率。
+
+```python
+# ❌ 冗长低效的指令
+bad_prompt = """
+你是一个AI助手，你需要帮助用户解答问题。当用户问你问题的时候，
+你应该仔细思考用户的问题，然后给出一个详细的、准确的、有帮助的回答。
+你应该尽量避免给出错误的信息，如果你不确定答案，你应该诚实地说你不确定。
+你应该保持礼貌和专业，避免使用不当的语言...
+"""
+
+# ✅ 精简高效的指令
+good_prompt = """
+角色：专业AI助手
+原则：准确、简洁、坦诚不确定
+格式：先结论后解释
+禁止：猜测、编造数据
+"""
+
+# 计算效率
+print(f"优化前：{len(bad_prompt)} 字符")  # ~180
+print(f"优化后：{len(good_prompt)} 字符")   # ~60
+print(f"节省：{(180-60)/180*100:.0f}%")     # 67%
+```
+
+### 4.2 信息密度提升
+
+用更少的token传达更多信息。
+
+```python
+# ❌ 低信息密度
+low_density = """
+宁德时代在2023年的营业收入达到了4009亿元人民币，
+这个数字相比2022年增长了22.01%。公司的净利润达到了
+441亿元，同比增长了43.58%。公司的动力电池出货量
+是390GWh，相比去年增长了34.95%。
+"""
+
+# ✅ 高信息密度
+high_density = """
+宁德时代2023: 营收4009亿(+22%) | 净利441亿(+44%) | 出货390GWh(+35%)
+"""
+
+print(f"低密度版：{len(low_density)} 字符")   # ~150
+print(f"高密度版：{len(high_density)} 字符")  # ~55
+print(f"信息保留：100% | Token节省：63%")
+```
+
+### 4.3 噪音过滤
+
+移除对任务无帮助的信息。
+
+```python
+def filter_noise(retrieved_docs: List[str], query: str, llm) -> List[str]:
+    """过滤与查询无关的检索结果"""
+    
+    filtered = []
+    
+    for doc in retrieved_docs:
+        # 方法1：关键词匹配（快速但粗糙）
+        query_terms = set(query.lower().split())
+        doc_terms = set(doc.lower().split())
+        overlap = len(query_terms & doc_terms)
+        
+        if overlap < 1:
+            continue  # 没有重叠词，跳过
+        
+        # 方法2：LLM判断相关性（更准确但慢）
+        relevance_prompt = f"""
+判断以下文档是否与查询相关。只回答"是"或"否"。
+
+查询：{query}
+
+文档：{doc[:500]}
+
+相关性："""
+        
+        response = llm.generate(relevance_prompt)
+        if "是" in response:
+            filtered.append(doc)
+    
+    return filtered
+
+# 使用示例
+query = "宁德时代的市场份额"
+raw_docs = [
+    "宁德时代全球市占率37%，稳居第一",  # 相关
+    "今日股市整体下跌，沪指跌0.5%",      # 无关
+    "比亚迪电池市占率升至15%",            # 相关
+    "新能源补贴政策明年调整"              # 边缘相关
+]
+
+filtered_docs = filter_noise(raw_docs, query, llm)
+# 输出：["宁德时代全球市占率37%...", "比亚迪电池市占率升至15%"]
+```
+
+### 4.4 结构化格式
+
+用格式化减少歧义，提升理解效率。
+
+```python
+# ❌ 非结构化（模型需要花更多token理解）
+unstructured = """
+用户张三，男，35岁，住在上海浦东，是一名软件工程师，
+年收入50万，风险偏好稳健，主要投资股票和基金，
+持有贵州茅台500股和招商银行1000股...
+"""
+
+# ✅ 结构化（清晰高效）
+structured = """
+## 用户画像
+| 属性 | 值 |
+|------|-----|
+| 姓名 | 张三 |
+| 年龄 | 35 |
+| 职业 | 软件工程师 |
+| 年收入 | 50万 |
+| 风险偏好 | 稳健 |
+
+## 当前持仓
+- 贵州茅台: 500股
+- 招商银行: 1000股
+"""
+```
+
+### 4.5 Anthropic/OpenAI的最佳实践
+
+#### Anthropic Claude 最佳实践
+
+```python
+# Claude偏好的系统提示结构
+claude_system_prompt = """
+<role>
+你是一个专业的金融分析师，专注于中国市场研究。
+</role>
+
+<capabilities>
+- 财务分析
+- 估值建模
+- 行业研究
+</capabilities>
+
+<guidelines>
+- 基于数据说话
+- 承认不确定性
+- 提供信息来源
+</guidelines>
+
+<format>
+回复时使用以下结构：
+1. 核心观点（2-3句）
+2. 数据支撑
+3. 风险提示
+</format>
+"""
+
+# Claude的上下文组织偏好
+# 1. 把最重要的信息放在开头和结尾
+# 2. 使用XML标签明确分区
+# 3. 长文档放在<document>标签中
+```
+
+#### OpenAI GPT 最佳实践
+
+```python
+# GPT偏好的系统提示结构
+gpt_system_prompt = """
+You are an expert financial analyst specializing in China A-shares.
+
+## Capabilities
+- Financial statement analysis
+- Valuation modeling
+- Industry research
+
+## Response Format
+Always structure your response as:
+1. **Key Insight**: [2-3 sentences]
+2. **Data Points**: [bullet list]
+3. **Risks**: [bullet list]
+
+## Constraints
+- Be data-driven
+- Acknowledge uncertainty
+- Cite sources when available
+"""
+
+# GPT的上下文技巧
+# 1. 明确的章节标题
+# 2. 使用Markdown格式
+# 3. JSON格式输出用 ```json 包裹
+```
+
+---
+
+## Part 5：长上下文的挑战与解决方案
+
+### 5.1 Lost in the Middle 问题
+
+**现象**：模型对上下文中间位置的信息关注度最低。
+
+```
+注意力分布示意图：
+
+位置:     开头        中间        结尾
+注意力:   ████████    ████        ████████
+          高          低          高
+
+这意味着：
+- 重要信息放开头/结尾 ✅
+- 重要信息放中间 ❌
+```
+
+**论文证据**：
+> Liu et al. (2023) "Lost in the Middle: How Language Models Use Long Contexts"
+> 发现当相关信息在上下文中间位置时，模型性能显著下降。
+
+```python
+# 对策：重要信息重排序
+def reorder_for_attention(documents: List[str], query: str) -> List[str]:
+    """将最相关的文档放在开头和结尾"""
+    
+    # 按相关性排序
+    scored_docs = [(doc, score_relevance(doc, query)) for doc in documents]
+    scored_docs.sort(key=lambda x: x[1], reverse=True)
+    
+    if len(scored_docs) <= 2:
+        return [d[0] for d in scored_docs]
+    
+    # 最相关的放开头
+    # 次相关的放结尾
+    # 其他放中间
+    n = len(scored_docs)
+    reordered = []
+    
+    # 开头：最相关
+    reordered.append(scored_docs[0][0])
+    
+    # 中间：相关性较低的
+    middle_docs = [d[0] for d in scored_docs[2:]]
+    reordered.extend(middle_docs)
+    
+    # 结尾：第二相关
+    reordered.append(scored_docs[1][0])
+    
+    return reordered
+```
+
+### 5.2 注意力稀释
+
+**现象**：上下文越长，模型对每个部分的关注度越低。
+
+```python
+# 注意力稀释的影响
+context_lengths = [1000, 5000, 20000, 100000]
+effective_attention = [1.0, 0.7, 0.4, 0.2]  # 假设的有效注意力比例
+
+# 这意味着：
+# 1000 tokens: 模型能很好地关注所有内容
+# 100000 tokens: 大部分内容只能"扫一眼"
+```
+
+**对策**：
+1. **分块处理**：将长文档分块，分别处理后合并
+2. **层次化摘要**：先摘要，需要细节时再深入
+3. **查询聚焦**：只检索与当前查询最相关的部分
+
+```python
+class ChunkedProcessor:
+    """分块处理长文档"""
+    
+    def __init__(self, llm, chunk_size: int = 3000):
+        self.llm = llm
+        self.chunk_size = chunk_size
+    
+    def process_long_document(self, document: str, query: str) -> str:
+        # 分块
+        chunks = self._split_into_chunks(document)
+        
+        # 并行处理每个块
+        chunk_summaries = []
+        for chunk in chunks:
+            summary = self._process_chunk(chunk, query)
+            chunk_summaries.append(summary)
+        
+        # 合并结果
+        combined = "\n\n".join(chunk_summaries)
+        
+        # 最终综合
+        final_prompt = f"""
+基于以下各部分的分析，给出综合答案：
+
+{combined}
+
+问题：{query}
+
+综合答案：
+"""
+        return self.llm.generate(final_prompt)
+    
+    def _split_into_chunks(self, text: str) -> List[str]:
+        # 简单按长度分块，实际应考虑语义边界
+        chunks = []
+        for i in range(0, len(text), self.chunk_size):
+            chunks.append(text[i:i+self.chunk_size])
+        return chunks
+    
+    def _process_chunk(self, chunk: str, query: str) -> str:
+        prompt = f"""
+分析以下文本片段中与问题相关的内容：
+
+文本：{chunk}
+
+问题：{query}
+
+相关要点：
+"""
+        return self.llm.generate(prompt)
+```
+
+### 5.3 计算成本
+
+**现象**：上下文长度增加，计算成本呈平方级增长。
+
+```python
+# Transformer注意力计算复杂度: O(n²)
+
+def estimate_compute_cost(context_length: int):
+    """估算相对计算成本"""
+    base_length = 1000
+    base_cost = 1.0
+    
+    # 平方关系
+    relative_cost = (context_length / base_length) ** 2
+    return base_cost * relative_cost
+
+# 示例
+for length in [1000, 4000, 16000, 64000]:
+    cost = estimate_compute_cost(length)
+    print(f"{length:>6} tokens: {cost:>8.1f}x 成本")
+
+# 输出：
+#   1000 tokens:      1.0x 成本
+#   4000 tokens:     16.0x 成本
+#  16000 tokens:    256.0x 成本
+#  64000 tokens:   4096.0x 成本
+```
+
+### 5.4 综合解决方案
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    长上下文优化策略体系                                   │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  挑战                    策略                        工具/方法            │
+│  ─────                   ────                        ─────────            │
+│                                                                          │
+│  Lost in the Middle  →  重要信息重排序           →  开头/结尾放关键信息    │
+│                                                                          │
+│  注意力稀释          →  分块处理 + 层次化        →  Map-Reduce模式        │
+│                                                                          │
+│  计算成本            →  智能截断 + 按需检索      →  RAG + 缓存            │
+│                                                                          │
+│  信息过载            →  相关性过滤 + 压缩        →  重排序模型            │
+│                                                                          │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Part 6：实战案例
+
+### 6.1 客服Agent的上下文设计
+
+```python
+class CustomerServiceAgent:
+    """客服Agent的上下文设计示例"""
+    
+    def __init__(self):
+        self.system_prompt = self._build_system_prompt()
+        self.conversation_manager = SlidingWindowManager(window_size=8)
+        self.user_profile = {}
+        self.current_issue = None
+    
+    def _build_system_prompt(self) -> str:
+        return """
+## 角色
+你是[公司名]的智能客服助手。
+
+## 服务范围
+- 订单查询与修改
+- 退换货处理
+- 产品咨询
+- 投诉建议
+
+## 服务原则
+1. 先解决问题，再解释原因
+2. 用户情绪激动时，先安抚
+3. 超出权限的问题，转人工
+
+## 工具列表
+- query_order(order_id): 查询订单
+- create_refund(order_id, reason): 发起退款
+- transfer_human(reason): 转人工
+
+## 回复格式
+1. 确认理解用户问题
+2. 给出解决方案/操作结果
+3. 询问是否还需其他帮助
+"""
+    
+    def build_context(self, user_input: str) -> str:
+        """构建完整上下文"""
+        
+        parts = []
+        
+        # 1. 系统提示
+        parts.append(self.system_prompt)
+        
+        # 2. 用户画像（如果有）
+        if self.user_profile:
+            profile_text = f"""
+## 用户信息
+- 会员等级：{self.user_profile.get('level', '普通')}
+- 历史订单：{self.user_profile.get('order_count', 0)}单
+- 历史投诉：{self.user_profile.get('complaint_count', 0)}次
+- 偏好渠道：{self.user_profile.get('preferred_channel', '未知')}
+"""
+            parts.append(profile_text)
+        
+        # 3. 当前工单信息（如果有）
+        if self.current_issue:
+            issue_text = f"""
+## 当前工单
+- 问题类型：{self.current_issue.get('type')}
+- 相关订单：{self.current_issue.get('order_id')}
+- 问题状态：{self.current_issue.get('status')}
+"""
+            parts.append(issue_text)
+        
+        # 4. 对话历史（滑动窗口）
+        history = self.conversation_manager.get_context()
+        if history:
+            parts.append("## 对话历史")
+            for msg in history:
+                role = "用户" if msg['role'] == 'user' else "客服"
+                parts.append(f"{role}: {msg['content']}")
+        
+        # 5. 当前输入
+        parts.append(f"\n## 用户当前问题\n{user_input}")
+        
+        return "\n\n".join(parts)
+```
+
+### 6.2 编码Agent的上下文管理
+
+```python
+class CodingAgent:
+    """编码Agent的上下文设计示例"""
+    
+    def __init__(self):
+        self.system_prompt = self._build_system_prompt()
+        self.code_context = {}  # 当前打开的文件
+        self.task_plan = []     # 任务计划
+        self.execution_history = []  # 执行历史
+    
+    def _build_system_prompt(self) -> str:
+        return """
+## 角色
+你是一个专业的编程助手，帮助用户完成软件开发任务。
+
+## 工作流程
+1. 理解需求 → 2. 制定计划 → 3. 逐步实现 → 4. 测试验证
+
+## 工具
+- read_file(path): 读取文件
+- write_file(path, content): 写入文件
+- run_command(cmd): 执行命令
+- search_code(query): 搜索代码
+
+## 原则
+- 先理解再动手
+- 小步快跑，频繁验证
+- 保持代码整洁
+- 写好注释
+"""
+    
+    def build_context(self, user_request: str, include_code: bool = True) -> str:
+        """构建编码任务上下文"""
+        
+        parts = [self.system_prompt]
+        
+        # 当前任务计划
+        if self.task_plan:
+            plan_text = "## 当前任务计划\n"
+            for i, step in enumerate(self.task_plan):
+                status = "✅" if step.get('done') else "⏳"
+                plan_text += f"{i+1}. {status} {step['description']}\n"
+            parts.append(plan_text)
+        
+        # 执行历史（最近5条）
+        if self.execution_history:
+            history_text = "## 最近操作\n"
+            for action in self.execution_history[-5:]:
+                history_text += f"- {action['type']}: {action['summary']}\n"
+            parts.append(history_text)
+        
+        # 当前代码上下文（智能截断）
+        if include_code and self.code_context:
+            code_text = "## 当前代码文件\n"
+            
+            total_tokens = 0
+            max_code_tokens = 10000  # 预留给代码的token数
+            
+            for filepath, content in self.code_context.items():
+                file_tokens = len(content) // 2
+                
+                if total_tokens + file_tokens > max_code_tokens:
+                    # 超限，只显示摘要
+                    code_text += f"\n### {filepath} (摘要)\n"
+                    code_text += f"文件太长，共{len(content)}字符。显示前500字符...\n"
+                    code_text += f"```\n{content[:500]}\n...\n```\n"
+                else:
+                    code_text += f"\n### {filepath}\n```\n{content}\n```\n"
+                    total_tokens += file_tokens
+            
+            parts.append(code_text)
+        
+        # 用户请求
+        parts.append(f"## 用户请求\n{user_request}")
+        
+        return "\n\n".join(parts)
+```
+
+### 6.3 研究Agent的信息整合
+
+```python
+class ResearchAgent:
+    """研究Agent的上下文设计示例"""
+    
+    def __init__(self):
+        self.system_prompt = self._build_system_prompt()
+        self.research_topic = None
+        self.collected_sources = []  # 收集的信息源
+        self.synthesis = ""  # 当前综合结论
+    
+    def _build_system_prompt(self) -> str:
+        return """
+## 角色
+你是一个专业的研究助手，擅长信息收集、分析和综合。
+
+## 研究方法论
+1. 明确研究问题
+2. 多源信息收集
+3. 批判性评估
+4. 综合分析
+5. 形成结论
+
+## 信息源评估标准
+- 权威性：来源是否可信？
+- 时效性：信息是否过时？
+- 相关性：与研究问题是否直接相关？
+- 一致性：与其他来源是否矛盾？
+
+## 输出格式
+研究报告包含：
+1. 研究问题
+2. 关键发现
+3. 信息来源
+4. 分析过程
+5. 结论与建议
+6. 信息缺口
+"""
+    
+    def build_context(self, current_query: str) -> str:
+        """构建研究上下文"""
+        
+        parts = [self.system_prompt]
+        
+        # 研究主题
+        if self.research_topic:
+            parts.append(f"## 研究主题\n{self.research_topic}")
+        
+        # 已收集的信息（智能摘要）
+        if self.collected_sources:
+            sources_text = "## 已收集信息\n"
+            
+            # 按类型分组
+            by_type = {}
+            for source in self.collected_sources:
+                source_type = source.get('type', '其他')
+                if source_type not in by_type:
+                    by_type[source_type] = []
+                by_type[source_type].append(source)
+            
+            for source_type, sources in by_type.items():
+                sources_text += f"\n### {source_type}来源 ({len(sources)}条)\n"
+                for s in sources[:3]:  # 每类最多显示3条
+                    sources_text += f"- **{s['title']}** ({s['date']})\n"
+                    sources_text += f"  要点: {s['summary'][:100]}...\n"
+                    sources_text += f"  来源: {s['url']}\n"
+                
+                if len(sources) > 3:
+                    sources_text += f"  ... 还有{len(sources)-3}条\n"
+            
+            parts.append(sources_text)
+        
+        # 当前综合分析
+        if self.synthesis:
+            parts.append(f"## 当前分析\n{self.synthesis}")
+        
+        # 当前问题
+        parts.append(f"## 当前任务\n{current_query}")
+        
+        return "\n\n".join(parts)
+```
+
+---
+
+## Part 7：工具与框架
+
+### 7.1 LangChain的Memory模块
+
+LangChain提供了多种记忆实现：
+
+```python
+from langchain.memory import (
+    ConversationBufferMemory,      # 完整历史
+    ConversationBufferWindowMemory,  # 滑动窗口
+    ConversationSummaryMemory,       # 摘要记忆
+    ConversationSummaryBufferMemory, # 摘要+缓冲
+)
+
+# 1. 完整历史记忆
+buffer_memory = ConversationBufferMemory()
+buffer_memory.save_context(
+    {"input": "你好"},
+    {"output": "你好！有什么可以帮助你的？"}
+)
+
+# 2. 滑动窗口记忆
+window_memory = ConversationBufferWindowMemory(k=5)  # 只保留最近5轮
+
+# 3. 摘要记忆
+summary_memory = ConversationSummaryMemory(llm=llm)
+
+# 4. 混合模式：摘要+最近几轮
+hybrid_memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    max_token_limit=2000
+)
+```
+
+### 7.2 LlamaIndex的上下文管理
+
+```python
+from llama_index import (
+    VectorStoreIndex,
+    ServiceContext,
+)
+from llama_index.chat_memory import ChatMemoryBuffer
+
+# 1. 向量索引用于RAG检索
+index = VectorStoreIndex.from_documents(documents)
+query_engine = index.as_query_engine()
+
+# 2. 对话记忆
+memory = ChatMemoryBuffer.from_defaults(token_limit=3000)
+
+# 3. 组合成Agent
+agent = ReActAgent.from_tools(
+    tools=[query_engine_tool],
+    memory=memory,
+    verbose=True
+)
+```
+
+### 7.3 OpenClaw的记忆系统
+
+OpenClaw提供了灵活的记忆架构：
+
+```yaml
+# openclaw.yaml 配置示例
+memory:
+  # 对话历史管理
+  conversation:
+    strategy: "sliding_window"  # buffer | sliding_window | summary
+    window_size: 10
+    
+  # 长期记忆
+  long_term:
+    enabled: true
+    storage: "sqlite"  # sqlite | postgres | redis
+    embedding_model: "text-embedding-3-small"
+    
+  # 工作区记忆（文件系统）
+  workspace:
+    path: "~/.openclaw/workspace"
+    index_files: true
+    
+  # 技能记忆
+  skills:
+    path: "~/.openclaw/skills"
+    auto_load: true
+```
+
+```python
+# OpenClaw的上下文构建流程
+class OpenClawContextBuilder:
+    """OpenClaw风格的上下文构建"""
+    
+    def build(self, user_input: str) -> str:
+        parts = []
+        
+        # 1. Soul（核心人格）
+        if self.soul_file:
+            parts.append(self.read_file("SOUL.md"))
+        
+        # 2. User Profile
+        if self.user_file:
+            parts.append(self.read_file("USER.md"))
+        
+        # 3. Skills（技能库）
+        relevant_skills = self.match_skills(user_input)
+        if relevant_skills:
+            parts.append("## Available Skills")
+            for skill in relevant_skills:
+                parts.append(f"- {skill.name}: {skill.description}")
+        
+        # 4. Tools（工具定义）
+        parts.append("## Tools")
+        for tool in self.available_tools:
+            parts.append(tool.to_json_schema())
+        
+        # 5. Conversation History
+        parts.append("## Conversation")
+        parts.append(self.memory.get_formatted_history())
+        
+        # 6. User Input
+        parts.append(f"## User\n{user_input}")
+        
+        return "\n\n".join(parts)
+```
+
+### 7.4 框架对比
+
+| 框架 | 上下文管理特点 | 适用场景 |
+|------|---------------|----------|
+| **LangChain** | 丰富的Memory类型，易于切换 | 快速原型、多种记忆策略实验 |
+| **LlamaIndex** | 强大的RAG集成，文档索引 | 知识密集型应用 |
+| **OpenClaw** | 文件系统驱动，技能扩展 | 个人助理、开发者工具 |
+| **原生OpenAI** | 手动管理，最大灵活性 | 高度定制化需求 |
+
+---
+
+## 课程小结
+
+### 核心要点
+
+1. **上下文工程是Agent设计的核心**
+   - 不只是Prompt，而是整体信息架构
+   - 影响质量、成本、用户体验
+
+2. **上下文由六大组件构成**
+   - System Prompt → Few-shot → Retrieved → History → Tools → User Input
+   - 每个组件有其设计原则
+
+3. **管理策略要因地制宜**
+   - 压缩：保留语义，需要计算
+   - 窗口：简单高效，可能丢失
+   - 选择：智能筛选，需要调优
+   - 分层：灵活强大，实现复杂
+
+4. **长上下文有陷阱**
+   - Lost in the Middle：重要信息放两端
+   - 注意力稀释：分块处理
+   - 成本平方增长：智能截断
+
+5. **实战要针对场景设计**
+   - 客服：用户画像 + 工单 + 滑动历史
+   - 编码：任务计划 + 代码上下文 + 执行历史
+   - 研究：信息分类 + 来源追踪 + 综合分析
+
+### 设计原则总结
+
+```
+上下文工程设计原则：
+
+1. 信息优先级：必要 > 有用 > 可选
+2. 位置敏感：重要信息放开头和结尾
+3. 结构清晰：用格式减少歧义
+4. 密度适中：精简但不丢失关键信息
+5. 动态调整：根据任务类型调整策略
+6. 成本意识：Token是稀缺资源
+```
+
+---
+
+## 课后思考
+
+1. **设计题**：为一个"法律咨询Agent"设计上下文架构。考虑：用户画像、案例检索、对话历史、法条引用、免责声明。
+
+2. **分析题**：如果用户和Agent进行了100轮对话，你会如何管理这些历史？压缩、截断、还是其他方法？为什么？
+
+3. **优化题**：给定一个4000 token的上下文窗口限制，如何分配给：系统提示词、检索内容、对话历史、用户输入？给出你的分配方案和理由。
+
+4. **实践题**：尝试用不同的上下文组织方式（结构化 vs 非结构化、长提示 vs 短提示）让GPT/Claude完成同一任务，观察输出质量差异。
+
+---
+
+## 参考资源
+
+1. **Datawhale Hello-Agents 第九章**
+   - https://datawhalechina.github.io/hello-agents/chapter9/
+
+2. **Lost in the Middle论文**
+   - Liu et al. (2023) "Lost in the Middle: How Language Models Use Long Contexts"
+
+3. **Anthropic Prompt Engineering指南**
+   - https://docs.anthropic.com/claude/docs/introduction-to-prompt-design
+
+4. **OpenAI最佳实践**
+   - https://platform.openai.com/docs/guides/prompt-engineering
+
+5. **LangChain Memory文档**
+   - https://python.langchain.com/docs/modules/memory/
+
+---
+
+_好的上下文设计，是让模型"看到"正确的信息，在正确的位置，以正确的格式。_
