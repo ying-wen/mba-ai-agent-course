@@ -39,25 +39,19 @@
 
 | 课时 | 主题 | 幻灯片 | 讲义 |
 |------|------|--------|------|
-| L1-2 | 大语言模型基础 | [MD](slides/day1-lesson1-2-llm-basics.md) · [HTML](all-html/day1-lesson1-2-llm-basics.html) | [讲义](lecture-notes/L1-2-大语言模型基础.md) · [PDF](all-pdf/L1-2-LLM-Basics-大语言模型基础.pdf) |
-| L3-4 | 工作流与 RAG | [MD](slides/day1-lesson3-4-workflow.md) · [HTML](all-html/day1-lesson3-4-workflow.html) | [讲义](lecture-notes/L3-4-工作流与RAG.md) · [PDF](all-pdf/L3-4-Workflow-RAG-流程与检索增强.pdf) |
-| L5-6 | Agent 架构 | [MD](slides/day1-lesson5-6-agent.md) · [HTML](all-html/day1-lesson5-6-agent.html) | [讲义](lecture-notes/L5-6-智能体架构.md) · [PDF](all-pdf/L5-6-Agent-智能体设计与实现.pdf) |
-| L7-8 | 记忆与工具 | [MD](slides/day1-lesson7-8-memory-tools.md) · [HTML](all-html/day1-lesson7-8-memory-tools.html) | [讲义](lecture-notes/L7-8-记忆与工具.md) · [PDF](all-pdf/L7-8-Memory-Tools-记忆系统与工具编排.pdf) |
+| L1-2 | 大语言模型基础 | [Slides](slides/day1-lesson1-2-llm-basics.md) | [Notes](lecture-notes/L1-2-大语言模型基础.md) |
+| L3-4 | 工作流与 RAG | [Slides](slides/day1-lesson3-4-workflow.md) | [Notes](lecture-notes/L3-4-工作流与RAG.md) |
+| L5-6 | Agent 架构 | [Slides](slides/day1-lesson5-6-agent.md) | [Notes](lecture-notes/L5-6-智能体架构.md) |
+| L7-8 | 记忆与工具 | [Slides](slides/day1-lesson7-8-memory-tools.md) | [Notes](lecture-notes/L7-8-记忆与工具.md) |
 
 ### Day 2：进阶与落地
 
 | 课时 | 主题 | 幻灯片 | 讲义 |
 |------|------|--------|------|
-| L9-10 | 多智能体系统 | [MD](slides/day2-lesson9-10-multi-agent.md) · [HTML](all-html/day2-lesson9-10-multi-agent.html) | [讲义](lecture-notes/L9-10-多智能体系统.md) · [PDF](all-pdf/L9-10-MultiAgent-多智能体系统设计.pdf) |
-| L11-12 | MCP 与工具生态 | [MD](slides/day2-lesson11-12-mcp.md) · [HTML](all-html/day2-lesson11-12-mcp.html) | [讲义](lecture-notes/L11-12-MCP与工具生态.md) · [PDF](all-pdf/L11-12-MCP-工具集成标准.pdf) |
-| L13-14 | LLM OS | [MD](slides/day2-lesson13-14-llm-os.md) · [HTML](all-html/day2-lesson13-14-llm-os.html) | [讲义](lecture-notes/L13-14-智能体操作系统（LLM OS）.md) · [PDF](all-pdf/L13-14-LLM-OS-智能体操作系统.pdf) |
-| L15-16 | 商业落地 | [MD](slides/day2-lesson15-16-business.md) · [HTML](all-html/day2-lesson15-16-business.html) | [讲义](lecture-notes/L15-16-商业落地.md) · [PDF](all-pdf/L15-16-Business-商业落地与未来展望.pdf) |
-
-### 补充材料
-
-- [课程概览](slides/course-overview.md) · [HTML](all-html/course-overview.html)
-- [课程大纲](SYLLABUS.md)
-- [延伸阅读清单](READING-LIST.md)
+| L9-10 | 多智能体系统 | [Slides](slides/day2-lesson9-10-multi-agent.md) | [Notes](lecture-notes/L9-10-多智能体系统.md) |
+| L11-12 | MCP 与工具生态 | [Slides](slides/day2-lesson11-12-mcp.md) | [Notes](lecture-notes/L11-12-MCP与工具生态.md) |
+| L13-14 | LLM OS | [Slides](slides/day2-lesson13-14-llm-os.md) | [Notes](lecture-notes/L13-14-智能体操作系统（LLM OS）.md) |
+| L15-16 | 商业落地 | [Slides](slides/day2-lesson15-16-business.md) | [Notes](lecture-notes/L15-16-商业落地.md) |
 
 ---
 
@@ -87,76 +81,55 @@
 ## 📂 目录结构
 
 ```
-├── slides/              # 📽️ 课程幻灯片 (Marp Markdown)
-├── lecture-notes/       # 📖 详细讲义 (每节课 1 份，已整合补充章节)
-├── transcripts/         # 🎙️ 讲稿 (每页 slide 对应讲解词)
-├── all-html/            # 🌐 幻灯片 HTML 输出
-├── all-pdf/             # 📄 讲义 PDF 输出
-├── assignments/         # ✏️ 作业要求
-├── labs/                # 🧪 实验指南
-├── reference/           # 📚 参考资料
-├── SYLLABUS.md          # 课程大纲
-└── READING-LIST.md      # 延伸阅读清单
+├── slides/                  # 📽️ 课程幻灯片 (Marp Markdown)
+├── lecture-notes/           # 📖 详细讲义
+│   └── appendix/            # 📚 技术深度补充材料
+├── assignments/             # ✏️ 作业要求
+├── labs/                    # 🧪 实验指南
+├── SYLLABUS.md              # 📋 课程大纲
+└── READING-LIST.md          # 📚 延伸阅读清单
 ```
 
 ---
 
-## 🚀 快速开始
+## 🔧 环境配置
 
-幻灯片使用 [Marp](https://marp.app/) 格式编写，可直接用 VS Code + Marp 插件预览：
+### 1. 安装 OpenClaw
 
 ```bash
-# 安装 Marp CLI
-npm install -g @marp-team/marp-cli
+# macOS / Linux
+curl -fsSL https://openclaw.ai/install | sh
 
-# 生成 HTML
-marp slides/day1-lesson1-2-llm-basics.md --html -o output.html
-
-# 讲义生成 PDF (需要 pandoc + xelatex)
-pandoc lecture-notes/L1-2-LLM-Basics-大语言模型基础.md -o output.pdf \
-  --pdf-engine=xelatex -V CJKmainfont="Songti SC"
+# Windows PowerShell
+irm https://openclaw.ai/install.ps1 | iex
 ```
 
----
+### 2. 配置 API Key
 
-## 🤝 合作方
+```bash
+openclaw configure
+```
 
-### OpenClaw
+### 3. 验证安装
 
-[OpenClaw](https://openclaw.ai) 是一个开源的 Personal AI 基础设施项目，让每个人都能拥有自己的 AI Agent。
+```bash
+openclaw chat "你好"
+```
 
-**核心特性：**
-
-- 🦞 **多智能体系统** — CEO Agent 统领多个专业 Agent（研究、编码、投资、运维等），实现复杂任务的自动分解与协作
-- 🧩 **Skills 生态** — 模块化的能力扩展系统，通过 Skill 包快速赋予 Agent 新技能
-- 🔌 **MCP 协议支持** — 兼容 Model Context Protocol，无缝集成 MCP 工具生态
-- 💾 **本地记忆系统** — 基于向量搜索的长期记忆，支持 Hybrid Search、MMR 去重、时间衰减等高级特性
-- 📱 **全平台接入** — 统一接入 Telegram、飞书、Discord、WhatsApp、iMessage 等消息平台
-- 🏠 **隐私优先** — 数据本地存储，支持本地 Embedding 模型
-- ⚡ **Coding Agent 集成** — 原生支持 Codex CLI、Claude Code 等编码工具
-
-本课程的多智能体系统设计、MCP 集成、LLM OS 等内容深度结合 OpenClaw 的架构设计与实践经验。
+详细教程：[claw101.com](https://claw101.com/en)
 
 ---
 
-## 📖 延伸资源
+## 📖 延伸阅读
 
-- [OpenClaw 文档](https://docs.openclaw.ai) — 技术文档与教程
-- [OpenClaw GitHub](https://github.com/openclaw/openclaw) — 开源代码
-- [ClawHub](https://clawhub.com) — Skills 社区与分享平台
+详见 [READING-LIST.md](READING-LIST.md)
 
 ---
 
-## 📜 许可证
+## 📜 License
 
-本课程材料采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可证。
+本课程材料仅供教学使用。
 
 ---
 
-<div align="center">
-
-**上海交通大学安泰经济与管理学院 · 上海交通大学人工智能学院 × OpenClaw**
-
-*让每个人都能拥有自己的 AI Agent*
-
-</div>
+*上海交通大学 · 安泰经济与管理学院 · 2026*

@@ -1,13 +1,8 @@
-# 只保留核心教学文件
-# slides/, lecture-notes/, READING-LIST.md, SYLLABUS.md, README.md
-
 # 忽略编译输出
 all-html/
 all-pdf/
 
 # 忽略辅助文件
-assignments/
-labs/
 reference/
 scripts/
 transcripts/
@@ -16,8 +11,7 @@ transcripts/
 CONTENT-MAPPING.md
 REVISION-PLAN.md
 
-# 忽略附录和存档
-lecture-notes/appendix/
+# 忽略存档（历史版本）
 lecture-notes/archive/
 lecture-notes/images/
 
