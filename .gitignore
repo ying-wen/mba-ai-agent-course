@@ -1,21 +1,28 @@
-# Python
-__pycache__/
-*.py[cod]
-.env
-venv/
-.venv/
+# 只保留核心教学文件
+# slides/, lecture-notes/, READING-LIST.md, SYLLABUS.md, README.md
 
-# OS
+# 忽略编译输出
+all-html/
+all-pdf/
+
+# 忽略辅助文件
+assignments/
+labs/
+reference/
+scripts/
+transcripts/
+
+# 忽略工作文件
+CONTENT-MAPPING.md
+REVISION-PLAN.md
+
+# 忽略附录和存档
+lecture-notes/appendix/
+lecture-notes/archive/
+lecture-notes/images/
+
+# 系统文件
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Build output (generated files)
-all-pptx/
-output/
-
-# Logs
-*.log
+*.swp
+*.swo
+*~
