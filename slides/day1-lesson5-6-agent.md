@@ -5,6 +5,7 @@ paginate: true
 backgroundColor: "#f5f5f7"
 color: "#1d1d1f"
 style: |
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
   
   section {
     font-family: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;

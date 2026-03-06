@@ -6,6 +6,7 @@ size: 16:9
 backgroundColor: "#f5f5f7"
 color: "#1f2937"
 style: |
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
   
 
   section {
