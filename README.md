@@ -44,7 +44,7 @@
 
 | 课时 | 主题 | 页数 | 核心内容 |
 |------|------|------|----------|
-| **L1-2** | [大语言模型基础](slides/day1-lesson1-2-llm-basics.md) | 87页 | Transformer → GPT-5/Claude 4.6/Gemini 3.1，推理模型，MoE，Prompt Engineering |
+| **L1-2** | [大语言模型基础](slides/day1-lesson1-2-llm-basics.md) | 87页 | Transformer → GPT-5/Claude 4.6/Gemini 3.1，推理模型，MoE，Token Pricing, Prompt/Context Engineering |
 | **L3-4** | [工作流与 RAG](slides/day1-lesson3-4-workflow.md) | 77页 | Anthropic 5种工作流模式（含官方架构图），RAG/GraphRAG/Agentic RAG |
 | **L5-6** | [智能体架构与设计](slides/day1-lesson5-6-agent.md) | 82页 | ReAct/反思/规划，OpenAI+Anthropic 官方 Agent 定义，自主时长 14.5h |
 | **L7-8** | [记忆系统与工具编排](slides/day1-lesson7-8-memory-tools.md) | 65页 | 三层记忆架构，Context Rot，AGENTS.md，MCP/CLI/Skill 预览 |
