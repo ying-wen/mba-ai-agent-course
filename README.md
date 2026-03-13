@@ -1,125 +1,146 @@
 # 🤖 大模型智能体：从原理到实践
 
 > **上海交通大学安泰经济与管理学院 MBA 课程**  
-> 与 [OpenClaw](https://openclaw.ai) 合作开发
+> 与 [OpenClaw](https://openclaw.ai) 合作开发  
+> 最后更新：2026-03-14
 
 ---
 
 ## 👨‍🏫 讲师
 
-**温颖** 副教授  
-上海交通大学 人工智能学院  
-🔗 [yingwen.io](https://yingwen.io)
+**温颖** 副教授 · 上海交通大学 人工智能学院 · [yingwen.io](https://yingwen.io)  
+**温睦宁** 助理研究员 · 上海交通大学 人工智能学院
 
-**温睦宁** 助理研究员  
-上海交通大学 人工智能学院  
-
-## 👨‍🏫 助教
-
-**王雅娟**  
-上海交通大学 安泰经济与管理学院  
+**助教**：王雅娟 · 上海交通大学 安泰经济与管理学院
 
 ---
 
 ## 📚 课程简介
 
-本课程面向 MBA 学员，系统介绍大语言模型（LLM）与 AI Agent 的核心原理、技术架构与商业应用。通过理论讲解与动手实践相结合，帮助学员理解 AI Agent 如何重塑企业工作流程，并具备评估、选型和落地 AI Agent 解决方案的能力。
+两天密集课程（16课时），面向 MBA 学员，系统讲解大语言模型与 AI Agent 的**原理、架构与商业落地**。
+
+### 你将学到
+
+- LLM 核心原理（Transformer → GPT-5 → 推理模型）
+- 工作流设计（Pipeline/Routing/Parallelization + RAG）
+- Agent 架构（ReAct/反思/规划 + 记忆 + 工具）
+- 多 Agent 协作（共识机制、OMAO 实战挑战）
+- 工具生态（CLI → MCP → Agent Skills，安全治理）
+- Harness Engineering（Agent = Model + Harness）
+- 商业落地（Services as Software、AI-native 组织、$1→$4800 经济学）
 
 ### 课程特色
 
-- 🎯 **商业导向**：聚焦 AI Agent 在企业场景的实际应用
-- 🌐 **前沿视野**：涵盖 MCP 协议、LLM OS 等最新技术趋势
-- 🇨🇳 **本土视角**：深入分析中国 AI 产业格局与机遇
+- 🎯 **商业导向**：每个技术点都配 MBA 视角的商业洞察
+- 🔥 **前沿内容**：整合 2026 年 3 月最新的硅谷趋势（Harness Engineering、MCP vs CLI 争论、红杉万亿美元论）
+- 📊 **数据驱动**：引用 Anthropic 2026 报告、$OneMillion-Bench、Lakera 安全审计等一手数据
+- 🏗️ **案例丰富**：OpenAI 0 代码实验、Cursor $50B、Zapier 800 Agent 等真实案例
 
 ---
 
 ## 📅 课程大纲
 
-### Day 1：基础与架构
+### Day 1：基础与架构（4 × 90min）
 
-| 课时 | 主题 | 幻灯片 | 讲义 |
-|------|------|--------|------|
-| L1-2 | 大语言模型基础 | [Slides](slides/day1-lesson1-2-llm-basics.md) | [Notes](lecture-notes/L1-2-大语言模型基础.md) |
-| L3-4 | 工作流与 RAG | [Slides](slides/day1-lesson3-4-workflow.md) | [Notes](lecture-notes/L3-4-工作流与RAG.md) |
-| L5-6 | Agent 架构 | [Slides](slides/day1-lesson5-6-agent.md) | [Notes](lecture-notes/L5-6-智能体架构.md) |
-| L7-8 | 记忆与工具 | [Slides](slides/day1-lesson7-8-memory-tools.md) | [Notes](lecture-notes/L7-8-记忆与工具.md) |
+| 课时 | 主题 | 页数 | 核心内容 |
+|------|------|------|----------|
+| **L1-2** | [LLM 基础](slides/day1-lesson1-2-llm-basics.md) | 87页 | Transformer → GPT-5/Claude 4.6/Gemini 3.1，推理模型，MoE，Prompt Engineering |
+| **L3-4** | [工作流与 RAG](slides/day1-lesson3-4-workflow.md) | 77页 | Anthropic 5种工作流模式（含官方架构图），RAG/GraphRAG/Agentic RAG |
+| **L5-6** | [Agent 架构](slides/day1-lesson5-6-agent.md) | 82页 | ReAct/反思/规划，OpenAI+Anthropic 官方 Agent 定义，自主时长 14.5h |
+| **L7-8** | [记忆与工具](slides/day1-lesson7-8-memory-tools.md) | 65页 | 三层记忆架构，Context Rot，AGENTS.md，MCP/CLI/Skill 预览 |
 
-### Day 2：进阶与落地
+### Day 2：进阶与落地（4 × 90min）
 
-| 课时 | 主题 | 幻灯片 | 讲义 |
-|------|------|--------|------|
-| L9-10 | 多智能体系统 | [Slides](slides/day2-lesson9-10-multi-agent.md) | [Notes](lecture-notes/L9-10-多智能体系统.md) |
-| L11-12 | MCP 与工具生态 | [Slides](slides/day2-lesson11-12-mcp.md) | [Notes](lecture-notes/L11-12-MCP与工具生态.md) |
-| L13-14 | LLM OS | [Slides](slides/day2-lesson13-14-llm-os.md) | [Notes](lecture-notes/L13-14-智能体操作系统（LLM OS）.md) |
-| L15-16 | 商业落地 | [Slides](slides/day2-lesson15-16-business.md) | [Notes](lecture-notes/L15-16-商业落地.md) |
+| 课时 | 主题 | 页数 | 核心内容 |
+|------|------|------|----------|
+| **L9-10** | [多智能体系统](slides/day2-lesson9-10-multi-agent.md) | 51页 | 4种协作模式，共识机制（Voting/Debate/Consensus），OMAO 七缺口，实战瓶颈 |
+| **L11-12** | [工具生态](slides/day2-lesson11-12-mcp.md) | 63页 | CLI→MCP→Skills 四代演进，MCP vs CLI（10-32x 成本差），Lakera 安全审计 |
+| **L13-14** | [LLM OS](slides/day2-lesson13-14-llm-os.md) | 59页 | Harness Engineering（OpenAI/LangChain/Anthropic），OpenClaw 架构，Big Model vs Big Harness |
+| **L15-16** | [商业落地](slides/day2-lesson15-16-business.md) | 58页 | $1→$4800 Agent 经济学，红杉 Services as Software，AI-native 组织，技术趋势 |
+
+> 共 **542 页**，含 **15 张**来自 Anthropic 和 OpenAI 的官方架构图
 
 ---
 
-## 📝 作业
+## 📂 仓库结构
 
-| 作业 | 内容 | 占比 |
+```
+├── slides/                     # 📽️ 课程幻灯片 (Marp Markdown)
+│   ├── course-overview.md      # 课程总览
+│   ├── day1-lesson*.md         # Day 1 四讲
+│   ├── day2-lesson*.md         # Day 2 四讲
+│   ├── images/                 # Anthropic + OpenAI 官方图
+│   └── assets/images/          # Lilian Weng 论文图
+├── .marprc.yml                 # Marp 配置
+├── package.json                # 依赖
+└── README.md
+```
+
+---
+
+## 🔧 本地编译
+
+### 安装依赖
+
+```bash
+npm install -g @marp-team/marp-cli
+```
+
+### 编译为 PDF
+
+```bash
+marp slides/day1-lesson1-2-llm-basics.md --pdf --allow-local-files -o output.pdf
+```
+
+### 编译为 HTML
+
+```bash
+marp slides/day1-lesson1-2-llm-basics.md --html --allow-local-files -o output.html
+```
+
+### 编译为 PPTX
+
+```bash
+marp slides/day1-lesson1-2-llm-basics.md --pptx --allow-local-files -o output.pptx
+```
+
+### 批量编译
+
+```bash
+for md in slides/day*.md; do
+  name=$(basename "$md" .md)
+  marp "$md" --pdf --allow-local-files -o "output/${name}.pdf"
+done
+```
+
+---
+
+## 📖 参考资料
+
+### 官方技术博客（课程核心引用）
+
+| 来源 | 文章 | 用于 |
 |------|------|------|
-| [作业1](assignments/assignment1-openclaw-report.md) | OpenClaw 使用体验报告 | 40% |
-| [作业2](assignments/assignment2-agent-future-research.md) | AI Agent 未来研究与创业机会 | 50% |
-| 出勤 | 课堂参与 | 10% |
+| Anthropic | [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) | L3-4, L5-6, L9-10 |
+| Anthropic | [Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) | L13-14 |
+| Anthropic | [2026 Agentic Coding Trends Report](https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf) | L13-14, L15-16 |
+| OpenAI | [A Practical Guide to Building AI Agents](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/) | L5-6, L9-10 |
+| OpenAI | [Harness Engineering](https://openai.com/index/harness-engineering/) | L13-14 |
+| LangChain | [The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) | L13-14 |
+| Sequoia | [Services: The New Software](https://sequoiacap.com/article/services-the-new-software/) | L15-16 |
+| CircleCI | [MCP vs CLI for AI-native Development](https://circleci.com/blog/mcp-vs-cli/) | L11-12 |
+| Lakera | [Agent Skill Ecosystem Security](https://www.lakera.ai/blog/the-agent-skill-ecosystem-when-ai-extensions-become-a-malware-delivery-channel) | L11-12 |
+| Latent Space | [Is Harness Engineering Real?](https://www.latent.space/p/ainews-is-harness-engineering-real) | L13-14 |
 
----
+### 学术论文
 
-## 🧪 实验 (Labs)
+- [Voting or Consensus? Decision-Making in Multi-Agent Debate](https://arxiv.org/abs/2502.19130) — ACL 2025
+- [$OneMillion-Bench](https://arxiv.org/abs/2603.07980) — Agent 经济价值评估
+- [Auditing Multi-Agent LLM Reasoning Trees](https://arxiv.org/abs/2602.09341)
 
-| 实验 | 主题 | 难度 |
-|------|------|------|
-| [Lab 1](labs/lab1-prompt/README.md) | Prompt Engineering Playground | ⭐ |
-| [Lab 2](labs/lab2-workflow/README.md) | 构建 RAG 工作流 | ⭐⭐ |
-| [Lab 3](labs/lab3-agent/README.md) | 实现 ReAct Agent | ⭐⭐ |
-| [Lab 4](labs/lab4-multiagent/README.md) | 多智能体系统 | ⭐⭐⭐ |
+### 产品与生态
 
-> 实验为选修内容，不计入成绩
-
----
-
-## 📂 目录结构
-
-```
-├── slides/                  # 📽️ 课程幻灯片 (Marp Markdown)
-├── lecture-notes/           # 📖 详细讲义
-│   └── appendix/            # 📚 技术深度补充材料
-├── assignments/             # ✏️ 作业要求
-├── labs/                    # 🧪 实验指南
-├── SYLLABUS.md              # 📋 课程大纲
-└── READING-LIST.md          # 📚 延伸阅读清单
-```
-
----
-
-## 🔧 环境配置
-
-### 1. 安装 OpenClaw
-
-```bash
-# macOS / Linux
-curl -fsSL https://openclaw.ai/install.sh | bash
-```
-
-### 2. 配置 API Key
-
-```bash
-openclaw configure
-```
-
-### 3. 验证安装
-
-```bash
-openclaw chat "你好"
-```
-
-详细教程：[docs.openclaw.ai](https://docs.openclaw.ai/getting-started)
-
----
-
-## 📖 延伸阅读
-
-详见 [READING-LIST.md](READING-LIST.md)
+- [OpenClaw](https://openclaw.ai) · [ClawHub Skills](https://clawhub.com) · [MCP Protocol](https://modelcontextprotocol.io) · [AgentSkills.io](https://agentskills.io)
 
 ---
 
@@ -129,4 +150,4 @@ openclaw chat "你好"
 
 ---
 
-*上海交通大学 · 安泰经济与管理学院 · 2026*
+*上海交通大学 · 安泰经济与管理学院 · 2026 春*
