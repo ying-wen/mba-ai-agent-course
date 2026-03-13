@@ -44,19 +44,19 @@
 
 | 课时 | 主题 | 页数 | 核心内容 |
 |------|------|------|----------|
-| **L1-2** | [LLM 基础](slides/day1-lesson1-2-llm-basics.md) | 87页 | Transformer → GPT-5/Claude 4.6/Gemini 3.1，推理模型，MoE，Prompt Engineering |
+| **L1-2** | [大语言模型基础](slides/day1-lesson1-2-llm-basics.md) | 87页 | Transformer → GPT-5/Claude 4.6/Gemini 3.1，推理模型，MoE，Prompt Engineering |
 | **L3-4** | [工作流与 RAG](slides/day1-lesson3-4-workflow.md) | 77页 | Anthropic 5种工作流模式（含官方架构图），RAG/GraphRAG/Agentic RAG |
-| **L5-6** | [Agent 架构](slides/day1-lesson5-6-agent.md) | 82页 | ReAct/反思/规划，OpenAI+Anthropic 官方 Agent 定义，自主时长 14.5h |
-| **L7-8** | [记忆与工具](slides/day1-lesson7-8-memory-tools.md) | 65页 | 三层记忆架构，Context Rot，AGENTS.md，MCP/CLI/Skill 预览 |
+| **L5-6** | [智能体架构与设计](slides/day1-lesson5-6-agent.md) | 82页 | ReAct/反思/规划，OpenAI+Anthropic 官方 Agent 定义，自主时长 14.5h |
+| **L7-8** | [记忆系统与工具编排](slides/day1-lesson7-8-memory-tools.md) | 65页 | 三层记忆架构，Context Rot，AGENTS.md，MCP/CLI/Skill 预览 |
 
 ### Day 2：进阶与落地（4 × 90min）
 
 | 课时 | 主题 | 页数 | 核心内容 |
 |------|------|------|----------|
-| **L9-10** | [多智能体系统](slides/day2-lesson9-10-multi-agent.md) | 51页 | 4种协作模式，共识机制（Voting/Debate/Consensus），OMAO 七缺口，实战瓶颈 |
-| **L11-12** | [工具生态](slides/day2-lesson11-12-mcp.md) | 63页 | CLI→MCP→Skills 四代演进，MCP vs CLI（10-32x 成本差），Lakera 安全审计 |
-| **L13-14** | [LLM OS](slides/day2-lesson13-14-llm-os.md) | 59页 | Harness Engineering（OpenAI/LangChain/Anthropic），OpenClaw 架构，Big Model vs Big Harness |
-| **L15-16** | [商业落地](slides/day2-lesson15-16-business.md) | 58页 | $1→$4800 Agent 经济学，红杉 Services as Software，AI-native 组织，技术趋势 |
+| **L9-10** | [多智能体协作与共识机制](slides/day2-lesson9-10-multi-agent.md) | 51页 | 4种协作模式，共识机制（Voting/Debate/Consensus），OMAO 七缺口，实战瓶颈 |
+| **L11-12** | [CLI · MCP · Skills 工具生态](slides/day2-lesson11-12-mcp.md) | 63页 | CLI→MCP→Skills 四代演进，MCP vs CLI（10-32x 成本差），Lakera 安全审计 |
+| **L13-14** | [LLM OS 与 Harness Engineering](slides/day2-lesson13-14-llm-os.md) | 59页 | Harness Engineering（OpenAI/LangChain/Anthropic），OpenClaw 架构，Big Model vs Big Harness |
+| **L15-16** | [AI Agent 商业革命与未来](slides/day2-lesson15-16-business.md) | 58页 | $1→$4800 Agent 经济学，红杉 Services as Software，AI-native 组织，技术趋势 |
 
 > 共 **542 页**，含 **15 张**来自 Anthropic 和 OpenAI 的官方架构图
 
