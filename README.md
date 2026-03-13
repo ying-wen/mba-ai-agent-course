@@ -98,10 +98,7 @@
 
 ```bash
 # macOS / Linux
-curl -fsSL https://openclaw.ai/install | sh
-
-# Windows PowerShell
-irm https://openclaw.ai/install.ps1 | iex
+curl -fsSL https://openclaw.ai/install.sh | bash
 ```
 
 ### 2. 配置 API Key
@@ -116,7 +113,7 @@ openclaw configure
 openclaw chat "你好"
 ```
 
-详细教程：[claw101.com](https://claw101.com/en)
+详细教程：[docs.openclaw.ai](https://docs.openclaw.ai/getting-started)
 
 ---
 

@@ -1,15 +1,34 @@
-# 忽略辅助文件
+# 只保留slides源文件和基础配置
+# 排除所有编译产物
+all-pdf/
+all-html/
+all-pptx/
+slides-pdf/
+slides-pptx/
+
+# 排除lecture-notes（只在本地保留）
+lecture-notes/
+
+# 排除辅助目录
 reference/
 scripts/
 transcripts/
+labs/
+assignments/
 
-# 忽略工作文件
+# 排除node/构建
+node_modules/
+package-lock.json
+
+# 排除工作文件
 CONTENT-MAPPING.md
 REVISION-PLAN.md
+READING-LIST.md
+marp.config.js
 
-# 忽略存档（历史版本）
-lecture-notes/archive/
-lecture-notes/images/
+# 排除测试文件
+test-*.html
+test-*.pdf
 
 # 系统文件
 .DS_Store

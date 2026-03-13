@@ -1,0 +1,24 @@
+{
+  "name": "mba-ai-agent-course-clean",
+  "version": "1.0.0",
+  "description": "> **上海交通大学安泰经济与管理学院 MBA 课程**   > 与 [OpenClaw](https://openclaw.ai) 合作开发",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ying-wen/mba-ai-agent-course.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ying-wen/mba-ai-agent-course/issues"
+  },
+  "homepage": "https://github.com/ying-wen/mba-ai-agent-course#readme",
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}

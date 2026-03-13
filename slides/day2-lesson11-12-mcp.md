@@ -7,7 +7,7 @@ backgroundColor: "#f5f5f7"
 color: "#1f2937"
 style: |
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
-  
+
 
   section {
     font-family: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
@@ -26,8 +26,6 @@ style: |
   li { margin: 0.16em 0; }
 
   pre {
-    background: #1e293b;
-    color: #e2e8f0;
     background: #1e293b;
     color: #e2e8f0;
     border-radius: 10px;
@@ -86,429 +84,309 @@ style: |
 
 <!-- _paginate: false -->
 
-# 第11-12课时｜MCP协议与Skill生态
+# 第11-12课时｜工具集成演进：CLI → MCP → Skills
 ## MBA课程《大模型智能体》
 
-<span class="tag">90分钟</span><span class="tag">讲授 + 演示 + 实操</span>
+<span class="tag">90分钟</span><span class="tag">讲授 + 案例 + 讨论</span>
 
-- 主题：从“工具能接上”到“工具可治理、可扩展、可复用”
-- 目标：理解MCP、会配Claude Desktop、会设计Skill落地方案
+- 主题：Agent如何获得"动手能力"——从命令行到协议到技能生态
+- 目标：理解三代工具集成范式，掌握选型框架与安全治理
 
 ---
 
 # 你将掌握什么
 
-1. 识别企业工具集成的核心痛点与隐藏成本
-2. 理解MCP的协议哲学、角色分层与能力模型
-3. 读懂JSON-RPC消息流与错误处理机制
-4. 完成Claude Desktop MCP配置与排障
-5. 掌握Skill系统设计、发布与治理方法
-6. 基于生态现状做选型与路线图
+1. 理解工具集成的四代演进逻辑
+2. 掌握CLI作为Agent工具接口的原理与优势
+3. 读懂MCP协议的架构、能力与工作流
+4. 用**Inner Loop / Outer Loop**框架做工具选型
+5. 理解Agent Skills的设计哲学与生态现状
+6. 识别Skill生态的安全风险与治理方案
 
 ---
 
-# 课程地图（11-12课时）
+# 课程地图
 
-1. 工具集成为什么会失控
-2. MCP协议原理与能力边界
-3. JSON-RPC架构与消息生命周期
-4. Claude Desktop MCP配置实战
-5. Skill系统：轻量扩展与组织复用
-6. 生态现状与企业落地建议
-
----
-
-# 先问一个业务问题
-
-> 你在公司里推动“AI + 工具自动化”时，最怕哪件事？
-
-- A. 一上生产就不稳定
-- B. 权限边界说不清
-- C. 维护靠“某位大神”
-- D. 工具太多，标准太乱
-
-<div class="small muted">本节课会逐一对齐这四类问题。</div>
+| Part | 主题 | 时间 |
+|------|------|------|
+| 1 | 工具集成的四代演进 | 10 min |
+| 2 | CLI/Bash——Agent最自然的工具接口 | 12 min |
+| 3 | MCP协议——从"能调用"到"可治理" | 15 min |
+| 4 | MCP vs CLI——2026年最热的工具争论 | 12 min |
+| 5 | Agent Skills——第四代工具集成 | 15 min |
+| 6-9 | 三方对比 + 安全治理 + 展望 + 总结 | 26 min |
 
 ---
 
-# Part 1｜工具集成痛点（为什么需要MCP）
+# 先问一个问题
 
-- 先看现实：为什么“能调用工具”并不等于“能规模化”
-- 你会看到：
-  - 技术复杂度如何指数上升
-  - 运维、治理、审计为何成为瓶颈
-  - 为什么必须要一个通用协议层
+> Agent能思考、能规划、能对话，但光靠"说"不够——它需要**动手**。
+
+- 查数据库、发消息、跑测试、部署代码、读文件……
+- 问题不是"能不能调工具"，而是**怎么调才能规模化、安全化、可治理**
+
+<div class="small muted">这就是本讲要回答的核心问题。</div>
 
 ---
 
-# 经典困境：M×N 连接器爆炸
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
 
-- 3个Agent × 20个系统 = 60条集成链路
-- 每条链路都要处理：认证、限流、错误、重试、升级
-- 任一系统API变更，可能影响多条链路
+# Part 1｜工具集成的四代演进
+
+从硬编码到知识驱动
+
+---
+
+# Agent需要工具——这是基本事实
+
+没有工具的Agent = 只能聊天的ChatBot
+
+![augmented-llm](images/augmented-llm.png)
+
+```text
+Agent能力 = 推理能力 × 可用工具 × 集成质量
+```
+
+- **推理能力**：模型决定
+- **可用工具**：生态决定
+- **集成质量**：架构决定 ← 本讲重点
+
+---
+
+# 四代演进：一张图看全
+
+```text
+第一代: 硬编码API        每个工具单独写集成代码
+  │                      M个Agent × N个工具 = M×N连接器
+  ▼
+第二代: CLI/Bash         Unix哲学：小工具 + 管道组合
+  │                      LLM天然擅长，零schema开销
+  ▼
+第三代: MCP协议          标准化JSON-RPC，即插即用
+  │                      认证集中、结构化输出、可发现
+  ▼
+第四代: Agent Skills     写文档而非写代码
+                         LLM阅读SKILL.md自主学习
+```
+
+---
+
+# 第一代：硬编码API——M×N问题
+
+3个Agent × 20个系统 = **60条集成链路**
+
+每条链路都要处理：认证、限流、错误、重试、版本兼容
 
 | 方案 | 接入复杂度 | 维护复杂度 |
 |---|---:|---:|
 | 各做各的 | M×N | 极高 |
-| 协议标准化 | M+N | 可控 |
+| 统一协议 | M+N | 可控 |
+
+**类比**：USB出现之前，每种设备都有专属接口
 
 ---
 
-# 痛点1：重复造轮子
+# 第二代→第四代的核心跃迁
 
-- 每个团队都在重复做“同类连接器”
-- 能力定义不统一：`create_ticket` / `new_issue` / `add_bug`
-- 同样功能，不同Agent行为差异大
+| 代际 | 核心思想 | 接口形式 | Agent学习方式 |
+|------|----------|----------|---------------|
+| 硬编码API | 写代码集成 | 函数调用 | 预定义 |
+| CLI/Bash | Unix哲学 | stdin/stdout | 训练数据 |
+| MCP协议 | 标准化协议 | JSON-RPC | Schema发现 |
+| Agent Skills | 知识驱动 | Markdown文档 | 阅读理解 |
 
-**结果**：成本上升，质量下降，知识无法沉淀
-
----
-
-# 痛点2：稳定性不可预期
-
-- API限流、字段变化、权限过期都可能导致调用失败
-- 缺少统一重试策略与降级策略
-- 失败后难归因：是Agent逻辑、网络，还是工具端问题？
-
-<div class="small">业务视角：自动化链路无法承诺SLA。</div>
+每一代都在降低集成门槛、提升可扩展性
 
 ---
 
-# 痛点3：安全与合规难治理
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
 
-- 谁可以调用“删除客户数据”？
-- 工具调用是否有审计日志？
-- 是否能做最小权限、按环境隔离（dev/stage/prod）？
+# Part 2｜CLI/Bash——Agent最自然的工具接口
 
-**没有标准接口时，安全策略往往散落在脚本里。**
-
----
-
-# 痛点4：组织协作成本高
-
-- 平台团队、业务团队、安全团队语言不一致
-- “能跑起来”和“可运营”之间有巨大鸿沟
-- 缺少统一能力目录（discoverability）
-
-**结论**：需要像HTTP一样的“工具调用标准层”。
+为什么LLM天生就会用命令行
 
 ---
 
-# MCP的设计哲学
+# CLI的核心思想：Unix哲学
 
-1. **协议优先**：先统一接口，再谈生态繁荣
-2. **能力可发现**：工具能力应可枚举、可理解
-3. **模型无关**：不绑定某个LLM厂商
-4. **传输可替换**：stdio、本地；HTTP、远程
-5. **安全可治理**：权限、审计、边界明确
+> "Write programs that do one thing and do it well. Write programs to work together."
+> — Doug McIlroy, 1978
 
----
+- **小工具**：每个命令只做一件事（`grep`, `sort`, `wc`）
+- **管道组合**：`|` 把输出喂给下一个命令
+- **文本流**：一切皆文本，人和机器都能读
 
-# MCP一句话定义
-
-> MCP（Model Context Protocol）是面向模型应用的上下文与工具交互标准。
-
-- 对标思路：
-  - HTTP统一Web通信
-  - SQL统一数据库查询
-  - MCP统一“模型 ↔ 外部能力”
+这套哲学诞生于1970年代——但在2026年的AI时代，它比以往更重要。
 
 ---
 
-# MCP解决的不是“调用”，而是“协作”
+# 为什么LLM天然擅长CLI
 
-- **调用层**：让模型能用工具
-- **协作层**：让多工具可组合、可治理、可观测
-- **组织层**：让能力可以在团队间复用
+> "AI has made the CLI more important and powerful."
 
-<div class="small">这是“Demo能跑”到“企业能用”的关键跨越。</div>
+LLM的训练数据包含**海量Shell用法**：
 
----
+- Stack Overflow上的命令行问答
+- GitHub上的脚本和CI配置
+- 技术文档和教程
 
-# 管理者翻译页①｜为什么这部分和你有关
+**结果**：LLM已经"见过"几乎所有常用CLI工具的用法，无需额外学习。
 
-- **业务价值**：标准化后，跨部门自动化项目的交付周期通常可从“按月”缩短到“按周”
-- **主要风险**：若没有统一协议，后续每新增一个系统都会带来额外集成债务
-- **预算影响**：前期会增加协议改造投入（约占PoC预算10%-20%），但可显著降低后续维护成本
+<div class="tiny muted">来源: <a href="https://www.theregister.com/2026/03/11/ai_needs_command_line_interface/">The Register, 2026.03.11</a></div>
 
 ---
 
-# Part 2｜MCP协议原理
+# CLI在Agent中的工作方式
 
-- 角色分层
-- 能力模型（Tools / Resources / Prompts / Sampling）
-- 生命周期与消息规范
-- 错误、取消、通知、版本协商
+```text
+Agent
+  │
+  ├─ 1. 决定需要什么信息/操作
+  │
+  ├─ 2. 构造Shell命令
+  │
+  ├─ 3. spawn subprocess → 传参数
+  │
+  ├─ 4. 读取 stdout / stderr
+  │
+  └─ 5. 解析文本结果 → 继续推理
+```
+
+**零握手、零schema、零持久连接**——跑完就走。
 
 ---
 
-# MCP三角色：Host / Client / Server
+# 真实案例：一行命令搞定测试
+
+```bash
+pytest --tb=short 2>&1 | head -50
+```
+
+输出：
+```text
+FAILED tests/test_auth.py::test_login
+  AssertionError: expected 200, got 401
+1 failed, 14 passed in 0.43s
+```
+
+Agent直接读文本，理解失败原因，修改代码，重新运行。
+
+整个过程**没有加载任何schema，没有消耗额外token**。
+
+---
+
+# CLI的优势
+
+| 优势 | 说明 |
+|------|------|
+| **零schema开销** | 不需要加载工具定义，省token |
+| **训练熟悉度** | LLM见过大量CLI用法，准确率高 |
+| **Unix管道** | `cmd1 | cmd2 | cmd3` 天然可组合 |
+| **生态广泛** | 几乎所有开发工具都有CLI |
+| **调试直观** | 人可以直接在终端复现 |
+
+---
+
+# CLI的局限
+
+| 局限 | 说明 |
+|------|------|
+| **无认证管理** | 每个工具单独配置凭证 |
+| **无审计日志** | 谁调了什么？不知道 |
+| **无Schema** | 输出格式因版本/环境而异 |
+| **非结构化输出** | 纯文本，解析可能出错 |
+| **安全边界弱** | 命令行可以做任何事 |
+
+<div class="small muted">CLI适合"快速迭代"场景，但企业治理需要更多。</div>
+
+---
+
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
+
+# Part 3｜MCP协议——从"能调用"到"可治理"
+
+AI应用与工具之间的"USB协议"
+
+---
+
+# MCP是什么
+
+MCP（Model Context Protocol）= AI应用与工具之间的**标准化协议**
+
+- Anthropic于2024年11月发布
+- 开放标准，不绑定特定LLM
+- 目标：让工具连接像USB一样**即插即用**
+
+```text
+传统: 每对单独集成 → M×N
+MCP:  统一协议层   → M+N
+```
+
+---
+
+# MCP三层架构
 
 | 角色 | 典型实例 | 职责 |
 |---|---|---|
-| Host | Claude Desktop, IDE Agent | 管理会话与策略 |
-| Client | Host中的MCP客户端 | 发送JSON-RPC请求 |
-| Server | GitHub/DB/Filesystem等服务 | 暴露标准能力 |
-
----
-
-# 角色关系图（概念）
+| **Host** | Claude Desktop, IDE | 管理会话与安全策略 |
+| **Client** | Host中的MCP客户端 | 发送JSON-RPC请求 |
+| **Server** | GitHub/DB/Filesystem | 暴露标准化能力 |
 
 ```text
-User
-  │
-  ▼
-Host (Claude Desktop / IDE)
-  ├─ MCP Client A ── JSON-RPC ── MCP Server: github
-  ├─ MCP Client B ── JSON-RPC ── MCP Server: postgres
-  └─ MCP Client C ── JSON-RPC ── MCP Server: filesystem
+User → Host (Claude Desktop)
+         ├─ Client A ── JSON-RPC ── Server: github
+         ├─ Client B ── JSON-RPC ── Server: postgres
+         └─ Client C ── JSON-RPC ── Server: filesystem
 ```
-
-- Host可管理多个Server
-- 每个Server独立声明能力
 
 ---
 
-# MCP能力模型总览
+# MCP四大能力
 
-| 能力 | 作用 | 典型场景 |
+| 能力 | 作用 | 示例 |
 |---|---|---|
-| Tools | 可执行动作 | 创建Issue、发消息、写库 |
-| Resources | 可读取上下文 | 文件、记录、配置 |
-| Prompts | 模板化提示 | 评审模板、任务模板 |
-| Sampling | Server请求模型推理 | 复杂链式决策 |
+| **Tools** | 可执行的函数 | 创建Issue、发消息 |
+| **Resources** | 可读取的数据 | 文件内容、数据库记录 |
+| **Prompts** | 预定义提示模板 | 代码审查模板 |
+| **Sampling** | Server请求LLM推理 | 复杂链式决策 |
+
+Agent连接Server后，先通过`tools/list`发现可用能力，再通过`tools/call`执行。
 
 ---
 
-# Tools：可执行的“函数接口”
-
-- 包含：名称、描述、输入Schema
-- Host/模型基于语义决定是否调用
-- 返回可结构化结果或文本结果
-
-```json
-{
-  "name": "create_issue",
-  "description": "Create a GitHub issue",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "repo": {"type": "string"},
-      "title": {"type": "string"}
-    },
-    "required": ["repo", "title"]
-  }
-}
-```
-
----
-
-# Resources：可读取的“数据入口”
-
-- 以URI抽象外部数据源
-- 可用于长文档、结构化数据、状态快照
-- 强调“读语义”与“可追踪来源”
-
-```json
-{
-  "uri": "postgres://sales/orders?date=2026-02-01",
-  "name": "Orders Snapshot",
-  "mimeType": "application/json"
-}
-```
-
----
-
-# Prompts：组织知识的复用层
-
-- 把高质量提示词产品化
-- 支持参数化模板，减少Prompt漂移
-- 适合沉淀：审计、报告、分析、客服流程
+# MCP工作流（精简）
 
 ```text
-Prompt: review_pr
-Args: repo, pr_number, policy_level
+1. Host ──► Server:  initialize（协商版本+能力）
+2. Host ──► Server:  tools/list（发现可用工具）
+3. Host ──► Server:  tools/call（执行具体动作）
+4. Server ──► Host:  返回结构化JSON结果
+5. Host ──► 模型:    推理下一步
 ```
 
----
-
-# Sampling（进阶能力）
-
-- Server可请求Host进行模型推理
-- 适合：Server端编排里需要“智能判断”
-- 风险：责任边界更复杂，需严格审计
-
-**课堂建议**：先掌握Tools/Resources，再引入Sampling。
+所有通信基于**JSON-RPC 2.0**——标准、可追踪、便于审计。
 
 ---
 
-# 管理者翻译页②｜能力模型的管理含义
-
-- **业务价值**：Tools/Resources/Prompts 分层后，能力复用率更高，跨团队复制更快
-- **主要风险**：Sampling等进阶能力若越权调用，会带来责任归属不清与审计难题
-- **预算影响**：建议将预算按“70%基础能力 + 20%治理 + 10%创新试验”配置
-
----
-
-# MCP生命周期（高层）
-
-1. 建立连接（stdio/HTTP）
-2. `initialize` 协商能力与版本
-3. `initialized` 通知完成
-4. `tools/list` / `resources/list` 能力发现
-5. `tools/call` 执行与返回
-6. 会话结束与资源回收
-
----
-
-# 初始化握手示意
+# MCP Tool调用示例
 
 ```json
+// Request
 {
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "clientInfo": {"name": "claude-desktop", "version": "1.0.0"},
-    "capabilities": {"roots": {}, "sampling": {}}
-  }
-}
-```
-
----
-
-# 会话中最常见调用链
-
-```text
-Host -> tools/list         (发现可用工具)
-Host -> tools/call         (执行具体动作)
-Server -> result/error     (返回结果或错误)
-Host -> 下一个步骤决策      (继续计划/终止)
-```
-
-**重点**：模型推理与工具执行是分离的，便于审计。
-
----
-
-# 通知与取消机制
-
-- 通知：无`id`，不要求响应（如能力变更提示）
-- 取消：`notifications/cancelled` 用于中止耗时操作
-- 对长任务必须支持“可取消”，避免系统阻塞
-
----
-
-# 错误处理基本模型
-
-| 错误层 | 示例 | 处理建议 |
-|---|---|---|
-| 协议错误 | 非法JSON-RPC | 直接拒绝，记录日志 |
-| 参数错误 | 缺字段/类型错 | 返回可读错误 + 修复建议 |
-| 业务错误 | 权限不足/资源不存在 | 提示用户与策略系统 |
-| 系统错误 | 网络超时/下游异常 | 重试 + 降级 + 告警 |
-
----
-
-# 传输层：stdio vs Streamable HTTP
-
-| 维度 | stdio | Streamable HTTP |
-|---|---|---|
-| 部署 | 本地进程 | 远程服务 |
-| 门槛 | 低 | 中高 |
-| 安全 | 本机边界为主 | 需鉴权/网关 |
-| 适用 | 个人工具、本地研发 | 团队共享、生产环境 |
-
----
-
-# stdio模式深入
-
-- Host拉起Server子进程
-- 通过stdin/stdout交换JSON-RPC
-- 本地开发体验好，调试直观
-
-```text
-claude-desktop
-  └─ spawn: mcp-server-github
-      ├─ stdin  <- request
-      └─ stdout -> response
-```
-
----
-
-# HTTP模式深入
-
-- Server作为网络服务提供端点
-- 适合集中部署、集中治理
-- 常与API网关、身份系统结合
-
-```text
-Host -> HTTPS -> Gateway -> MCP Server Cluster
-```
-
-- 需重点补齐：认证、限流、审计、多租户隔离
-
----
-
-# 安全分层建议（企业）
-
-1. **身份层**：OAuth / API Key / 短期令牌
-2. **权限层**：按工具、按参数、按环境授权
-3. **执行层**：沙箱、命令白名单、只读默认
-4. **审计层**：谁在何时调用了什么，结果如何
-
----
-
-# 可观测性指标（MCP）
-
-- 工具调用成功率（按工具维度）
-- P95响应时间 / 超时率
-- 参数错误率（提示Schema质量）
-- 安全拒绝率（权限策略是否合理）
-- 单次任务工具调用次数（成本与稳定性信号）
-
----
-
-# Part 3｜JSON-RPC架构（工程视角）
-
-- JSON-RPC 2.0是MCP消息骨架
-- 理解它，才能真正排障与治理
-
----
-
-# JSON-RPC 2.0基础
-
-- 核心字段：`jsonrpc`、`id`、`method`、`params`
-- 响应字段：`result` 或 `error`
-- 通知消息：无`id`
-
-参考标准：[
-JSON-RPC Specification
-](https://www.jsonrpc.org/specification)
-
----
-
-# Request/Response完整示例
-
-```json
-// request
-{
-  "jsonrpc": "2.0",
-  "id": "req-42",
+  "jsonrpc": "2.0", "id": "req-42",
   "method": "tools/call",
   "params": {
     "name": "create_issue",
-    "arguments": {
-      "repo": "org/project",
-      "title": "MCP timeout on prod"
-    }
+    "arguments": {"repo": "org/project", "title": "Bug: login 401"}
   }
 }
 
-// response
+// Response
 {
-  "jsonrpc": "2.0",
-  "id": "req-42",
+  "jsonrpc": "2.0", "id": "req-42",
   "result": {
     "content": [{"type": "text", "text": "Issue #128 created"}]
   }
@@ -517,572 +395,511 @@ JSON-RPC Specification
 
 ---
 
-# 错误响应示例
+# MCP的核心优势
 
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "req-42",
-  "error": {
-    "code": -32001,
-    "message": "Permission denied",
-    "data": {
-      "policy": "github.write.prod",
-      "hint": "Request temporary approval"
-    }
-  }
-}
-```
-
-- `message`给人看
-- `data`给系统自动化处理
+| 优势 | 说明 |
+|------|------|
+| **认证集中** | Server统一管理OAuth/API Key |
+| **结构化输出** | JSON格式，解析无歧义 |
+| **工具可发现** | `tools/list` 自动枚举能力 |
+| **Session状态** | 支持有状态交互 |
+| **安全可审计** | 每次调用可记录、可追溯 |
 
 ---
 
-# 为什么要重视`id`
+# 传输方式：本地 vs 远程
 
-- 并发调用时，靠`id`对齐请求与响应
-- 便于Tracing：日志、链路、故障回放
-- 与业务`trace_id`映射，可打通观测平台
-
-**建议**：`id`使用可追踪格式，如`trace-uuid-step`。
-
----
-
-# 批量调用与编排
-
-- JSON-RPC支持批量请求（batch）
-- 但课堂实践里，优先“显式串行 + 明确依赖”
-- 避免并发调用导致数据竞争或配额突发
+| 方式 | 适用场景 | 特点 |
+|---|---|---|
+| **stdio** | 本地进程 | Host拉起子进程，stdin/stdout通信 |
+| **HTTP** | 远程服务 | 网络通信，需认证与网关 |
 
 ```text
-Step1 查询状态 -> Step2 决策 -> Step3 修改资源
+本地: Claude Desktop → spawn mcp-server-github → stdin/stdout
+远程: Host → HTTPS → API Gateway → MCP Server Cluster
 ```
 
 ---
 
-# 超时、重试与幂等性
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
 
-| 问题 | 典型风险 | 工程策略 |
+# Part 4｜MCP vs CLI——2026年最热的工具争论
+
+两者都讲清楚了，现在来比较
+
+---
+
+# 争论的起源
+
+2025年末以来，开发者社区激烈讨论：
+
+> **给AI助手连接工具，该用MCP还是CLI？**
+
+这不是技术信仰问题——而是**场景匹配问题**。
+
+CircleCI给出了最精辟的框架：
+
+> "The CLI vs. MCP question is really a question about **where you are in the development loop**."
+
+<div class="tiny muted">来源: <a href="https://circleci.com/blog/mcp-vs-cli/">CircleCI Blog</a></div>
+
+---
+
+# Inner Loop vs Outer Loop
+
+| | Inner Loop（内循环） | Outer Loop（外循环） |
 |---|---|---|
-| 超时 | 请求悬挂 | 统一超时预算 |
-| 重试 | 重复写入 | 幂等键/去重表 |
-| 下游抖动 | 雪崩 | 指数退避 + 熔断 |
+| **做什么** | 写代码→跑测试→改代码 | CI/CD→部署→安全检查 |
+| **时间尺度** | 秒～分钟 | 分钟～小时 |
+| **关键指标** | **速度** | **可靠性+安全性** |
+| **谁控制** | 开发者本人 | 团队/系统 |
+| **最佳选择** | **CLI** ✅ | **MCP** ✅ |
+
+**大多数团队最终两者都用。**
 
 ---
 
-# Anthropic: 工具设计的艺术
+# Benchmark数据：残酷的事实
 
-> 来源: [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) - Appendix 2
+### ScaleKit 2026 Benchmark
 
-**核心观点**：ACI (Agent-Computer Interface) 和 HCI 一样重要
+> **MCP比CLI贵 10–32x**
+> （在token消耗和API调用成本上）
 
-**工具设计原则**：
-1. **站在模型角度思考** — 描述是否足够清晰？
-2. **测试模型如何使用** — 用Workbench观察失败模式
-3. **Poka-yoke** — 防呆设计，让错误难以发生
-4. **给足思考空间** — 避免让模型"写进死角"
+<div class="tiny muted">来源: <a href="https://www.scalekit.com/blog/mcp-vs-cli-use">ScaleKit, 2026.03</a></div>
+
+### 浏览器自动化Benchmark
+
+| 维度 | CLI | MCP | 差距 |
+|------|-----|-----|------|
+| Token效率 | 基准 | **+33%** 消耗 | CLI胜 |
+| 任务完成分 | **77**/100 | 60/100 | CLI胜22% |
+| 多步调试 | 完成 | context耗尽 | CLI显著胜 |
 
 ---
 
-# 工具格式的选择
+# Context Budget杀手
 
-| 格式 | 优点 | 缺点 |
+**真实案例**：GitHub MCP Server一次dump **93个tool** = **55,000 tokens**
+
+你的128K context window，光加载工具schema就用了**43%**。
+
+```text
+128K context budget 分配：
+
+███████████████████░░░░░░░░░░░░░░░░░░░░░░  43% MCP Schema
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  
+                                            剩余57%给推理+代码+对话
+
+vs CLI: 100%可用于实际工作
+```
+
+<div class="tiny muted">来源: Reddit r/ClaudeAI 热帖</div>
+
+---
+
+# 五问决策框架
+
+| 问题 | → CLI | → MCP |
+|------|-------|-------|
+| 谁控制反馈循环？ | 开发者本人 | 团队/系统 |
+| 循环有多紧？ | 高频迭代 | 离散查询 |
+| 需要认证外部系统？ | 否 | 是 |
+| 输出格式要求？ | 纯文本即可 | 需结构化JSON |
+| 个人还是团队？ | 个人工作流 | 团队共享 |
+
+---
+
+# 真相：不是二选一
+
+> "最常见的错误是把传输选择当成架构决策——'We're a CLI shop'或'We're an MCP shop'是错误的抽象层级。"
+
+**混合方案才是正解**：
+
+```text
+CLI包装MCP后端：
+  ┌─────────┐      ┌─────────────┐      ┌──────────┐
+  │  Agent   │─CLI─►│ 轻量CLI封装  │─API─►│ MCP后端  │
+  └─────────┘      └─────────────┘      └──────────┘
+  
+  对Agent：零schema开销，CLI体验
+  对后端：统一认证、审计、结构化
+```
+
+正如CircleCI总结："Stop treating this as either/or and start matching the tool to the loop."
+
+---
+
+# 行业标准化动向
+
+**NIST 2026.02**：启动 AI Agent Standards Initiative
+
+- 正在制定Agent工具交互的安全与互操作标准
+- MCP和CLI都在讨论范围内
+- 目标：建立工具调用的安全基线与审计要求
+
+**信号**：工具协议不再是"社区玩具"，已进入国家标准视野。
+
+---
+
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
+
+# Part 5｜Agent Skills——第四代工具集成
+
+不是给Agent写代码接口，而是写文档
+
+---
+
+# 从MCP vs CLI到Skill
+
+CLI和MCP解决的是**"怎么调工具"**
+
+Skill解决的是**"怎么教Agent做事"**
+
+```text
+传统Plugin:  代码 → 代码接口 → 固定执行路径
+
+Agent Skill: SKILL.md → LLM阅读理解 → LLM自己决定如何调用
+```
+
+**革命性**：非程序员也能创建Skill——写Markdown即可。
+
+---
+
+# SKILL.md结构详解
+
+```yaml
+---
+name: deploy
+description: Deploy the application to production.
+  Use when the user says "deploy" or "ship it".
+disable-model-invocation: true    # 只能手动触发
+allowed-tools: Bash, Read         # 限制可用工具
+context: fork                     # 子Agent隔离执行
+---
+
+## Deploy Procedure
+
+1. **Pre-flight**: Run `npm test`, ensure all pass
+2. **Build**: Run `npm run build`
+3. **Deploy**: Run `./scripts/deploy.sh production`
+4. **Verify**: Run smoke tests, if fail → rollback
+```
+
+---
+
+# Frontmatter配置
+
+| 字段 | 类型 | 说明 |
 |------|------|------|
-| Diff | 紧凑 | 需要预知行数 |
-| 全文重写 | 简单 | token消耗大 |
-| Markdown代码块 | 自然 | 无需额外转义 |
-| JSON内嵌代码 | 结构化 | 需转义换行引号 |
+| `name` | string | Skill名称 = `/slash-command` |
+| `description` | string | Agent据此判断何时使用 |
+| `disable-model-invocation` | bool | `true` = 只能用户手动触发 |
+| `allowed-tools` | list | 限制Skill可使用的工具集 |
+| `context` | string | `fork` = 在子Agent中执行（隔离） |
 
-**建议**：选择模型"在互联网上见过最多"的格式
-
----
-
-# CLAUDE.md：项目级指令文件
-
-```markdown
-# CLAUDE.md
-
-## 项目背景
-这是一个电商后台管理系统...
-
-## 代码规范
-- 使用 TypeScript strict mode
-- 组件使用函数式写法
-- 测试覆盖率 > 80%
-
-## 常见陷阱
-- 不要直接修改 config/prod.json
-- API变更需要同步更新mock
-```
-
-**作用**：每次会话开始自动加载，确保Agent了解项目上下文
+Agent遵循 [AgentSkills.io](https://agentskills.io) 开放标准，跨Claude Code、OpenClaw等工具通用。
 
 ---
 
-# Schema设计原则（Tools）
-
-1. 字段名语义清晰，避免缩写谜语
-2. 必填项最小化，默认值显式化
-3. 枚举值可解释（含业务注释）
-4. 错误提示可直接指导修复
-
----
-
-# 好Schema vs 坏Schema
-
-| 维度 | 好Schema | 坏Schema |
-|---|---|---|
-| 命名 | `customer_id` | `id` |
-| 枚举 | `priority: low/med/high` | `level: 1/2/3` |
-| 描述 | 业务上下文完整 | 只有技术术语 |
-| 校验 | 类型/范围明确 | 运行时才报错 |
-
----
-
-# 验证链路：三层防线
-
-1. **模型前校验**：Prompt约束 + 例子
-2. **Server入参校验**：JSON Schema严格校验
-3. **业务规则校验**：权限、状态机、配额
-
-**原则**：错误尽量前置，失败尽量可解释。
-
----
-
-# 管理者翻译页③｜为什么要投入Schema与错误码
-
-- **业务价值**：问题定位时间可从“小时级”降到“分钟级”，降低业务中断成本
-- **主要风险**：无统一错误码会导致跨团队扯皮，影响SLA承诺
-- **预算影响**：建议在项目早期预留5%-8%预算建设观测与错误治理能力
-
----
-
-# Part 4｜Claude Desktop MCP配置
-
-- 从“理解协议”到“实际可用”
-- 重点：配置、验证、日志、排障、权限
-
----
-
-# 先决条件清单
-
-- 已安装 [Claude Desktop](https://claude.ai/download)
-- 可用Node.js / Python运行MCP Server
-- 了解本机环境变量与路径
-- 准备一个可测试的Server（如filesystem）
-
----
-
-# Claude Desktop配置文件位置
-
-| 平台 | 路径 |
-|---|---|
-| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
-| Windows | `%APPDATA%\\Claude\\claude_desktop_config.json` |
-
-> 修改后通常需要重启Claude Desktop生效。
-
----
-
-# 配置结构（核心字段）
-
-```json
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/Documents"],
-      "env": {}
-    }
-  }
-}
-```
-
-- `mcpServers`：可同时配置多个Server
-- 每个Server定义启动命令与参数
-
----
-
-# 多Server配置示例
-
-```json
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/work"]
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {"GITHUB_TOKEN": "${GITHUB_TOKEN}"}
-    }
-  }
-}
-```
-
----
-
-# 远程Server思路（HTTP）
-
-- Claude Desktop常见是stdio本地模式
-- 企业场景可在网关后部署远程MCP服务
-- 关键点：统一身份、访问控制、租户隔离
-
-```text
-Claude Desktop -> 企业网关 -> MCP服务集群 -> 内部系统
-```
-
----
-
-# 配置排障清单（最常见）
-
-1. 命令不存在（`command not found`）
-2. 包安装失败（网络或权限）
-3. 环境变量未注入（token为空）
-4. 路径权限不足（文件系统拒绝）
-5. Server启动后立即退出（参数错误）
-
----
-
-# 日志与定位方法
-
-- 先看Claude Desktop日志
-- 再在终端独立运行Server，确认是否可启动
-- 逐步最小化配置：先filesystem，再加复杂Server
-- 对每次失败保留错误快照，形成团队FAQ
-
----
-
-# 权限治理建议（桌面到企业）
-
-| 层级 | 建议 |
-|---|---|
-| 个人开发 | 只启用必要Server，最小目录授权 |
-| 团队测试 | 分环境Token，按组分配工具权限 |
-| 生产环境 | 网关鉴权 + 审计留痕 + 审批流程 |
-
----
-
-# 动手试试 1｜安装与验证Claude Desktop
-
-- 平台直达：[
-Claude Desktop下载页
-](https://claude.ai/download)
-- 文档直达：[
-Claude Desktop Docs
-](https://support.anthropic.com/en/collections/4079974-claude-desktop)
-
-**任务**：确认本机可打开Claude Desktop并完成登录。
-
----
-
-# 动手试试 2｜接入一个官方MCP Server
-
-- 平台直达：[
-MCP官方Servers仓库
-](https://github.com/modelcontextprotocol/servers)
-- 推荐起步：`filesystem` 或 `fetch`
-
-**任务**：选择一个Server，写入配置，重启Claude并尝试调用。
-
----
-
-# 动手试试 3｜用Inspector看消息流
-
-- 平台直达：[
-MCP Inspector仓库
-](https://github.com/modelcontextprotocol/inspector)
-- 参考资料：[
-MCP官方文档
-](https://modelcontextprotocol.io/introduction)
-
-**任务**：观察一次`tools/list`和`tools/call`完整消息。
-
----
-
-# 管理者翻译页④｜配置实战后的经营视角
-
-- **业务价值**：完成最小配置后，可在2周内验证一个真实流程的自动化可行性
-- **主要风险**：凭证管理与目录权限配置不当，可能导致数据暴露
-- **预算影响**：PoC阶段建议单列“安全与权限治理”预算，不低于总预算的15%
-
----
-
-# Part 5｜Skill系统（OpenClaw视角）
-
-- Skill是“协议之外”的另一条高效扩展路径
-- 优势：轻、快、可定制
-- 风险：跨平台复用较弱，需要治理规范
-
----
-
-# Skill是什么
-
-> Skill = 让Agent通过“说明 + 脚本 + 资源”获得稳定能力。
-
-- 常见组成：`SKILL.md`、脚本、配置、模板
-- Agent先读说明，再决定调用什么命令
-- 特别适合内部流程与垂直场景
-
----
-
-# Skill与MCP：不是替代，而是分工
-
-| 维度 | MCP Server | Skill |
-|---|---|---|
-| 标准化 | 强（跨Host） | 弱（平台相关） |
-| 上手速度 | 中 | 快 |
-| 复用范围 | 广 | 团队内高 |
-| 治理复杂度 | 高 | 中 |
-
----
-
-# Skill目录结构建议
+# Skill目录结构
 
 ```text
 my-skill/
-├─ SKILL.md          # 核心说明：何时用、怎么用
-├─ scripts/
-│  ├─ run.sh
-│  └─ validate.py
-├─ templates/
-│  └─ report.md
-└─ config.yaml       # 环境/参数配置
+├── SKILL.md           # 核心说明文件（必须）
+├── scripts/
+│   └── validate.sh    # Agent可执行的脚本
+├── references/
+│   └── api-docs.md    # 参考文档
+└── examples/
+    └── sample.md      # 示例输出
 ```
 
----
-
-# SKILL.md应写什么
-
-1. 目标与适用场景
-2. 前置依赖与权限要求
-3. 输入参数与示例
-4. 异常处理与回滚办法
-5. 安全边界（禁止操作清单）
-
-**原则**：让“新同事5分钟可上手”。
+Agent先读SKILL.md理解"做什么、怎么做"，再调用脚本执行。
 
 ---
 
-# 一个可执行的SKILL.md片段
+# 三种存储层级
 
-```markdown
-## 命令
-python scripts/generate_report.py --date {date} --team {team}
+| 层级 | 路径 | 作用范围 | 典型场景 |
+|------|------|----------|----------|
+| **Enterprise** | managed settings | 组织全员 | 合规检查、安全策略 |
+| **Personal** | `~/.claude/skills/` | 个人所有项目 | 工作流偏好 |
+| **Project** | `.claude/skills/` | 仅当前项目 | 构建、测试、部署 |
 
-## 输入约束
-- date: YYYY-MM-DD
-- team: sales | ops | finance
+优先级：**Enterprise > Personal > Project**
 
-## 失败处理
-- 若数据库连接失败，返回"retry_after=60"
-```
+同名冲突时，高优先级覆盖低优先级。
 
 ---
 
-# Skill调度机制（简化）
+# 内置强力Skill
+
+| Skill | 功能 | 亮点 |
+|-------|------|------|
+| **`/simplify`** | 审查代码，并行3个review Agent | 多Agent协作 + 聚合修复 |
+| **`/batch`** | 编排**5-30个Agent**并行修改 | 每个在独立git worktree |
+| **`/loop`** | 定时重复执行prompt | 类似cron |
+
+> `/batch` 是Skill能力的巅峰——一个SKILL.md编排数十个并行Agent，全部通过Markdown描述实现。
+
+<div class="tiny muted">来源: <a href="https://code.claude.com/docs/en/skills">Claude Code Skills Docs</a></div>
+
+---
+
+# Skill生态系统
+
+| 生态 | 状态 |
+|------|------|
+| **ClawHub** | **2,857+ skills**（2026.03），CLI一键安装 |
+| **AgentSkills.io** | 跨工具开放标准 |
+| **anthropics/skills** | Anthropic官方仓库 |
+| **Google gws** | CLI + MCP + Skills三合一（100+ Skills） |
+
+**关键趋势**：Skill不是某一家的私有概念——它正在成为行业通用标准。
+
+---
+
+# Progressive Disclosure 解决 Context Rot
+
+[Context Rot](https://research.trychroma.com/context-rot)：模型性能随context填满而下降
+
+| 方式 | 启动加载 | Token消耗 |
+|------|----------|-----------|
+| MCP schema-on-connect | 所有Server全量加载 | 10个Server = **数千tokens** |
+| Skill按需加载 | 仅名称+简短描述 | 10个Skill = **几百tokens** |
 
 ```text
-User intent
-   ↓
-Agent读取可用Skill描述
-   ↓
-挑选最匹配Skill + 参数填充
-   ↓
-执行脚本/命令
-   ↓
-结果总结并返回用户
+Skill的Progressive Disclosure:
+  启动 → 只加载名称和描述（几十tokens）
+  需要 → Agent读取完整SKILL.md（按需）
+  完成 → 结果压缩，释放context
 ```
 
-- 成功率高度依赖：描述清晰度 + 参数约束质量
+---
+
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
+
+# Part 6｜CLI vs MCP vs Skill 三方对比
+
+一页看清三种范式
 
 ---
 
-# Skill质量检查清单
+# 三方对比表
 
-- 是否有明确“适用/不适用场景”
-- 是否提供最小可运行示例
-- 错误是否可定位、可恢复
-- 是否声明了权限与风险
-- 是否有版本号与变更记录
-
----
-
-# Skill发布与共享
-
-- 平台直达：[
-ClawHub
-](https://clawhub.com)
-- CLI技能：`clawhub search/install/update/publish`
-- 推荐流程：内测 -> 团队试点 -> 全员发布
+| 维度 | CLI | MCP Server | Agent Skill |
+|------|-----|------------|-------------|
+| **本质** | 命令行程序 | 结构化API服务 | 知识文档 + 脚本 |
+| **接口** | stdin/stdout | JSON-RPC | Markdown文件 |
+| **上下文成本** | ~零 | 高（schema加载） | 低（按需加载） |
+| **创建难度** | 需编程 | 中等（实现协议） | 低（写Markdown） |
+| **认证** | 手动/每次配 | 集中管理 | 依赖底层工具 |
+| **输出格式** | 自由文本 | 结构化JSON | Agent理解后整合 |
+| **适合场景** | 快速迭代 | 外部系统集成 | 工作流定义 |
 
 ---
 
-# 动手试试 4｜创建你的第一个Skill
+# 选型建议
 
-- 平台直达：[
-OpenClaw Skills文档（示例入口）
-](https://docs.openclaw.ai/skills)
-- 参考模板：[
-ClawHub
-](https://clawhub.com)
+```text
+什么时候用什么？
 
-**任务**：做一个“日报生成Skill”，至少包含输入、命令、失败处理。
+CLI:   Agent已经知道怎么用的工具 + 快速本地操作 + 不需要schema
+MCP:   连接外部SaaS（GitHub/Slack/DB）+ 需要认证和审计
+Skill: 定义操作流程 + 教Agent处理特定任务 + 扩展"知识"
+```
 
----
+**最佳实践**：三者混合使用
 
-# 动手试试 5｜发布并版本化Skill
-
-- 平台直达：[
-ClawHub发布指南入口
-](https://clawhub.com)
-- 平台直达：[
-GitHub Releases
-](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
-
-**任务**：给Skill打`v0.1.0`，记录一次可回滚发布。
+- Skill定义"做什么"（SOP）
+- Skill内部调用CLI做"快操作"
+- 涉及外部系统时走MCP
 
 ---
 
-# 管理者翻译页⑤｜Skill 与 MCP 如何组合投资
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
 
-- **业务价值**：Skill负责快速试错，MCP负责标准化沉淀，组合可兼顾速度与规模
-- **主要风险**：若只做Skill不做标准化，半年后可能出现“脚本孤岛”
-- **预算影响**：建议采用“双轨预算”：创新试点预算 + 平台化治理预算并行
+# Part 7｜安全与治理——Skill生态的暗面
 
----
+![OpenAI Agent安全Guardrails架构](images/openai-guardrails.png)
 
-# Part 6｜生态现状与选型策略
-
-- 关注三个维度：生态成熟度、治理能力、组织匹配度
-- 技术正确不等于业务可落地
+当"任何人都能发布代码执行能力"时会发生什么
 
 ---
 
-# 2026 MCP生态观察
+# Lakera安全审计：触目惊心
 
-1. 工具数量增长很快，但质量参差
-2. 通用Server成熟更快（GitHub/DB/Filesystem）
-3. 企业更关心：安全、稳定、审计，不只“能不能连”
-4. 生态正在从“玩具化”走向“生产化”
+审计了 **4,310个** Agent Skill → 深度分析 **221个**：
 
-<div class="tiny muted">数据来源与时间：基于 MCP 官方站点、modelcontextprotocol/servers 仓库公开信息与 Smithery 生态目录抽样统计（访问时间：2026-02-27，口径：公开可访问条目，未去重私有部署实例）。</div>
+| 风险类型 | 占比 | 说明 |
+|----------|------|------|
+| OAuth过度授权 | **70.1%** | 请求权限远超实际需要 |
+| 命令注入模式 | **43.4%** | 用户输入直接拼接到shell |
+| 确认恶意软件 | **44个** Skill | 累计 **12,559+** 下载 |
+| 无沙箱隔离 | **100%** | 直接访问文件系统和网络 |
 
----
-
-# 生态能力地图（简版）
-
-| 类别 | 代表Server | 典型价值 |
-|---|---|---|
-| 开发协作 | GitHub/GitLab | 工程自动化 |
-| 数据分析 | Postgres/BigQuery | 报表与决策 |
-| 办公协同 | Slack/Notion | 沟通与知识流 |
-| 本地执行 | Filesystem/Shell | 自动化运维 |
+<div class="tiny muted">来源: <a href="https://www.lakera.ai/blog/the-agent-skill-ecosystem-when-ai-extensions-become-a-malware-delivery-channel">Lakera Security Research, 2026</a></div>
 
 ---
 
-# 国内平台对照（学习用）
+# 攻击模式：ClawHavoc恶意软件
 
-| 方向 | 平台直达链接 | 观察点 |
-|---|---|---|
-| Agent搭建 | [Coze](https://www.coze.cn) | 插件生态与发布机制 |
-| 模型应用 | [通义百炼](https://bailian.console.aliyun.com/) | 企业接入与成本 |
-| 流程编排 | [Dify](https://dify.ai/) | 工作流 + 工具治理 |
+```text
+攻击链:
+  1. 发布看似正常的Skill到ClawHub
+  2. SKILL.md中嵌入Base64编码的payload
+  3. Agent执行时: echo "base64..." | base64 -d | bash
+  4. 连接C2服务器（命令控制中心）
+  5. 部署Atomic Stealer → 窃取浏览器密码、SSH密钥、钱包
+```
 
-<div class="tiny muted">注：平台能力更新快，课堂后请自行复核最新功能。</div>
+**44个确认恶意Skill**，被安装了**12,559次以上**。
 
 ---
 
-# 选型矩阵：MCP vs Skill vs 混合
+# 与成熟生态对比
 
-| 业务条件 | 推荐 |
+| 生态 | 审核机制 | 权限控制 | 沙箱 |
+|------|----------|----------|------|
+| 浏览器扩展 | Chrome Web Store审核 | 权限声明 | 有 |
+| App Store | Apple人工审核 | 权限弹窗 | 强 |
+| npm/PyPI | 无审核 | 无 | 无 |
+| **Agent Skills** | **无审核** | **无** | **无** |
+
+Agent Skill生态本质上是**分布式代码执行平台**——但治理水平停留在早期npm。
+
+---
+
+# 治理建议：安全分层模型
+
+| 层级 | 建议 |
 |---|---|
-| 跨多AI平台复用 | MCP优先 |
-| 内部流程快速试错 | Skill优先 |
-| 强合规与审计要求 | MCP + 网关治理 |
-| 既要速度又要复用 | 混合架构 |
+| **L0 只读** | 搜索、查询 → 自由使用 |
+| **L1 低影响写入** | 创建草稿、添加备注 → 需日志 |
+| **L2 业务影响** | 发消息、修改数据 → 需审批 |
+| **L3 高风险** | 删除、资金、权限变更 → **必须人工确认** |
+
+**三条底线**：
+
+1. 不安装未审计的Skill
+2. 生产环境Skill必须代码审查
+3. 建立Skill的version pinning + 变更通知
 
 ---
 
-# 0-1-10落地路线图
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
 
-1. **0到1（2周）**：1个关键流程打通
-2. **1到N（1-2月）**：沉淀标准Tool Schema与日志规范
-3. **10+流程（季度）**：平台化治理、权限自动化、成本看板
+# Part 8｜展望与趋势
 
----
-
-# 风险登记（Risk Register）
-
-| 风险 | 触发信号 | 缓解措施 |
-|---|---|---|
-| 调用失败高 | 成功率阈值：客服<95%预警、法务<97%预警、交易<99.5%预警 | 分行业重试策略 + 分级降级 + 人工接管 |
-| 数据越权 | 审计告警 | 最小权限 + 审批 |
-| 成本失控 | 调用量激增 | 配额与预算闸门 |
-| 人员依赖 | 只有1人会维护 | 文档化 + 轮值机制 |
+工具协议的终局在哪里
 
 ---
 
-# ROI如何讲给管理层
-
-- 节省重复开发工时（连接器复用）
-- 缩短自动化交付周期（上线更快）
-- 降低故障定位成本（标准日志）
-- 提升合规可解释性（审计闭环）
-
-**一句话**：从“项目制实验”转为“平台化资产”。
-
----
-
-# 案例蓝图：销售运营自动化
+# 工具协议的终局：三层架构
 
 ```text
-CRM数据 -> MCP Server (postgres)
-       -> Agent分析 -> Tool: create_task / send_summary
-       -> Slack回传 + Dashboard留痕
+┌─────────────────────────────────────────────┐
+│  社会层: 信任、声誉、治理                     │
+│  (NIST标准、Skill审计、安全评级)              │
+├─────────────────────────────────────────────┤
+│  协作层: Agent-to-Agent通信                   │
+│  (Google A2A协议、任务委托、能力协商)          │
+├─────────────────────────────────────────────┤
+│  工具层: Agent-to-Tool连接                    │
+│  (MCP + CLI + Skills)                        │
+└─────────────────────────────────────────────┘
 ```
 
-| 指标 | 改造前 | 改造后（8周） | 变化 |
-|---|---:|---:|---:|
-| 日报汇总耗时 | 2.5小时/天 | 0.7小时/天 | -72% |
-| 线索跟进及时率 | 61% | 86% | +25pct |
-| 人工漏跟进工单 | 34单/周 | 9单/周 | -74% |
-
-- 运营每天显著减少人工汇总时间
-- 管理层获得可追溯决策链路与周度对比面板
-<div class="tiny muted">注：以上为课堂案例样本口径（单销售团队、8周观察窗），用于说明前后对比方法。</div>
+我们今天讲的是**工具层**——但协作层和社会层正在快速发展。
 
 ---
 
-# 课堂工作坊（20分钟）
+# 趋势1：Context Engineering成为核心能力
 
-1. 选一个你熟悉的业务流程
-2. 划分：哪些能力走MCP，哪些走Skill
-3. 设计最小可行架构（角色、权限、日志）
-4. 产出1页方案图 + 3条治理策略
+> "The trend is to let LLMs themselves control context engineering."
+> — Harrison Chase, LangChain CEO
 
----
+**从"全量加载"到"按需加载"**：
 
-# 讨论题（小组）
-
-- 你的组织最先该标准化哪类工具？
-- 你会先做“效率提升”还是“风控治理”？
-- 如果只能做一件事，做Schema标准还是日志平台？
-
-<div class="small muted">建议每组3分钟陈述，1分钟问答。</div>
+- MCP的schema-on-connect → **lazy loading**
+- Skill的Progressive Disclosure已经走在前面
+- 未来：Agent自己决定加载哪些工具
 
 ---
 
-# 复盘：六个关键结论
+# 趋势2：动态工具发现
 
-1. 工具集成难点在治理，不在调用
-2. MCP把“集成”升级成“标准协作”
-3. JSON-RPC是排障与可观测的基础
-4. Claude Desktop可作为低门槛实验场
-5. Skill适合快速沉淀内部能力
-6. 混合架构是多数企业的现实选择
+当前：连接时加载所有schema → context bloat
+
+未来：
+
+```text
+Agent: "我需要查GitHub issue"
+  → 动态发现GitHub MCP Server
+  → 只加载 issue 相关的 3 个 tool schema
+  → 用完释放
+
+而不是一次性加载 93 个 tool = 55,000 tokens
+```
+
+CircleCI已经观察到部分MCP实现开始支持这种模式。
+
+---
+
+# 趋势3：工具生态的网络效应
+
+```text
+更多Skill → 更多Agent使用 → 更多开发者创建Skill
+     ↑                                    │
+     └────────────────────────────────────┘
+```
+
+- ClawHub从0到2,857+ skills只用了不到一年
+- Google gws将CLI+MCP+Skills三合一
+- **赢家通吃的逻辑**：谁的工具生态最丰富，谁的Agent最强大
+
+---
+
+<!-- _backgroundColor: #0f172a -->
+<!-- _color: #f1f5f9 -->
+
+# Part 9｜总结
+
+---
+
+# 核心概念回顾
+
+| 概念 | 一句话 |
+|------|--------|
+| **M×N问题** | 没有标准协议，集成成本指数增长 |
+| **CLI** | LLM天然擅长，零开销，适合快速迭代 |
+| **MCP** | 标准化协议，认证集中，适合企业治理 |
+| **Inner/Outer Loop** | CLI适合内循环，MCP适合外循环 |
+| **Agent Skill** | 写文档教Agent，非程序员也能创建 |
+| **Context Rot** | Skill用按需加载解决schema膨胀 |
+| **安全治理** | 70%过度授权，44个恶意软件——不能裸奔 |
+
+---
+
+# MBA洞察
+
+> **Skill是AI Agent时代的SOP。**
+
+传统企业用SOP文档管理知识——谁的SOP好，谁的执行力强。
+
+AI企业用Skill管理Agent能力——**谁能更快把业务知识编码成Skill，谁就让AI更有效服务客户。**
+
+三个战略问题：
+
+1. 你的核心业务流程，能写成Skill吗？
+2. 你的团队，谁来维护这些Skill？
+3. 你的Skill生态，有安全治理吗？
 
 ---
 
@@ -1090,93 +907,36 @@ CRM数据 -> MCP Server (postgres)
 
 1. 选一个业务流程（如客服质检、销售周报）
 2. 输出一份A4方案：
-   - 为什么选MCP/Skill/混合
-   - Tool Schema草案
-   - 权限与审计方案
+   - 哪些环节用CLI，哪些用MCP，哪些用Skill
+   - 写一个SKILL.md草案
+   - 安全治理方案（权限分层 + 审计策略）
 3. 可选：实现一个最小Demo并录屏5分钟
 
 ---
 
-# 资料索引（可点击）
+# 延伸阅读
 
-## 官方
+## 核心资源
+- [CircleCI: MCP vs CLI for AI-native development](https://circleci.com/blog/mcp-vs-cli/)
+- [ScaleKit: MCP vs CLI Benchmarking](https://www.scalekit.com/blog/mcp-vs-cli-use)
+- [Claude Code: Extend Claude with Skills](https://code.claude.com/docs/en/skills)
+- [Lakera: Agent Skill Ecosystem Security](https://www.lakera.ai/blog/the-agent-skill-ecosystem-when-ai-extensions-become-a-malware-delivery-channel)
+
+## 协议与标准
 - [MCP官方文档](https://modelcontextprotocol.io/introduction)
-- [MCP Servers仓库](https://github.com/modelcontextprotocol/servers)
-- [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
-- [JSON-RPC 2.0规范](https://www.jsonrpc.org/specification)
+- [AgentSkills.io — 开放标准](https://agentskills.io)
+- [NIST AI Agent Standards Initiative](https://www.nist.gov/)
 
-## 官方指南 ⭐
-- [Anthropic: CLAUDE.md & ACI Design](https://www.anthropic.com/engineering/claude-code-best-practices) - Agent-Computer Interface
-- [Simon Willison: LLM Tools](https://simonw.substack.com/p/large-language-models-can-run-tools)
-
-## 平台
-- [Claude Desktop下载](https://claude.ai/download)
-- [ClawHub](https://clawhub.com)
-- [Coze](https://www.coze.cn)
-- [Dify](https://dify.ai/)
-
----
-
-# 附录A｜MCP消息字典（速查）
-
-| 方法 | 用途 |
-|---|---|
-| `initialize` | 协议能力协商 |
-| `tools/list` | 枚举工具能力 |
-| `tools/call` | 执行工具调用 |
-| `resources/list` | 列出资源 |
-| `resources/read` | 读取资源内容 |
-| `prompts/list` | 枚举提示模板 |
-
----
-
-# 附录B｜最小MCP Server伪代码
-
-```typescript
-import { Server } from "@modelcontextprotocol/sdk/server";
-
-const server = new Server({ name: "demo", version: "0.1.0" }, { capabilities: { tools: {} } });
-
-server.setRequestHandler("tools/list", async () => ({
-  tools: [{ name: "ping", description: "health check", inputSchema: { type: "object", properties: {} } }]
-}));
-
-server.setRequestHandler("tools/call", async (req) => {
-  if (req.params.name === "ping") {
-    return { content: [{ type: "text", text: "pong" }] };
-  }
-  throw new Error("unknown tool");
-});
-```
-
----
-
-# 附录C｜企业上线检查单
-
-- [ ] 关键工具都有Schema与错误码
-- [ ] 权限分层可审计
-- [ ] 超时/重试/熔断已配置
-- [ ] 关键调用有Tracing与告警
-- [ ] 发生故障有人工兜底流程
-
----
-
-# 动手试试 6｜生态调研冲刺（课后）
-
-- 平台直达：[
-Smithery（MCP生态目录）
-](https://smithery.ai)
-- 平台直达：[
-MCP官方站点
-](https://modelcontextprotocol.io)
-
-**任务**：选3个与你行业最相关的Server，写一页“可用性评估”。
+## 生态
+- [ClawHub — Skill市场](https://clawhub.com)
+- [Anthropic Skills仓库](https://github.com/anthropics/skills)
+- [Context Rot研究](https://research.trychroma.com/context-rot)
 
 ---
 
 # Q&A
 
-## 从“会调用工具”到“会建设能力平台”
+## 从"会调用工具"到"会建设能力平台"
 
 谢谢大家。
 
