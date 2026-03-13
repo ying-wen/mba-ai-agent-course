@@ -21,7 +21,7 @@
 
 ### 你将学到
 
-- LLM 核心原理（Transformer → GPT-5 → 推理模型）
+- LLM 核心原理（Transformer → 推理模型 → GPT-5.4/Claude Opus 4.6 Agent模型）
 - 工作流设计（Pipeline/Routing/Parallelization + RAG）
 - Agent 架构（ReAct/反思/规划 + 记忆 + 工具）
 - 多 Agent 协作（共识机制、OMAO 实战挑战）
