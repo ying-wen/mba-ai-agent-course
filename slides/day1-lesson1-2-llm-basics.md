@@ -342,7 +342,7 @@ openclaw gateway start && openclaw gateway status
 
 | 资源 | 链接 |
 |------|------|
-| **完整教程** | [claw101.com/en](https://claw101.com/en) ⭐ 13章免费 |
+| **完整教程** | [https://openclaw.ai](https://openclaw.ai)  |
 | **飞书配置** | [docs.openclaw.ai/zh-CN/channels/feishu](https://docs.openclaw.ai/zh-CN/channels/feishu) |
 | **社区** | Telegram [@claw101](https://t.me/claw101) |
 
@@ -454,12 +454,11 @@ openclaw chat "你好，请介绍一下你自己"
 <div>
 
 ### OpenAI
-- GPT-5 / 5.2 / **5.4**
-- o1 / o3（推理系列）
+- GPT-5 / 5.2 / 5.3 codex / **5.4**
 
 ### Anthropic
-- Claude Opus 4.5
-- **Claude 4.6**
+- Claude Opus/Sonnet 4.5
+- **Claude Opus/Sonnet 4.6 **
 
 </div>
 <div>
@@ -471,18 +470,17 @@ openclaw chat "你好，请介绍一下你自己"
 ### Meta（开源）
 - Llama 4 Scout (109B MoE)
 - **Llama 4 Maverick** (400B MoE)
-- Llama 4 Behemoth
 
 </div>
 <div>
 
 ### 国产闭源
-- **Kimi K2** / K2.5
-- 豆包 / 通义
+- 豆包
 
 ### 国产开源
 - **DeepSeek-V3** / R1
 - **Qwen-3**
+- **Kimi K2.5** 
 
 </div>
 </div>
@@ -495,14 +493,12 @@ openclaw chat "你好，请介绍一下你自己"
 
 | 模型 | 核心优势 | 典型场景 | 架构 |
 |---|---|---|---|
-| **GPT-5.4** | 综合最强、工具生态成熟 | 复杂通用任务 | Dense |
-| **o3** | 数学/逻辑/代码深度推理 | 决策推演、难题求解 | 推理模型 |
-| **Claude 4.6** | 代码、长文档、稳定输出 | 法务/研究/SWE | Dense |
-| **Gemini 3.1 Pro** | 多模态+超长上下文(2M) | 视频理解、ARC-AGI | Dense |
+| **GPT-5.4** | 综合最强、工具生态成熟 | 复杂通用任务 | 
+| **Claude 4.6** | 代码、长文档、稳定输出 | 法务/研究/SWE | 
+| **Gemini 3.1 Pro** | 多模态+超长上下文(2M) | 视频理解、ARC-AGI | 
 | **DeepSeek-V3** | 极致性价比 | 大规模业务调用 | MoE |
 | **DeepSeek-R1** | 开源推理标杆 | 分析推导任务 | MoE |
-| **Llama 4 Maverick** | 开源最强MoE | 私有化部署 | MoE (400B) |
-| **Kimi K2** | 中文长文本+知识处理 | 读材料、做综述 | Dense |
+| **Kimi K2.5/GLM 5** | 中文长文本+知识处理 | 读材料、做综述 | 
 
 ---
 
@@ -524,16 +520,14 @@ openclaw chat "你好，请介绍一下你自己"
 
 # 💰 2026 API 定价全景（每百万 Token, USD）
 
-| 模型 | 输入价格 | 输出价格 | 性价比评级 |
+| 模型 | 输入价格 | 输出价格 | 
 |---|---:|---:|---|
-| GPT-5.4 | $2 | $8 | ⭐⭐⭐ |
-| o3 | $10 | $40 | ⭐（推理溢价） |
-| Claude Opus 4.6 | $15 | $75 | ⭐⭐ |
-| Gemini 3 Pro | $1.25 | $5 | ⭐⭐⭐⭐ |
-| DeepSeek-V3 | **$0.27** | **$1.10** | ⭐⭐⭐⭐⭐ |
-| Kimi K2 | ¥60/M | ¥60/M | ⭐⭐⭐⭐ |
+| GPT-5.4 | $2.5 | $22.50 | 
+| Claude Opus 4.6 | $5 | $25 | 
+| Gemini 3.1 Pro (200k总长度) | $2 | $5 | 
+| Kimi K2.5 | ¥4/M | ¥21/M | 
 
-> **趋势**：GPT-5.4相比GPT-4o降价60%+；DeepSeek-V3以不到GPT-5.4的1/7价格提供可比性能。Token单价每年以50%+速度下降。
+> **趋势**：Token单价每年以50%+速度下降。
 
 <div class="tiny muted">来源: 各平台官方定价页, 2026.03</div>
 
@@ -547,7 +541,6 @@ openclaw chat "你好，请介绍一下你自己"
 ### System 1（快思考）
 - 模式匹配、响应迅速
 - 日常问答、信息检索
-- **代表**: GPT-5.4、Claude 4.6
 
 </div>
 <div>
@@ -555,7 +548,6 @@ openclaw chat "你好，请介绍一下你自己"
 ### System 2（慢思考）
 - 分步推理、自检纠错
 - 数学、代码、复杂决策
-- **代表**: o3、DeepSeek-R1
 
 </div>
 </div>
@@ -649,11 +641,10 @@ print(f"${estimate_cost(120_000, 30_000, 0.27, 1.10):.2f}")  # $0.07
 
 | 模型 | 上下文窗口 | 能力级别 |
 |---|---:|---|
-| GPT-5.4 | 256K tokens | 处理一本书 |
-| Claude 4.6 | 200K tokens | 处理长文档 |
-| Gemini 3.1 Pro | **2M tokens** | 处理整个代码库 |
-| Kimi K2 | 2M tokens | 超长中文文本 |
-| DeepSeek-V3 | 128K tokens | 通用场景够用 |
+| GPT-5.4 | 1M tokens | 处理一本书 |
+| Claude 4.6 | 1M tokens | 处理长文档 |
+| Gemini 3.1 Pro | 1M tokens | 处理整个代码库 |
+| Kimi 2.5 | 256K tokens | 通用场景够用 |
 
 ---
 
