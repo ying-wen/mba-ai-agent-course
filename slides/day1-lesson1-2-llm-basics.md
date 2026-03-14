@@ -235,7 +235,7 @@ style: |
 | 平台 | 特点 | 入口 |
 |------|------|------|
 | **DeepSeek** | 性价比王，深度思考 | deepseek.com |
-| **Kimi** | 超长上下文2M | kimi.moonshot.cn |
+| **Kimi** | 超长上下文，Agent| kimi.moonshot.cn |
 | **豆包** | 多模态，中文优化 | doubao.com |
 | **ChatGPT** | 综合最强 | chat.openai.com |
 | **Claude** | 长文档，稳定输出 | claude.ai |
